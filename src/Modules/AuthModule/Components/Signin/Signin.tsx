@@ -111,7 +111,7 @@ export default function Signin() {
                 If you don’t have an account register
                 <br />
                 You can
-                <Link className={Styles.register} to="/register">
+                <Link className={Styles.register} to="/auth/signup">
                   {" "}
                   Register here !
                 </Link>
