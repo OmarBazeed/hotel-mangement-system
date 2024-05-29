@@ -4,7 +4,7 @@
   }
 }
 
-.loginContainer {
+.forgetPassContainer {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -41,9 +41,9 @@
   color: white;
 }
 
-.register {
+.loginHere {
   font-weight: bold !important;
-  color: rgba(21, 44, 91, 1) !important;
+  color: rgb(253, 85, 85) !important;
   text-decoration: none !important;
 }
 

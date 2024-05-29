@@ -25,6 +25,7 @@ import { FormData } from "../../../../Interfaces/interFaces";
 import Styles from "./Signin.module.css";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
+import { FullscreenExit } from "../../../../../node_modules/@mui/icons-material/index";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState("password");
@@ -115,13 +116,20 @@ export default function Signin() {
                   Register here !
                 </Link>
               </Typography>
+              <Typography variant="h6" sx={{
+                 my: 0,
+                 color: "#152C5B",
+                 display: "flex",
+                 alignItems: "left"
+                 }}>Email Address
+              </Typography>
               <Box
                 onSubmit={handleSubmit(onSubmit)}
                 component="form"
                 noValidate
                 autoComplete="off"
               >
-                <TextField
+                <TextField sx={{bgcolor: '#F5F6F8'}}
                   {...register("email", {
                     required: "Email is required ",
                     pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
@@ -130,7 +138,7 @@ export default function Signin() {
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Please type here"
                   name="email"
                   autoComplete="email"
                   error={!!errors?.email}
@@ -142,12 +150,19 @@ export default function Signin() {
                   // {String(errors?.email? errors.email.message:"")}
                   // autoFocus
                 />
-
-                <FormControl fullWidth sx={{ mb: 1, mt: 4 }} variant="outlined">
+                <Typography variant="h6" sx={{
+                  my: 1,
+                  mt: 8,
+                  color: "#152C5B",
+                  display: "flex",
+                  alignItems: "left"
+                  }}>Password
+                </Typography>
+                <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
-                    Password
+                    Please type here
                   </InputLabel>
-                  <OutlinedInput
+                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
                     {...register("password", {
                       required: true,
                       pattern:
@@ -186,7 +201,7 @@ export default function Signin() {
                     xs
                     sx={{ mb: 5, pb: 5, pt: 2, display: "flex" }}
                   >
-                    <Link className={Styles.register} to="/forget-password">
+                    <Link className={Styles.register} to="/auth/forget-password">
                       Forgot password?
                     </Link>
                   </Grid>
