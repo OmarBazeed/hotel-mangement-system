@@ -58,7 +58,7 @@ export default function ForgetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigateTolayout(res.data.data.user.role);
+      navigate("/auth/reset-password")
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -175,7 +175,7 @@ export default function ForgetPassword() {
           >
             <img src={img} alt="Login Image" className={Styles.image} />
             <Typography variant="h4" className={Styles.imageText1}>
-              Sign in
+              Forget Password
             </Typography>
 
             <Typography variant="h6" className={Styles.imageText}>
