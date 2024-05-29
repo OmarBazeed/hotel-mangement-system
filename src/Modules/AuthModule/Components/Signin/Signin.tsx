@@ -1,5 +1,6 @@
 import Grid from "@mui/material/Grid";
 
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -16,33 +17,31 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import Styles from './Signin.module.css';
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { toast } from "react-toastify";
+
+import img from "../../../../assets/images/resetPass.png";
+import logo from "../../../../assets/images/Staycation.png";
 import { AuthContext } from "../../../../Context/Components/AuthContext";
-import img from '../../../../assets/images/resetPass.png';
-import logo from '../../../../assets/images/Staycation.png';
+import { FormData } from "../../../../Interfaces/interFaces";
+import Styles from "./Signin.module.css";
+import { toast } from "react-toastify";
+
 export default function Signin() {
-  interface FormData {
-    email: string;
-    password: string;
-    loginData:string
-  }
   const [showPassword, setShowPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
   const navigate = useNavigate();
-  const navigateTolayout = () => {
-    if (loginData?.role == "user") {
-      // console.log("loginData");
-      // navigate("/layout");
-      
-      
-      
+  const navigateTolayout = (userInfo: string) => {
+    if (userInfo == "admin") {
+      navigate("/dashboard");
     } else {
-      console.log("laaaaaaaaaa");
-      // navigate("/dashboard");
+      navigate("/");
     }
   };
+
+  const signUpWaitToast = {
+    onClose: () => setIsClicked(false),
+  };
+
   const {
     register,
     handleSubmit,
@@ -50,42 +49,30 @@ export default function Signin() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    // console.log(data);
     setSpinner(true);
-
-    await axios
-      .post(`${baseUrl}/v0/admin/users/login`, data)
-      .then((response) => {
-        localStorage.setItem("token", response.data.data.token);
-        savLoginData();
-        // console.log(response.data.data.user);
-        const userRole= (response.data.data.user.role);
-
-        if (userRole=="admin") {
-          navigate("/dashboard");
-          
-        }else{
-         
-          navigate("/landing");
-        }
-
-        setSpinner(false);
-        toast.success("Login  successfully");
-      })
-      .catch((error) => {
-        if (axios.isAxiosError(error) && error.response) {
-          toast.error(error.response.data.message);
-        }
-        console.log(error);
-        setSpinner(false);
-      });
+    setIsClicked(true);
+    try {
+      const res = await axios.post(`${baseUrl}/api/v0/admin/users/login`, data);
+      setSpinner(false);
+      navigateTolayout(res.data.data.user.role);
+      savLoginData();
+      toast.success(res.data.message, signUpWaitToast);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(
+          error.response.data.message || "fail signin",
+          signUpWaitToast
+        );
+      }
+      setSpinner(false);
+    }
   };
   const authContext = useContext(AuthContext);
   if (!authContext) {
     // Handle the case where AuthContext is null
     return null;
   }
-  const { loginData, savLoginData, baseUrl } = authContext;
+  const { savLoginData, baseUrl } = authContext;
   return (
     <>
       <Box
@@ -206,6 +193,7 @@ export default function Signin() {
                   variant="contained"
                   color="primary"
                   sx={{ mt: 2, mb: 2, py: 1 }}
+                  disabled={isClicked}
                 >
                   {spinner ? (
                     <CircularProgress size={24} color="inherit" />
@@ -227,7 +215,6 @@ export default function Signin() {
             <Typography variant="h4" className={Styles.imageText1}>
               Sign in
             </Typography>
-           
 
             <Typography variant="h6" className={Styles.imageText}>
               Homes as unique as you.

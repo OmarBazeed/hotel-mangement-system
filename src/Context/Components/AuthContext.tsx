@@ -8,7 +8,7 @@ export interface IAuth {
   loginData: DecodedTokenType | null | any;
   savLoginData: () => void;
   userRole: string | null;
-  requestHeaders: { Authorization:string},
+  requestHeaders: { Authorization: string };
   baseUrl: string | undefined;
   // updateUserData: () => void;
   // setUserRole: () => void;
@@ -16,22 +16,21 @@ export interface IAuth {
 
 interface DecodedTokenType {
   role: string;
-  
 }
 
 export const AuthContext = createContext<IAuth | null>(null);
 
-export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({children}) => {
+export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [loginData, setloginData] = useState<DecodedTokenType | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const baseUrl="https://upskilling-egypt.com:3000/api";
-  
+  const baseUrl = "https://upskilling-egypt.com:3000";
+
   // console.log(userRole);
-  
-  const requestHeaders =
-   {
+
+  const requestHeaders = {
     Authorization: ` ${localStorage.getItem("token")}`,
-    
   };
 
   const savLoginData = () => {
@@ -46,10 +45,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({children
       savLoginData();
     }
   }, []);
-
-
-
-
 
   const contextValue: IAuth | null = {
     loginData,
