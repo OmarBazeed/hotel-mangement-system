@@ -24,6 +24,7 @@ import { AuthContext } from "../../../../Context/Components/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
 import Styles from "./Signin.module.css";
 import { toast } from "react-toastify";
+import { getBaseUrl } from "../../../../Utils/Utils";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState("password");
@@ -52,11 +53,14 @@ export default function Signin() {
     setSpinner(true);
     setIsClicked(true);
     try {
-      const res = await axios.post(`${baseUrl}/api/v0/admin/users/login`, data);
+      const res = await axios.post(
+        `${getBaseUrl()}/api/v0/admin/users/login`,
+        data
+      );
       setSpinner(false);
-      navigateTolayout(res.data.data.user.role);
-      savLoginData();
       toast.success(res.data.message, signUpWaitToast);
+      navigateTolayout(res.data.data.user.role);
+      // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(

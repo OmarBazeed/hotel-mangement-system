@@ -9,7 +9,7 @@ export interface IAuth {
   savLoginData: () => void;
   userRole: string | null;
   requestHeaders: { Authorization: string };
-  baseUrl: string | undefined;
+  // baseUrl: string | undefined;
   // updateUserData: () => void;
   // setUserRole: () => void;
 }
@@ -25,7 +25,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [loginData, setloginData] = useState<DecodedTokenType | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const baseUrl = "https://upskilling-egypt.com:3000";
 
   // console.log(userRole);
 
@@ -50,7 +49,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     loginData,
     userRole,
     savLoginData,
-    baseUrl,
     requestHeaders,
   };
   return (
