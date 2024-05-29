@@ -1,15 +1,9 @@
 import Grid from "@mui/material/Grid";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
   CircularProgress,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
   TextField,
   Typography,
 } from "@mui/material";
@@ -24,19 +18,11 @@ import { FormData } from "../../../../Interfaces/interFaces";
 import Styles from "./forgetPass.module.css";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import { FullscreenExit } from "../../../../../node_modules/@mui/icons-material/index";
 
 export default function ForgetPassword() {
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const navigate = useNavigate();
-  const navigateTolayout = (userInfo: string) => {
-    if (userInfo == "admin") {
-      navigate("/dashboard");
-    } else {
-      navigate("/");
-    }
-  };
 
   const signUpWaitToast = {
     onClose: () => setIsClicked(false),
@@ -58,12 +44,12 @@ export default function ForgetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigateTolayout(res.data.data.user.role);
+      navigate("/auth/reset-password")
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(
-          error.response.data.message || "fail signin",
+          error.response.data.message || "user not registered",
           signUpWaitToast
         );
       }
@@ -75,7 +61,7 @@ export default function ForgetPassword() {
     // Handle the case where AuthContext is null
     return null;
   }
-  const { savLoginData, baseUrl } = authContext;
+  const { baseUrl } = authContext;
   return (
     <>
       <Box
