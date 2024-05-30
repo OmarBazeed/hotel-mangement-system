@@ -119,7 +119,7 @@ export default function Signin() {
                 If you don’t have an account register
                 <br />
                 You can
-                <Link className={Styles.register} to="/register">
+                <Link className={Styles.register} to="signup">
                   {" "}
                   Register here !
                 </Link>
@@ -160,7 +160,7 @@ export default function Signin() {
                     {...register("password", {
                       required: true,
                       pattern:
-                        /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                        /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
                     })}
                     error={!!errors?.password}
                     className=""
