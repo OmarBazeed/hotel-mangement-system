@@ -20,7 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import img from "../../../../assets/images/resetPass.png";
 import logo from "../../../../assets/images/Staycation.png";
-import { AuthContext } from "../../../../Context/Components/AuthContext";
+import { AuthContext } from "../../../../Context/AuthContext/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
 import Styles from "./ResetPass.module.css";
 import { toast } from "react-toastify";
@@ -59,7 +59,7 @@ export default function ResetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigate("/auth")
+      navigate("/auth");
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -107,7 +107,7 @@ export default function ResetPassword() {
               <Typography variant="h4">Reset Password</Typography>
 
               <Typography sx={{ my: 2 }}>
-                If you already have an account registered 
+                If you already have an account registered
                 <br />
                 You can
                 <Link className={Styles.register} to="/auth">
@@ -115,12 +115,16 @@ export default function ResetPassword() {
                   login here !
                 </Link>
               </Typography>
-              <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Email Address
+              <Typography
+                variant="h6"
+                sx={{
+                  my: 0,
+                  color: "#152C5B",
+                  display: "flex",
+                  alignItems: "left",
+                }}
+              >
+                Email Address
               </Typography>
               <Box
                 onSubmit={handleSubmit(onSubmit)}
@@ -128,7 +132,8 @@ export default function ResetPassword() {
                 noValidate
                 autoComplete="off"
               >
-                <TextField sx={{bgcolor: '#F5F6F8'}}
+                <TextField
+                  sx={{ bgcolor: "#F5F6F8" }}
                   {...register("email", {
                     required: "Email is required ",
                     pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
@@ -150,20 +155,25 @@ export default function ResetPassword() {
                   // autoFocus
                 />
 
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Password
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 1,
+                    mt: 2,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Password
                 </Typography>
-                
+
                 <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
                     Please type here
                   </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("password", {
                       required: "Password is required",
                       pattern:
@@ -204,19 +214,24 @@ export default function ResetPassword() {
                   />
                 </FormControl>
 
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Confirm Password
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 1,
+                    mt: 2,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Confirm Password
                 </Typography>
                 <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
                     Please type here
                   </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("confirmPassword", {
                       required: true,
                       validate: validateConfirmPassword,
@@ -234,7 +249,9 @@ export default function ResetPassword() {
                           aria-label="toggle password visibility"
                           onClick={() => {
                             setShowConfirmPassword(
-                              showConfirmPassword === "password" ? "text" : "password"
+                              showConfirmPassword === "password"
+                                ? "text"
+                                : "password"
                             );
                           }}
                           edge="end"
@@ -251,20 +268,24 @@ export default function ResetPassword() {
                   />
                 </FormControl>
 
-
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>OTP
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 1,
+                    mt: 2,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  OTP
                 </Typography>
                 <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
                     Please type here
                   </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("seed", {
                       required: true,
                     })}
@@ -274,8 +295,6 @@ export default function ResetPassword() {
                     label="seed"
                   />
                 </FormControl>
-                
-                
 
                 <Button
                   type="submit"

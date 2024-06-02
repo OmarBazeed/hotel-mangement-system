@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { AuthContextProvider } from "./Context/Components/AuthContext.tsx";
+import { AuthContextProvider } from "./Context/AuthContext/AuthContext.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

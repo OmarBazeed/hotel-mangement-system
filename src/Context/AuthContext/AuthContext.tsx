@@ -1,44 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { jwtDecode } from "jwt-decode";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 // import { useTranslation } from "react-i18next";
 
 // Define the authentication data//
 export interface IAuth {
-  loginData: DecodedTokenType | null | any;
+  loginData: { role: string } | null;
   savLoginData: () => void;
-  userRole: string | null;
+  logOut: () => void;
   requestHeaders: { Authorization: string };
-  // baseUrl: string | undefined;
-  // updateUserData: () => void;
-  // setUserRole: () => void;
 }
 
-interface DecodedTokenType {
-  role: string;
-}
+// interface DecodedTokenType {
+//   role: string;
+// }
 
 export const AuthContext = createContext<IAuth | null>(null);
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [loginData, setloginData] = useState<DecodedTokenType | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  // console.log(userRole);
-
+  const [loginData, setloginData] = useState<{ role: string } | null>(null);
   const requestHeaders = {
-    Authorization: ` ${localStorage.getItem("token")}`,
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   };
-
   const savLoginData = () => {
     const encodedToken = localStorage.getItem("token");
-    const decodedToken = jwtDecode(encodedToken!) as DecodedTokenType;
+    if (!encodedToken) throw new Error("token not found");
+
+    const decodedToken = jwtDecode(encodedToken!) as { role: string };
     setloginData(decodedToken);
-    setUserRole(decodedToken.role);
   };
 
+  const logOut = () => {
+    localStorage.removeItem("token");
+    setloginData(null);
+  };
   useEffect(() => {
     if (localStorage.getItem("token")) {
       savLoginData();
@@ -47,11 +50,19 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
   const contextValue: IAuth | null = {
     loginData,
-    userRole,
     savLoginData,
     requestHeaders,
+    logOut,
   };
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const ZContext = useContext(AuthContext);
+  if (!ZContext) {
+    throw new Error("useAuth must be used within an AuthContextProvider");
+  }
+  return ZContext;
 };

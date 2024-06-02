@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import img from "../../../../assets/images/resetPass.png";
 import logo from "../../../../assets/images/Staycation.png";
-import { AuthContext } from "../../../../Context/Components/AuthContext";
+import { AuthContext } from "../../../../Context/AuthContext/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
 import Styles from "./forgetPass.module.css";
 import { toast } from "react-toastify";
@@ -58,7 +58,7 @@ export default function ForgetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigate("/auth/reset-password")
+      navigate("/auth/reset-password");
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -102,7 +102,7 @@ export default function ForgetPassword() {
         >
           <Grid item md={6} m={1}>
             <img src={logo} className={Styles.logoimage} alt="favRooms" />
-            <Grid item xs={10} sx={{ bgcolor: "", mt: -4, }} m={5}>
+            <Grid item xs={10} sx={{ bgcolor: "", mt: -4 }} m={5}>
               <Typography variant="h4">Forgot Password</Typography>
 
               <Typography sx={{ my: 2, mb: 10 }}>
@@ -114,12 +114,16 @@ export default function ForgetPassword() {
                   Login here !
                 </Link>
               </Typography>
-              <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Email
+              <Typography
+                variant="h6"
+                sx={{
+                  my: 0,
+                  color: "#152C5B",
+                  display: "flex",
+                  alignItems: "left",
+                }}
+              >
+                Email
               </Typography>
               <Box
                 onSubmit={handleSubmit(onSubmit)}
@@ -127,9 +131,10 @@ export default function ForgetPassword() {
                 noValidate
                 autoComplete="off"
               >
-                <TextField sx={{bgcolor: '#F5F6F8'}}
+                <TextField
+                  sx={{ bgcolor: "#F5F6F8" }}
                   {...register("email", {
-                    required: "Email is required "
+                    required: "Email is required ",
                   })}
                   margin="normal"
                   required
@@ -147,8 +152,7 @@ export default function ForgetPassword() {
                   // {String(errors?.email? errors.email.message:"")}
                   // autoFocus
                 />
-                
-                
+
                 <Button
                   type="submit"
                   fullWidth

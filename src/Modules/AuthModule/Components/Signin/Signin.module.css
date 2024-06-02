@@ -5,10 +5,11 @@
 }
 
 .loginContainer {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  box-sizing: border-box !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px !important;
+  padding-bottom: 20px !important;
 }
 
 .imageContainer {
@@ -17,16 +18,12 @@
   position: relative;
 }
 
-.logoimage {
-  margin-bottom: 110px;
-}
+/* .logoimage {
+  margin-bottom: 30px;
+} */
 .image {
-  /* border-radius: 10px; */
+  height: 100%;
   width: 100%;
-  height: 700px;
-  /* height: 100%; */
-  /* object-fit: cover; */
-  /* object-position: center; */
 }
 .imageText1 {
   position: absolute;
@@ -45,5 +42,24 @@
   font-weight: bold !important;
   color: rgb(253, 85, 85) !important;
   text-decoration: none !important;
+  margin-left: 5px;
 }
 
+.bckChange {
+  background: url("../../../../assets/images/login.png");
+  background-size: cover;
+  background-position: bottom;
+}
+.addBorder {
+  padding: 10px;
+  box-shadow: 2px 2px 2px gray;
+  background-color: rgba(104, 104, 104, 0.042);
+}
+.formContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  margin: 0 !important;
+}

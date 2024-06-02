@@ -15,12 +15,12 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { SubmitHandler,useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import img from "../../../../assets/images/registerimg.png";
 import logo from "../../../../assets/images/Staycation.png";
-import { AuthContext } from "../../../../Context/Components/AuthContext";
+import { AuthContext } from "../../../../Context/AuthContext/AuthContext";
 import { RegisterFormData } from "../../../../Interfaces/interFaces";
 import Styles from "./Signup.module.css";
 import { toast } from "react-toastify";
@@ -61,13 +61,13 @@ export default function Signup() {
       setSpinner(false);
       toast.success(response.data.message, signUpWaitToast);
       console.log(response.data.message);
-      
-      navigate("/auth")
+
+      navigate("/auth");
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         console.log(error.response.data.message);
-        
+
         toast.error(
           error.response.data.message || "Cannot Reset Password",
           signUpWaitToast
@@ -82,7 +82,6 @@ export default function Signup() {
     return null;
   }
   const { baseUrl } = authContext;
-
 
   const appendToFormData = (data: RegisterFormData) => {
     const formData = new FormData();
@@ -129,7 +128,7 @@ export default function Signup() {
               <Typography variant="h4">Sign Up</Typography>
 
               <Typography sx={{ my: 2 }}>
-                If you already have an account registered 
+                If you already have an account registered
                 <br />
                 You can
                 <Link className={Styles.register} to="/auth">
@@ -138,25 +137,27 @@ export default function Signup() {
                 </Link>
               </Typography>
 
-
-              
               <Box
                 onSubmit={handleSubmit(onSubmit)}
                 component="form"
                 noValidate
                 autoComplete="off"
               >
-
-                <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>User Name
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 0,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  User Name
                 </Typography>
-                <TextField sx={{bgcolor: '#F5F6F8'}}
+                <TextField
+                  sx={{ bgcolor: "#F5F6F8" }}
                   {...register("userName", {
-                    required: "User Name is required "
+                    required: "User Name is required ",
                   })}
                   margin="normal"
                   required
@@ -175,14 +176,19 @@ export default function Signup() {
                   // autoFocus
                 />
 
-                <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Email Address
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 0,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Email Address
                 </Typography>
-                <TextField sx={{bgcolor: '#F5F6F8'}}
+                <TextField
+                  sx={{ bgcolor: "#F5F6F8" }}
                   {...register("email", {
                     required: "Email is required ",
                     pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
@@ -204,20 +210,25 @@ export default function Signup() {
                   // autoFocus
                 />
 
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Password
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 1,
+                    mt: 2,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Password
                 </Typography>
-                
+
                 <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
                     Please type here
                   </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("password", {
                       required: "Password is required",
                       pattern:
@@ -233,7 +244,7 @@ export default function Signup() {
                       errors?.password === "required" &&
                       " Password is required"
                     }
-                    id="outlined-adornment-password"
+                    id="outlined-adornment-password "
                     type={showPassword}
                     endAdornment={
                       <InputAdornment position="end">
@@ -258,19 +269,24 @@ export default function Signup() {
                   />
                 </FormControl>
 
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Confirm Password
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 1,
+                    mt: 2,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Confirm Password
                 </Typography>
                 <FormControl fullWidth sx={{ mb: 3, mt: 1 }} variant="outlined">
                   <InputLabel htmlFor="outlined-adornment-password">
                     Please type here
                   </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("confirmPassword", {
                       required: true,
                       validate: validateConfirmPassword,
@@ -288,7 +304,9 @@ export default function Signup() {
                           aria-label="toggle password visibility"
                           onClick={() => {
                             setShowConfirmPassword(
-                              showConfirmPassword === "password" ? "text" : "password"
+                              showConfirmPassword === "password"
+                                ? "text"
+                                : "password"
                             );
                           }}
                           edge="end"
@@ -304,18 +322,29 @@ export default function Signup() {
                     label="confirmPassword"
                   />
                 </FormControl>
-                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                  <Box sx={{ width: '45%' }}>
-                    <Typography variant="h6" sx={{
-                    my: 0,
-                    color: "#152C5B",
+                <Box
+                  sx={{
+                    width: "100%",
                     display: "flex",
-                    alignItems: "left"
-                    }}>Phone Number
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        my: 0,
+                        color: "#152C5B",
+                        display: "flex",
+                        alignItems: "left",
+                      }}
+                    >
+                      Phone Number
                     </Typography>
-                    <TextField sx={{ bgcolor: '#F5F6F8'}}
+                    <TextField
+                      sx={{ bgcolor: "#F5F6F8" }}
                       {...register("phoneNumber", {
-                        required: "phoneNumber is required "
+                        required: "phoneNumber is required ",
                       })}
                       margin="normal"
                       required
@@ -334,17 +363,22 @@ export default function Signup() {
                       // autoFocus
                     />
                   </Box>
-                  <Box sx={{ width: '45%' }}>
-                    <Typography variant="h6" sx={{
-                    my: 0,
-                    color: "#152C5B",
-                    display: "flex",
-                    alignItems: "left"
-                    }}>Country
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        my: 0,
+                        color: "#152C5B",
+                        display: "flex",
+                        alignItems: "left",
+                      }}
+                    >
+                      Country
                     </Typography>
-                    <TextField sx={{ bgcolor: '#F5F6F8'}}
+                    <TextField
+                      sx={{ bgcolor: "#F5F6F8" }}
                       {...register("country", {
-                        required: "country is required "
+                        required: "country is required ",
                       })}
                       margin="normal"
                       required
@@ -365,16 +399,21 @@ export default function Signup() {
                   </Box>
                 </Box>
 
-                <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Role
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 0,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Role
                 </Typography>
-                <TextField sx={{bgcolor: '#F5F6F8'}}
+                <TextField
+                  sx={{ bgcolor: "#F5F6F8" }}
                   {...register("role", {
-                    required: "role is required "
+                    required: "role is required ",
                   })}
                   margin="normal"
                   required
@@ -393,18 +432,22 @@ export default function Signup() {
                   // autoFocus
                 />
 
-                <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Profile Image
+                <Typography
+                  variant="h6"
+                  sx={{
+                    my: 0,
+                    color: "#152C5B",
+                    display: "flex",
+                    alignItems: "left",
+                  }}
+                >
+                  Profile Image
                 </Typography>
                 <FormControl fullWidth sx={{ mb: 3, mt: 1 }} variant="outlined">
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
+                  <OutlinedInput
+                    sx={{ bgcolor: "#F5F6F8" }}
                     {...register("profileImage", {
                       required: "profile image is required",
-
                     })}
                     error={!!errors?.profileImage}
                     margin="normal"
@@ -417,7 +460,6 @@ export default function Signup() {
                     label="Profile Image"
                   />
                 </FormControl>
-
 
                 <Button
                   type="submit"
