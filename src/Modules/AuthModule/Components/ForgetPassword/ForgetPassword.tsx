@@ -1,32 +1,25 @@
-import Grid from "@mui/material/Grid";
-
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
   CircularProgress,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
   TextField,
   Typography,
+  Grid,
 } from "@mui/material";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import img from "../../../../assets/images/resetPass.png";
-import logo from "../../../../assets/images/Staycation.png";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../../../Context/Components/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
-import Styles from "./forgetPass.module.css";
-import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import { FullscreenExit } from "../../../../../node_modules/@mui/icons-material/index";
+import logoDark from "../../../../assets/images/logo-dark.svg";
+import logoLight from "../../../../assets/images/logo-light.svg";
+import Style from "../Auth.module.css";
 
 export default function ForgetPassword() {
+  const [isDark, setIsDark] = useState(true);
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -45,6 +38,7 @@ export default function ForgetPassword() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -58,7 +52,7 @@ export default function ForgetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigate("/auth/reset-password")
+      navigate("/auth/reset-password");
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -79,108 +73,147 @@ export default function ForgetPassword() {
   return (
     <>
       <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          height: "100vh",
-          justifyContent: "center",
-          // border: '1px solid',
-          // borderColor: "divider",
-          // borderRadius: 2,
-          // bgcolor: "#cfe8fc",
-          // color: "text.secondary",
-          // "& svg": {
-          //   m: 1,
-          // },
-        }}
+        component={"section"}
+        minHeight={"100vh"}
+        sx={{ pt: { xs: "0px", md: "24px" } }}
       >
-        <Grid
-          className={Styles.forgetPassContainer}
-          sx={{ bgcolor: "#ffffff" }}
-          container
-          rowSpacing={1}
+        <Box
+          sx={{ display: { xs: "none", md: "block" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
         >
-          <Grid item md={6} m={1}>
-            <img src={logo} className={Styles.logoimage} alt="favRooms" />
-            <Grid item xs={10} sx={{ bgcolor: "", mt: -4, }} m={5}>
-              <Typography variant="h4">Forgot Password</Typography>
-
-              <Typography sx={{ my: 2, mb: 10 }}>
-                If you already have an account registered
-                <br />
-                You can
-                <Link className={Styles.loginHere} to="/auth">
-                  {" "}
-                  Login here !
-                </Link>
-              </Typography>
-              <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Email
-              </Typography>
-              <Box
-                onSubmit={handleSubmit(onSubmit)}
-                component="form"
-                noValidate
-                autoComplete="off"
-              >
-                <TextField sx={{bgcolor: '#F5F6F8'}}
-                  {...register("email", {
-                    required: "Email is required "
-                  })}
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Please type here"
-                  name="email"
-                  autoComplete="email"
-                  error={!!errors?.email}
-                  helperText={
-                    errors?.email &&
-                    errors?.email.type === "required" &&
-                    " Email is required"
-                  }
-                  // {String(errors?.email? errors.email.message:"")}
-                  // autoFocus
-                />
-                
-                
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 7, mb: 2, py: 1 }}
-                  disabled={isClicked}
-                >
-                  {spinner ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    "send mail"
-                  )}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-
+          <img width={"150px"} src={isDark ? logoDark : logoLight} alt="logo" />
+        </Box>
+        <Box
+          sx={{ display: { xs: "block", md: "none" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
+        >
+          <img width={"150px"} src={logoDark} alt="logo" />
+        </Box>
+        <Grid
+          container
+          height={"96vh"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           <Grid
-            className={Styles.imageContainer}
-            sx={{ height: "100%" }}
+            width={"100%"}
+            height={"100%"}
             item
-            xs={5}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDirection={"column"}
+            xs={12}
+            md={6}
+            className={`${Style.forgetPass}`}
           >
-            <img src={img} alt="Login Image" className={Styles.image} />
-            <Typography variant="h4" className={Styles.imageText1}>
-              Forget Password
-            </Typography>
+            <Box width={{ md: "65%", xs: "90%" }}>
+              <Box>
+                <Typography mb={3} fontWeight={"500"} variant="h5">
+                  Forgot password
+                </Typography>
+                <Typography fontWeight={"500"} variant="body2">
+                  If you already have an account register
+                </Typography>
+                <Typography
+                  display={"flex"}
+                  alignItems={"center"}
+                  fontWeight={"500"}
+                  variant="body2"
+                >
+                  You can
+                  <Button variant="text" color={"error"}>
+                    <Link
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={"/auth"}
+                    >
+                      Login here !
+                    </Link>
+                  </Button>
+                </Typography>
+                {/* forget pass form */}
+                <Box
+                  onSubmit={handleSubmit(onSubmit)}
+                  component="form"
+                  noValidate
+                  autoComplete="off"
+                  width={"100%"}
+                >
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "E-mail Is Required",
+                      pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        type="text"
+                        id="filled-error"
+                        label="E-mail"
+                        sx={{ mt: 3 }}
+                        error={!!errors.email}
+                        helperText={errors.email ? errors.email?.message : ""}
+                      />
+                    )}
+                  />
 
-            <Typography variant="h6" className={Styles.imageText}>
-              Homes as unique as you.
-            </Typography>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2, mb: 2, py: 1 }}
+                    disabled={isClicked}
+                  >
+                    {spinner ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "Send mail"
+                    )}
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid
+            position={"relative"}
+            sx={{
+              display: { xs: "none", md: "block" },
+            }}
+            item
+            xs={12}
+            md={6}
+            className={`${Style.forgetPassCol}`}
+          >
+            <Box position={"absolute"} top={"80%"} left={"10%"}>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  color: "#FDFFFC",
+                  fontSize: { lg: "2.5rem", md: "2.2rem" },
+                }}
+              >
+                Forgot password
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  color: "#FDFFFC",
+                  fontSize: "1.3rem",
+                }}
+              >
+                Homes as unique as you.
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
       </Box>

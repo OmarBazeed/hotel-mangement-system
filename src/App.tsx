@@ -1,3 +1,5 @@
+import { ThemeProvider } from "@emotion/react";
+import { createTheme, CssBaseline } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import AdsList from "./Modules/AdminDashboard/Componenets/Ads/AdsList/AdsList";
@@ -10,7 +12,6 @@ import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/Forge
 import ResetPassword from "./Modules/AuthModule/Components/ResetPassword/ResetPassword";
 import Signin from "./Modules/AuthModule/Components/Signin/Signin";
 import Signup from "./Modules/AuthModule/Components/Signup/Signup";
-import Verify from "./Modules/AuthModule/Components/Verify/Verify";
 import LandingPage from "./Modules/LandingPage/LandingPage.tsx/LandingPage";
 import ConfirmPayment from "./Modules/PaymentModule/Components/ConfirmPayment/ConfirmPayment";
 import DetailsPayment from "./Modules/PaymentModule/Components/DetailsPayment/DetailsPayment";
@@ -21,6 +22,11 @@ import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayo
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
 
 export default function App() {
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
   const routes = createBrowserRouter([
     {
       path: "/",
@@ -56,12 +62,12 @@ export default function App() {
           element: <Signin />,
         },
         {
-          path: "signup",
-          element: <Signup />,
+          path: "signin",
+          element: <Signin />,
         },
         {
-          path: "verify-account",
-          element: <Verify />,
+          path: "signup",
+          element: <Signup />,
         },
         {
           path: "forget-password",
@@ -105,5 +111,10 @@ export default function App() {
       ],
     },
   ]);
-  return <RouterProvider router={routes} />;
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <RouterProvider router={routes} />
+    </ThemeProvider>
+  );
 }

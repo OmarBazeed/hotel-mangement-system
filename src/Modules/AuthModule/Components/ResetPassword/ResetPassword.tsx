@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Watch } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -15,18 +15,21 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-
-import img from "../../../../assets/images/resetPass.png";
-import logo from "../../../../assets/images/Staycation.png";
 import { AuthContext } from "../../../../Context/Components/AuthContext";
-import { FormData } from "../../../../Interfaces/interFaces";
-import Styles from "./ResetPass.module.css";
+import {
+  FormData,
+  ResetPassInterFace,
+} from "../../../../Interfaces/interFaces";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
+import logoDark from "../../../../assets/images/logo-dark.svg";
+import logoLight from "../../../../assets/images/logo-light.svg";
+import Style from "../Auth.module.css";
 
 export default function ResetPassword() {
+  const [isDark, setIsDark] = useState(true);
   const [showPassword, setShowPassword] = useState("password");
   const [showConfirmPassword, setShowConfirmPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
@@ -37,19 +40,14 @@ export default function ResetPassword() {
     onClose: () => setIsClicked(false),
   };
 
-  const validateConfirmPassword = (value: string) => {
-    const newPassword = getValues("password");
-    return value === newPassword || "Passwords do not match";
-  };
-
   const {
-    register,
     handleSubmit,
     formState: { errors },
-    getValues,
-  } = useForm<FormData>();
+    control,
+    watch,
+  } = useForm<ResetPassInterFace>();
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ResetPassInterFace) => {
     setSpinner(true);
     setIsClicked(true);
     try {
@@ -59,7 +57,7 @@ export default function ResetPassword() {
       );
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
-      navigate("/auth")
+      navigate("/auth");
       // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -80,235 +78,294 @@ export default function ResetPassword() {
   return (
     <>
       <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          height: "100vh",
-          justifyContent: "center",
-          // border: '1px solid',
-          // borderColor: "divider",
-          // borderRadius: 2,
-          // bgcolor: "#cfe8fc",
-          // color: "text.secondary",
-          // "& svg": {
-          //   m: 1,
-          // },
-        }}
+        component={"section"}
+        minHeight={"100vh"}
+        sx={{ pt: { xs: "0px", md: "24px" } }}
+        className={`${Style.signInBody}`}
       >
-        <Grid
-          className={Styles.loginContainer}
-          sx={{ bgcolor: "#ffffff" }}
-          container
-          rowSpacing={1}
+        <Box
+          sx={{ display: { xs: "none", md: "block" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
         >
-          <Grid item md={6} m={1}>
-            <img src={logo} className={Styles.logoimage} alt="favRooms" />
-            <Grid item xs={10} sx={{ bgcolor: "", mt: -4 }} m={5}>
-              <Typography variant="h4">Reset Password</Typography>
-
-              <Typography sx={{ my: 2 }}>
-                If you already have an account registered 
-                <br />
-                You can
-                <Link className={Styles.register} to="/auth">
-                  {" "}
-                  login here !
-                </Link>
-              </Typography>
-              <Typography variant="h6" sx={{
-                 my: 0,
-                 color: "#152C5B",
-                 display: "flex",
-                 alignItems: "left"
-                 }}>Email Address
-              </Typography>
-              <Box
-                onSubmit={handleSubmit(onSubmit)}
-                component="form"
-                noValidate
-                autoComplete="off"
-              >
-                <TextField sx={{bgcolor: '#F5F6F8'}}
-                  {...register("email", {
-                    required: "Email is required ",
-                    pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                  })}
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Please type here"
-                  name="email"
-                  autoComplete="email"
-                  error={!!errors?.email}
-                  helperText={
-                    errors?.email &&
-                    errors?.email.type === "required" &&
-                    " Email is required"
-                  }
-                  // {String(errors?.email? errors.email.message:"")}
-                  // autoFocus
-                />
-
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Password
-                </Typography>
-                
-                <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Please type here
-                  </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
-                    {...register("password", {
-                      required: "Password is required",
-                      pattern:
-                        /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    })}
-                    error={!!errors?.password}
-                    margin="normal"
-                    required
-                    fullWidth
-                    className=""
-                    helperText={
-                      errors?.password &&
-                      errors?.password === "required" &&
-                      " Password is required"
-                    }
-                    id="outlined-adornment-password"
-                    type={showPassword}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => {
-                            setShowPassword(
-                              showPassword === "password" ? "text" : "password"
-                            );
-                          }}
-                          edge="end"
-                        >
-                          {showPassword === "password" ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                </FormControl>
-
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>Confirm Password
-                </Typography>
-                <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Please type here
-                  </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
-                    {...register("confirmPassword", {
-                      required: true,
-                      validate: validateConfirmPassword,
-                    })}
-                    error={!!errors?.confirmPassword}
-                    margin="normal"
-                    required
-                    fullWidth
-                    className=""
-                    id="outlined-adornment-password"
-                    type={showConfirmPassword}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => {
-                            setShowConfirmPassword(
-                              showConfirmPassword === "password" ? "text" : "password"
-                            );
-                          }}
-                          edge="end"
-                        >
-                          {showConfirmPassword === "password" ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="confirmPassword"
-                  />
-                </FormControl>
-
-
-                <Typography variant="h6" sx={{
-                  my: 1,
-                  mt: 2,
-                  color: "#152C5B",
-                  display: "flex",
-                  alignItems: "left"
-                  }}>OTP
-                </Typography>
-                <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Please type here
-                  </InputLabel>
-                  <OutlinedInput sx={{bgcolor: '#F5F6F8'}}
-                    {...register("seed", {
-                      required: true,
-                    })}
-                    error={!!errors?.seed}
-                    className=""
-                    id="outlined-adornment-password"
-                    label="seed"
-                  />
-                </FormControl>
-                
-                
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2, mb: 2, py: 1 }}
-                  disabled={isClicked}
-                >
-                  {spinner ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    "Reset"
-                  )}
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-
+          <img width={"150px"} src={isDark ? logoDark : logoLight} alt="logo" />
+        </Box>
+        <Box
+          sx={{ display: { xs: "block", md: "none" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
+        >
+          <img width={"150px"} src={logoDark} alt="logo" />
+        </Box>
+        <Grid
+          container
+          minHeight={"96vh"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           <Grid
-            className={Styles.imageContainer}
-            sx={{ height: "100%" }}
+            pt={8}
+            width={"100%"}
+            height={"100%"}
             item
-            xs={5}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDirection={"column"}
+            xs={12}
+            md={6}
+            className={`${Style.forgetPass} `}
           >
-            <img src={img} alt="Login Image" className={Styles.image} />
-            <Typography variant="h4" className={Styles.imageText1}>
-              Reset Password
-            </Typography>
+            <Box width={{ md: "65%", xs: "90%" }}>
+              <Box>
+                <Typography mb={3} fontWeight={"500"} variant="h5">
+                  Sign up
+                </Typography>
+                <Typography fontWeight={"500"} variant="body2">
+                  If you already have an account register
+                </Typography>
+                <Typography
+                  display={"flex"}
+                  alignItems={"center"}
+                  fontWeight={"500"}
+                  variant="body2"
+                >
+                  You can
+                  <Button variant="text" color={"error"}>
+                    <Link
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={"/auth"}
+                    >
+                      Login here !
+                    </Link>
+                  </Button>
+                </Typography>
+                {/* login form */}
+                <Box
+                  onSubmit={handleSubmit(onSubmit)}
+                  component="form"
+                  noValidate
+                  autoComplete="off"
+                  width={"100%"}
+                >
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "E-mail Is Required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                        message: "Email is invalid",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        type="text"
+                        label="E-mail"
+                        sx={{ mt: 3 }}
+                        error={!!errors.email}
+                        helperText={errors.email ? errors.email?.message : ""}
+                      />
+                    )}
+                  />
 
-            <Typography variant="h6" className={Styles.imageText}>
-              Homes as unique as you.
-            </Typography>
+                  <Controller
+                    name="seed"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "OTP is Required",
+                      pattern: {
+                        value: /^[A-Z0-9a-z]{4}$/,
+                        message: "OTP is Invalid.",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        type="text"
+                        label="OPT"
+                        sx={{ mt: 3 }}
+                        error={!!errors.seed}
+                        helperText={errors.seed ? errors.seed?.message : ""}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="password"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Password is required",
+                      pattern: {
+                        value:
+                          /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* )/,
+                        message:
+                          "Password must contain at least one digit, lowercase letter, uppercase letter, special character",
+                      },
+                      minLength: {
+                        value: 6,
+                        message: "Minimum length should be 6 characters",
+                      },
+                      maxLength: {
+                        value: 16,
+                        message: "Maximum length exceeded 16",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <FormControl
+                        sx={{ mt: 3 }}
+                        error={!!errors.password}
+                        fullWidth
+                        {...field}
+                      >
+                        <InputLabel htmlFor="outlined-adornment-password">
+                          Password
+                        </InputLabel>
+                        <OutlinedInput
+                          type={showPassword}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                  setShowPassword(
+                                    showPassword === "password"
+                                      ? "text"
+                                      : "password"
+                                  );
+                                }}
+                                edge="end"
+                              >
+                                {showPassword === "password" ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          label="Password"
+                        />
+                      </FormControl>
+                    )}
+                  />
+                  {errors.password && (
+                    <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                      {errors.password.message}
+                    </Typography>
+                  )}
+                  {/* confirm password */}
+                  <Controller
+                    name="confirmPassword"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Confirm Password is required",
+                      validate: (value) =>
+                        value === watch("password") ||
+                        "Confirm Password do not match",
+                    }}
+                    render={({ field }) => (
+                      <FormControl
+                        sx={{ mt: 3 }}
+                        error={!!errors.confirmPassword}
+                        fullWidth
+                        {...field}
+                      >
+                        <InputLabel htmlFor="outlined-adornment-password">
+                          Confirm Password
+                        </InputLabel>
+                        <OutlinedInput
+                          type={showConfirmPassword}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                  setShowConfirmPassword(
+                                    showConfirmPassword === "password"
+                                      ? "text"
+                                      : "password"
+                                  );
+                                }}
+                                edge="end"
+                              >
+                                {showConfirmPassword === "password" ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          label="Confirm Password"
+                        />
+                      </FormControl>
+                    )}
+                  />
+                  {errors.confirmPassword && (
+                    <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                      {errors.confirmPassword.message}
+                    </Typography>
+                  )}
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2, mb: 2, py: 1 }}
+                    disabled={isClicked}
+                  >
+                    {spinner ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "Reset"
+                    )}
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid
+            position={"relative"}
+            sx={{
+              display: { xs: "none", md: "block" },
+            }}
+            item
+            xs={12}
+            md={6}
+            className={`${Style.forgetPassCol}`}
+          >
+            <Box position={"absolute"} top={"80%"} left={"10%"}>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  color: "#FDFFFC",
+                  fontSize: { lg: "2.5rem", md: "2.2rem" },
+                }}
+              >
+                Reset Password
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  color: "#FDFFFC",
+                  fontSize: "1.3rem",
+                }}
+              >
+                Homes as unique as you.
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
       </Box>

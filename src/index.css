@@ -1,0 +1,18 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+@media (max-width: 899px) {
+  .MuiFormLabel-root {
+    color: #fff !important;
+  }
+  .MuiOutlinedInput-notchedOutline {
+    border-color: #fff !important;
+  }
+  .MuiInputBase-input {
+    color: #fff !important;
+  }
+}
