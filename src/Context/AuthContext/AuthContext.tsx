@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from "react";
-// import { useTranslation } from "react-i18next";
 
 // Define the authentication data//
 export interface IAuth {
@@ -16,10 +15,6 @@ export interface IAuth {
   logOut: () => void;
   requestHeaders: { Authorization: string };
 }
-
-// interface DecodedTokenType {
-//   role: string;
-// }
 
 export const AuthContext = createContext<IAuth | null>(null);
 

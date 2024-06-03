@@ -4,7 +4,7 @@ import {
   Button,
   CircularProgress,
   FormControl,
-  FormHelperText,
+  Grid,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -12,28 +12,27 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SignInImg from "../../../../assets/images/login0.png";
-import logo from "../../../../assets/images/Staycation.png";
 import { FormData } from "../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import Styles from "./Signin.module.css";
+import logoDark from "../../../../assets/images/logo-dark.svg";
+import logoLight from "../../../../assets/images/logo-light.svg";
+import Style from "../Auth.module.css";
 import {
   emailValidation,
   passwordValidation,
 } from "../../../../Utils/InputValidations";
-// import { FullscreenExit } from "../../../../../node_modules/@mui/icons-material/index";
 
 export default function Signin() {
+  const [isDark, setIsDark] = useState(true);
   const [showPassword, setShowPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  const [addAclass, setAddAclass] = useState<boolean>(false);
+  // const [addAclass, setAddAclass] = useState<boolean>(false);
   const navigate = useNavigate();
   const navigateTolayout = (userInfo: string) => {
     userInfo == "admin" ? navigate("/dashboard") : navigate("/");
@@ -43,8 +42,8 @@ export default function Signin() {
   };
 
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -60,7 +59,6 @@ export default function Signin() {
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
       navigateTolayout(res.data.data.user.role);
-      // savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(
@@ -72,202 +70,214 @@ export default function Signin() {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      window.innerWidth < 960 ? setAddAclass(true) : setAddAclass(false);
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   return (
     <>
       <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          height: "100vh",
-          justifyContent: "beween",
-          overflow: "hidden",
-        }}
-        className={`${addAclass ? Styles.bckChange : ""}`}
+        component={"section"}
+        minHeight={"100vh"}
+        sx={{ pt: { xs: "0px", md: "24px" } }}
       >
+        <Box
+          sx={{ display: { xs: "none", md: "block" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
+        >
+          <img width={"150px"} src={isDark ? logoDark : logoLight} alt="logo" />
+        </Box>
+        <Box
+          sx={{ display: { xs: "block", md: "none" } }}
+          left={50}
+          top={30}
+          position={"absolute"}
+        >
+          <img width={"150px"} src={logoDark} alt="logo" />
+        </Box>
         <Grid
-          className={`${Styles.loginContainer}`}
-          sx={{ bgcolor: addAclass ? "" : "#ffffff" }}
           container
-          rowSpacing={1}
-          px={3}
+          height={"96vh"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
           <Grid
+            width={"100%"}
+            height={"100%"}
             item
-            md={5}
-            sx={{ height: "100vh", paddingTop: "10px", paddingBottom: "10px" }}
-            position="relative"
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDirection={"column"}
+            xs={12}
+            md={6}
+            className={`${Style.signIn}`}
           >
-            <img src={logo} className={Styles.logoimage} alt="favRooms" />
-            <Grid
-              item
-              xs={10}
-              sx={{ bgcolor: "" }}
-              m={5}
-              className={`${addAclass ? Styles.addBorder : ""} ${
-                Styles.formContent
-              }`}
-            >
-              <Typography variant="h4">Sign in</Typography>
-
-              <Typography sx={{ my: 2 }}>
-                If you don’t have an account register
-                <br />
-                You can
-                <Link className={Styles.register} to="/auth/signup">
-                  Register here !
-                </Link>
-              </Typography>
-              {/*Form Sumbition */}
-              <Box
-                onSubmit={handleSubmit(onSubmit)}
-                component="form"
-                noValidate
-                autoComplete="off"
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    my: 0,
-                    display: "flex",
-                    alignItems: "left",
-                    color: {
-                      xs: "black",
-                      sm: "#152C5B",
-                    },
-                  }}
-                >
-                  Email Address
+            <Box width={{ md: "65%", xs: "90%" }}>
+              <Box>
+                <Typography mb={3} fontWeight={"500"} variant="h5">
+                  Sign in
                 </Typography>
-                <TextField
-                  sx={{ bgcolor: "#F5F6F8" }}
-                  {...register("email", emailValidation)}
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="email"
-                  name="email"
-                  autoComplete="email"
-                  error={!!errors?.email}
-                />
-                {errors?.email && (
-                  <FormHelperText>{errors.email.message}</FormHelperText>
-                )}
-                <Typography
-                  variant="h6"
-                  sx={{
-                    my: 1,
-                    mt: 8,
-                    color: {
-                      xs: "black",
-                      sm: "#152C5B",
-                    },
-                    display: "flex",
-                    alignItems: "left",
-                  }}
-                >
-                  Password
+                <Typography fontWeight={"500"} variant="body2">
+                  If you don’t have an account register
                 </Typography>
-                <FormControl fullWidth sx={{ mb: 1, mt: 1 }} variant="outlined">
-                  <InputLabel htmlFor="user-password">password</InputLabel>
-                  <OutlinedInput
-                    required
-                    sx={{ bgcolor: "#F5F6F8" }}
-                    {...register("password", passwordValidation)}
-                    error={!!errors?.password}
-                    id="user-password"
-                    type={showPassword}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => {
-                            setShowPassword(
-                              showPassword === "password" ? "text" : "password"
-                            );
-                          }}
-                          edge="end"
-                        >
-                          {showPassword === "password" ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
+                <Typography
+                  display={"flex"}
+                  alignItems={"center"}
+                  fontWeight={"500"}
+                  variant="body2"
+                >
+                  You can
+                  <Button variant="text" color={"primary"}>
+                    <Link
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={"/auth/signup"}
+                    >
+                      Register here !
+                    </Link>
+                  </Button>
+                </Typography>
+                {/* login form */}
+                <Box
+                  onSubmit={handleSubmit(onSubmit)}
+                  component="form"
+                  noValidate
+                  autoComplete="off"
+                  width={"100%"}
+                >
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    rules={emailValidation}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        type="text"
+                        id="filled-error"
+                        label="E-mail"
+                        sx={{ mt: 3 }}
+                        error={!!errors.email}
+                      />
+                    )}
                   />
-                  {errors?.password && (
-                    <FormHelperText>{errors.password.message}</FormHelperText>
+                  {errors?.email && (
+                    <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                      {errors?.email?.message}
+                    </Typography>
                   )}
-                </FormControl>
-                <Grid container>
-                  <Grid
-                    justifyContent="end"
-                    item
-                    xs
-                    sx={{ mb: 5, pb: 5, pt: 2, display: "flex" }}
+
+                  <Controller
+                    name="password"
+                    control={control}
+                    defaultValue=""
+                    rules={passwordValidation}
+                    render={({ field }) => (
+                      <FormControl
+                        sx={{ mt: 3 }}
+                        error={!!errors.password}
+                        fullWidth
+                        {...field}
+                      >
+                        <InputLabel htmlFor="outlined-adornment-password">
+                          Password
+                        </InputLabel>
+                        <OutlinedInput
+                          id="outlined-adornment-password"
+                          type={showPassword}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {
+                                  setShowPassword(
+                                    showPassword === "password"
+                                      ? "text"
+                                      : "password"
+                                  );
+                                }}
+                                edge="end"
+                              >
+                                {showPassword === "password" ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          label="Password"
+                        />
+                      </FormControl>
+                    )}
+                  />
+                  {errors.password && (
+                    <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                      {errors.password.message}
+                    </Typography>
+                  )}
+
+                  <Button
+                    sx={{ display: "block", ml: "auto", mt: "1rem" }}
+                    variant="text"
+                    color={"primary"}
                   >
                     <Link
-                      className={Styles.register}
-                      to="/auth/forget-password"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      to={"/auth/forget-password"}
                     >
-                      Forgot password?
+                      Forgot Password ?
                     </Link>
-                  </Grid>
-                </Grid>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    mt: 2,
-                    mb: 2,
-                    py: 1,
-                    filter: "drop-shadow(0px 8px 24px rgba(0, 0, 0, 0.15))",
-                  }}
-                  disabled={isClicked}
-                >
-                  {spinner ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    "Sign in"
-                  )}
-                </Button>
+                  </Button>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2, mb: 2, py: 1 }}
+                    disabled={isClicked}
+                  >
+                    {spinner ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "Login"
+                    )}
+                  </Button>
+                </Box>
               </Box>
-              {/*End Form */}
-            </Grid>
+            </Box>
           </Grid>
 
           <Grid
-            className={Styles.imageContainer}
-            sx={{ height: "100vh" }}
+            position={"relative"}
+            sx={{
+              display: { xs: "none", md: "block" },
+            }}
             item
-            xs={5}
-            md={7}
+            xs={12}
+            md={6}
+            className={`${Style.signInCol}`}
           >
-            <img src={SignInImg} alt="Login Image" className={Styles.image} />
-            <Typography variant="h4" className={Styles.imageText1}>
-              Sign In To RoomHome
-            </Typography>
-
-            <Typography variant="h6" className={Styles.imageText}>
-              Homes as unique as you.
-            </Typography>
+            <Box position={"absolute"} top={"80%"} left={"10%"}>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  color: "#FDFFFC",
+                  fontSize: { lg: "2.5rem", md: "2.2rem" },
+                }}
+              >
+                Sign in to Roamhome
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  color: "#FDFFFC",
+                  fontSize: "1.3rem",
+                }}
+              >
+                Homes as unique as you.
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
       </Box>

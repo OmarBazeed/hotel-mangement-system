@@ -12,5 +12,11 @@ export interface RegisterFormData {
   phoneNumber: string;
   country: string;
   role: string;
-  profileImage: File;
+  profileImage: FileList;
+}
+export interface ResetPassInterFace {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  seed: string;
 }
