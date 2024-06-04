@@ -91,7 +91,7 @@ export default function App() {
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <LandingPage />,
+      element: <LandingPage setTheme={setTheme} />,
       errorElement: <NotFound />,
     },
     {
