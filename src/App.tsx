@@ -22,6 +22,7 @@ import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayo
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
 import { useState } from "react";
 import { blue } from "@mui/material/colors";
+import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -156,6 +157,10 @@ export default function App() {
         {
           path: "rooms",
           element: <RoomsList />,
+        },
+        {
+          path: "room-data",
+          element: <RoomsData />
         },
         {
           path: "ads",

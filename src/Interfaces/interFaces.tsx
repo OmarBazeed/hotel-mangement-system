@@ -35,3 +35,12 @@ export interface SideBarProps {
 export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface RoomInterface {
+  id: number;
+  roomNumber: number;
+  price: number;
+  capacity: number,
+  discount: number;
+  category: string;
+}
