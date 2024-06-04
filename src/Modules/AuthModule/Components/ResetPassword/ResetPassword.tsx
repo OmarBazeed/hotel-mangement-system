@@ -29,7 +29,11 @@ import logoLight from "../../../../assets/images/logo-light.svg";
 import Style from "../Auth.module.css";
 
 export default function ResetPassword() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    const value = localStorage.getItem("theme");
+    if (value === "dark" || value === null) return true;
+    return false;
+  });
   const [showPassword, setShowPassword] = useState("password");
   const [showConfirmPassword, setShowConfirmPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
