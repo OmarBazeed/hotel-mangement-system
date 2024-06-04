@@ -9,12 +9,12 @@ import { useState } from "react";
 import Zimage from "../../../../assets/images/hero.png";
 
 export default function Home() {
-  const [personCount, setPersonCount] = useState<number>(0);
+  const [personCount, setPersonCount] = useState<number>(1);
   const incraese = () => {
     setPersonCount((prev) => prev + 1);
   };
   const decraese = () => {
-    personCount == 0 ? 0 : setPersonCount((prev) => prev - 1);
+    personCount <= 1 ? 1 : setPersonCount((prev) => prev - 1);
   };
   return (
     <>
@@ -33,7 +33,6 @@ export default function Home() {
           alignItems="center"
           justifyContent="space-around"
           height="90vh"
-          bgcolor=""
         >
           <Grid xs={10} lg={4}>
             <Stack spacing={3}>
@@ -52,8 +51,13 @@ export default function Home() {
                 We provide what you need to enjoy your holiday with family. Time
                 to make another memorable moments.
               </Typography>
+              <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
+                Start Booking
+              </Typography>
+              <Typography sx={{ marginBottom: "-15px !important" }}>
+                pick a date
+              </Typography>
               <Box>
-                <Typography>Start Booking</Typography>
                 <Stack
                   sx={{
                     position: "relative",
@@ -99,6 +103,9 @@ export default function Home() {
                   </LocalizationProvider>
                 </Stack>
               </Box>
+              <Typography sx={{ marginBottom: "-15px !important" }}>
+                Capacity
+              </Typography>
               <Stack
                 sx={{
                   position: "relative",
@@ -124,6 +131,7 @@ export default function Home() {
                     variant="contained"
                     color="error"
                     onClick={() => decraese()}
+                    disabled={personCount == 1}
                   >
                     -
                   </Button>
@@ -152,10 +160,20 @@ export default function Home() {
                   </Button>
                 </Grid>
               </Stack>
+              <Button
+                variant="contained"
+                sx={{
+                  width: "50%",
+                  color: "white",
+                  bgcolor: "#3252DF",
+                }}
+              >
+                Explore
+              </Button>
             </Stack>
           </Grid>
 
-          <Grid xs={10} lg={6}>
+          <Grid xs={10} lg={6} sx={{ display: { xs: "none", lg: "block" } }}>
             <Box
               sx={{
                 display: "flex",
@@ -166,7 +184,10 @@ export default function Home() {
               <img
                 src={Zimage}
                 alt="hero"
-                style={{ borderRadius: "20% 5% 5% 0" }}
+                style={{
+                  borderRadius: "20% 5% 5% 0",
+                  boxShadow: "2px 2px 2px gray, 4px 4px 4px gray",
+                }}
               />
             </Box>
           </Grid>
