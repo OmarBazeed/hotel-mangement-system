@@ -23,33 +23,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 
 
-const [isLoading, setIsLoading] = useState(false);
 
 
-
-const getRooms = useCallback(
-  async (taTitle: string, pageSize: number) => {
-    setIsLoading(true);
-    try {
-      const { data } = await axios.get(
-        `${getBaseUrl}/api/v0/admin/rooms?pageSize=${pageSize}&pageNumber=${pageNumber}`,
-        {
-          headers: getRequestHeaders(),
-          params: {
-            title: taTitle,
-          },
-        }
-      );
-
-      setTasks(data.data);
-      setTotalPages(data.totalNumberOfPages);
-    } catch (err) {
-      handleApiError(err);
-    }
-    setIsLoading(false);
-  },
-  [pageNumber]
-);
 
 
 
