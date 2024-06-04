@@ -3,11 +3,12 @@ import { Outlet } from "react-router-dom";
 import Home from "../components/Home/Home";
 import Navbar from "../../SharedModule/components/Navbar/Navbar";
 import Footer from "../../SharedModule/components/Footer/Footer";
+import { DashlayoutProps } from "../../../Interfaces/interFaces";
 
-export default function LandingPage() {
+export default function LandingPage({ setTheme }: DashlayoutProps) {
   return (
     <>
-      <Navbar />
+      <Navbar setTheme={setTheme} />
       <Box
         component="p"
         sx={{
