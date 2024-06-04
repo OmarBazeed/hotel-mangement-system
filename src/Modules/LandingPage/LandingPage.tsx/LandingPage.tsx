@@ -8,23 +8,14 @@ import { DashlayoutProps } from "../../../Interfaces/interFaces";
 export default function LandingPage({ setTheme }: DashlayoutProps) {
   return (
     <>
-      <Navbar setTheme={setTheme} />
-      <Box
-        component="p"
-        sx={{
-          p: 2,
-          border: "1px dashed grey",
-          backgroundColor: { xs: "red", sm: "green" },
-        }}
-      >
-        I Am Master Page Here
+      <Box sx={{ display: "flex" }}>
+        <Navbar setTheme={setTheme} />
+        <Box component="main" sx={{ p: 3, mt: "64px"}}>
+          <Home />
+          <Outlet />
+          <Footer />
+        </Box>
       </Box>
-
-      <Home />
-
-      <Footer />
-
-      <Outlet />
     </>
   );
 }

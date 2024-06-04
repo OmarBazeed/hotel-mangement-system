@@ -1,29 +1,178 @@
 import {
   Avatar,
+  Drawer,
   IconButton,
   Toolbar,
   Typography,
   styled,
   useTheme,
+  Button,
+  Divider,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  AppBar,
+  MenuItem,
+  Tooltip,
+  Menu,
+  Grid,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+// import MenuItem from "@mui/material/MenuItem";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 
-import { FormatAlignCenter } from "@mui/icons-material";
+import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MuiAppBar from "@mui/material/AppBar";
 import { useState } from "react";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
-export default function Navbar({ setTheme, setOpen, open }: AppBarProps) {
-  const { loginData } = useAuth();
-  // const tt = savLoginData();
-  // console.log(loginData);
-  const theme = useTheme();
+import { red } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
+
+export default function Navbar({
+  setTheme,
+  setOpen,
+  open,
+  window,
+}: AppBarProps) {
+  const { loginData, logOut } = useAuth();
+  const navigate = useNavigate();
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
     if (value === "dark" || value === null) return true;
     return false;
   });
+  const [profileMenu, setProfileMenu] = useState(false);
+  const navBtns = (
+    <Box
+      display={"flex"}
+      justifyItems={"center"}
+      alignItems={"center"}
+      gap={2}
+      flexDirection={{ xs: "column", md: "row" }}
+    >
+      <Button
+        onClick={() => navigate("/auth/signup")}
+        variant="contained"
+        disableElevation
+      >
+        Register
+      </Button>
+      <Button
+        onClick={() => navigate("/auth")}
+        variant="contained"
+        disableElevation
+      >
+        Login Now
+      </Button>
+    </Box>
+  );
+  const getProfileMenu = (
+    <Box ml={2} position={"relative"}>
+      <Box
+        onClick={() => setProfileMenu(!profileMenu)}
+        sx={{ cursor: "pointer" }}
+        display={"flex"}
+        alignItems={"center"}
+      >
+        <IconButton sx={{ p: 0 }}>
+          <Avatar
+            alt="Remy Sharp"
+            src="https://mui.com//static/images/avatar/2.jpg"
+          />
+        </IconButton>
+        <Typography ml={1} variant="body1">
+          mElshimi
+        </Typography>
+        <KeyboardArrowDown />
+      </Box>
+      <Box
+        display={profileMenu ? "block" : "none"}
+        borderRadius={1}
+        boxShadow={3}
+        border={"solid 1px #bdbdbd"}
+        bgcolor={isDark ? "#272727" : "#fff"}
+        position={"absolute"}
+        top={"45px"}
+      >
+        <Button
+          fullWidth
+          color="inherit"
+          py={1}
+          px={4}
+          sx={{
+            "&:hover": {
+              backgroundColor: isDark ? "#121212" : "#e0e0e0",
+            },
+            transition: "all .5s",
+          }}
+        >
+          Profile
+        </Button>
+        <Button
+          onClick={() => logOut()}
+          color="inherit"
+          fullWidth
+          py={1}
+          px={4}
+          sx={{
+            "&:hover": {
+              backgroundColor: isDark ? "#121212" : "#e0e0e0",
+            },
+            transition: "all .5s",
+          }}
+        >
+          Logout
+        </Button>
+      </Box>
+    </Box>
+  );
+
+  const navItems =
+    loginData?.role === "user"
+      ? ["Home", "Explore", "Reviews", "Favorites", getProfileMenu]
+      : loginData === null
+      ? ["Home", "Explore", navBtns]
+      : "";
+  const theme = useTheme();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const drawer = (
+    <Box sx={{ textAlign: "center" }}>
+      <Typography
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        my={2}
+        component="div"
+      >
+        <img width={"180px"} src={isDark ? logoDark : logoLight} alt="logo" />
+      </Typography>
+      <Divider />
+      <List>
+        {loginData?.role !== "admin"
+          ? navItems.map((item) => (
+              <ListItem key={item} disablePadding>
+                <ListItemButton sx={{ textAlign: "center" }}>
+                  <ListItemText primary={item} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          : ""}
+      </List>
+    </Box>
+  );
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== "open",
@@ -41,102 +190,223 @@ export default function Navbar({ setTheme, setOpen, open }: AppBarProps) {
         duration: theme.transitions.duration.enteringScreen,
       }),
     }),
-    backgroundColor: theme.palette.bgNav.main,
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.bgNav.contrastText,
   }));
+
   return (
     <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => {
-              setOpen(!open);
-            }}
-            edge="start"
-            sx={{
-              marginRight: 5,
-            }}
-          >
-            <FormatAlignCenter />
-          </IconButton>
-          <Typography
-            display={"flex"}
-            alignItems={"center"}
-            sx={{ flexGrow: 1 }}
-            variant="h6"
-            noWrap
-            component="div"
-          >
-            <img
-              width={"200px"}
-              src={isDark ? logoDark : logoLight}
-              alt="logo"
-            />
-          </Typography>
+      {loginData?.role === "admin" ? (
+        <AppBar position="absolute">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => {
+                setOpen(!open);
+              }}
+              edge="start"
+              sx={{
+                marginRight: 5,
+              }}
+            >
+              <FormatAlignCenter />
+            </IconButton>
 
-          <Typography mr={2} color="inherit" variant="body1">
-            mElshimi
-          </Typography>
-          <Avatar
-            alt="mElshimi"
-            src="https://mui.com//static/images/avatar/1.jpg"
-          />
-          <Typography ml={3} display={"flex"} alignItems={"center"}>
-            <label id="theme-toggle-button">
-              <input
-                type="checkbox"
-                onChange={() => {
-                  localStorage.setItem(
-                    "theme",
-                    theme.palette.mode === "dark" ? "light" : "dark"
-                  );
-                  setIsDark(!isDark);
-                  setTheme(theme.palette.mode === "light" ? "dark" : "light");
-                }}
-                // defaultChecked
-                checked={isDark}
-                id="toggle"
+            <Typography
+              display={"flex"}
+              alignItems={"center"}
+              sx={{ flexGrow: 1 }}
+              variant="h6"
+              noWrap
+              component="div"
+            >
+              <img
+                width={"200px"}
+                src={isDark ? logoDark : logoLight}
+                alt="logo"
               />
-              <svg
-                width={75}
-                viewBox="0 0 69.667 44"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g
-                  transform="translate(3.5 3.5)"
-                  data-name="Component 15 – 1"
-                  id="Component_15_1"
+            </Typography>
+            {getProfileMenu}
+            <Typography ml={3} mt={1} display={"flex"} alignItems={"center"}>
+              <label id="theme-toggle-button">
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    localStorage.setItem(
+                      "theme",
+                      theme.palette.mode === "dark" ? "light" : "dark"
+                    );
+                    setIsDark(!isDark);
+                    setTheme(theme.palette.mode === "light" ? "dark" : "light");
+                  }}
+                  // defaultChecked
+                  checked={isDark}
+                  id="toggle"
+                />
+                <svg
+                  width={75}
+                  viewBox="0 0 69.667 44"
+                  xmlnsXlink="http://www.w3.org/1999/xlink"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <g
-                    filter="url(#container)"
-                    transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
+                    transform="translate(3.5 3.5)"
+                    data-name="Component 15 – 1"
+                    id="Component_15_1"
                   >
-                    <rect
-                      fill="#83cbd8"
-                      transform="translate(3.5 3.5)"
-                      rx="17.5"
-                      height={35}
-                      width="60.667"
-                      data-name="container"
-                      id="container"
+                    <g
+                      filter="url(#container)"
+                      transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
+                    >
+                      <rect
+                        fill="#83cbd8"
+                        transform="translate(3.5 3.5)"
+                        rx="17.5"
+                        height={35}
+                        width="60.667"
+                        data-name="container"
+                        id="container"
+                      />
+                    </g>
+                    <g transform="translate(2.333 2.333)" id="button">
+                      {isDark ? moon() : sun()}
+                    </g>
+                    {isDark ? stars() : cloud()}
+                  </g>
+                </svg>
+              </label>
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      ) : (
+        ""
+      )}
+      {loginData?.role !== "admin" ? (
+        <>
+          <AppBar component="nav">
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2, display: { sm: "none" } }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                display={"flex"}
+                alignItems={"center"}
+                sx={{ flexGrow: 1 }}
+                variant="h6"
+                noWrap
+                component="div"
+              >
+                <img
+                  width={"150px"}
+                  src={isDark ? logoDark : logoLight}
+                  alt="logo"
+                />
+              </Typography>
+
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {navItems.map((item) => (
+                  <Box mx={1} sx={{ cursor: "pointer" }} key={item}>
+                    {item}
+                  </Box>
+                ))}
+              </Box>
+
+              <Typography ml={1} mt={1} display={"flex"} alignItems={"center"}>
+                <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
+                  <label id="theme-toggle-button">
+                    <input
+                      type="checkbox"
+                      onChange={() => {
+                        localStorage.setItem(
+                          "theme",
+                          theme.palette.mode === "dark" ? "light" : "dark"
+                        );
+                        setIsDark(!isDark);
+                        setTheme(
+                          theme.palette.mode === "light" ? "dark" : "light"
+                        );
+                      }}
+                      // defaultChecked
+                      checked={isDark}
+                      id="toggle"
                     />
-                  </g>
-                  <g transform="translate(2.333 2.333)" id="button">
-                    {isDark ? moon() : sun()}
-                  </g>
-                  {isDark ? stars() : cloud()}
-                </g>
-              </svg>
-            </label>
-          </Typography>
-        </Toolbar>
-      </AppBar>
+                    <svg
+                      width={75}
+                      viewBox="0 0 69.667 44"
+                      xmlnsXlink="http://www.w3.org/1999/xlink"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        transform="translate(3.5 3.5)"
+                        data-name="Component 15 – 1"
+                        id="Component_15_1"
+                      >
+                        <g
+                          filter="url(#container)"
+                          transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
+                        >
+                          <rect
+                            fill="#83cbd8"
+                            transform="translate(3.5 3.5)"
+                            rx="17.5"
+                            height={35}
+                            width="60.667"
+                            data-name="container"
+                            id="container"
+                          />
+                        </g>
+                        <g transform="translate(2.333 2.333)" id="button">
+                          {isDark ? moon() : sun()}
+                        </g>
+                        {isDark ? stars() : cloud()}
+                      </g>
+                    </svg>
+                  </label>
+                </Tooltip>
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <nav>
+            <Drawer
+              container={container}
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+              sx={{
+                display: { xs: "block", sm: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: drawerWidth,
+                },
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </nav>
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 }
+
 const drawerWidth = 240;
 
 const sun = () => {
@@ -173,6 +443,7 @@ const sun = () => {
     </g>
   );
 };
+
 const moon = () => {
   return (
     <g data-name="moon" id="moon">
@@ -228,6 +499,7 @@ const moon = () => {
     </g>
   );
 };
+
 const stars = () => {
   return (
     <g fill="#def8ff" transform="translate(3.585 1.325)" id="stars">
@@ -273,6 +545,7 @@ const stars = () => {
     </g>
   );
 };
+
 const cloud = () => {
   return (
     <g filter="url(#cloud)" transform="matrix(1, 0, 0, 1, -3.5, -3.5)">

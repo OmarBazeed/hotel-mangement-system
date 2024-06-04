@@ -26,6 +26,7 @@ export interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
   setTheme: React.Dispatch<React.SetStateAction<string>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  window?: () => Window;
 }
 
 export interface SideBarProps {
