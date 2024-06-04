@@ -20,7 +20,11 @@ import Style from "../Auth.module.css";
 import { emailValidation } from "../../../../Utils/InputValidations";
 
 export default function ForgetPassword() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    const value = localStorage.getItem("theme");
+    if (value === "dark" || value === null) return true;
+    return false;
+  });
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const navigate = useNavigate();

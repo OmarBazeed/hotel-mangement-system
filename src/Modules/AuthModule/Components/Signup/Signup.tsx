@@ -36,7 +36,11 @@ import {
 } from "../../../../Utils/InputValidations";
 
 export default function Signup() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    const value = localStorage.getItem("theme");
+    if (value === "dark" || value === null) return true;
+    return false;
+  });
   const [showPassword, setShowPassword] = useState("password");
   const [showConfirmPassword, setShowConfirmPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
