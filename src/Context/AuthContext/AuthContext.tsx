@@ -23,7 +23,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [loginData, setloginData] = useState<{ role: string } | null>(null);
   const requestHeaders = {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    Authorization: `${localStorage.getItem("token")}`,
   };
   const savLoginData = () => {
     const encodedToken = localStorage.getItem("token");
