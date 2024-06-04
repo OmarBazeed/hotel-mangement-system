@@ -1,11 +1,21 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { useState } from "react";
+import Zimage from "../../../../assets/images/hero.png";
+
 export default function Home() {
+  const [personCount, setPersonCount] = useState<number>(0);
+  const incraese = () => {
+    setPersonCount((prev) => prev + 1);
+  };
+  const decraese = () => {
+    personCount == 0 ? 0 : setPersonCount((prev) => prev - 1);
+  };
   return (
     <>
       <Box
@@ -18,70 +28,149 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        <Container
-          sx={{
-            bgcolor: "teal",
-            height: "90vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "between",
-          }}
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-around"
+          height="90vh"
+          bgcolor=""
         >
-          <Stack direction="column" useFlexGap spacing={4}>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                color: "background: rgba(21, 44, 91, 1)",
-                fontSize: "2rem",
-              }}
-            >
-              Forget Busy Work,
-              <br />
-              Start Next Vacation
-            </Typography>
-            <Typography>
-              We provide what you need to enjoy your holiday with family. Time
-              to make another memorable moments.
-            </Typography>
-            <Box>
-              <Typography>Start Booking</Typography>
-              <Box
+          <Grid xs={10} lg={4}>
+            <Stack spacing={3}>
+              <Typography
                 sx={{
-                  position: "relative",
+                  fontWeight: "bold",
+                  color: "rgba(21, 44, 91, 1)",
+                  fontSize: "2rem",
                 }}
               >
-                <CalendarMonthTwoToneIcon
-                  sx={{ position: "absolute", top: "15px", left: "10px" }}
-                />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["SingleInputDateRangeField"]}>
-                    <DateRangePicker
-                      slots={{ field: SingleInputDateRangeField }}
-                      name="allowedRange"
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
+                Forget Busy Work,
+                <br />
+                Start Next Vacation
+              </Typography>
+              <Typography>
+                We provide what you need to enjoy your holiday with family. Time
+                to make another memorable moments.
+              </Typography>
+              <Box>
+                <Typography>Start Booking</Typography>
+                <Stack
+                  sx={{
+                    position: "relative",
+                    bgcolor: "rgba(245, 246, 2410, 1)",
+                    marginTop: "5px",
+                  }}
+                >
+                  <CalendarMonthTwoToneIcon
+                    sx={{
+                      bgcolor: "rgba(21, 44, 91, 1)",
+                      height: "100%",
+                      width: "3.8rem",
+                      padding: "0 5px",
+                      position: "absolute",
+                      fontSize: ".8rem",
+                    }}
+                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["SingleInputDateRangeField"]}>
+                      <DateRangePicker
+                        slots={{ field: SingleInputDateRangeField }}
+                        name="allowedRange"
+                        sx={{
+                          "& fieldset": {
+                            border: "0",
+                          },
+                          "& input": {
+                            color: {
+                              xs: "#152C5B !important",
+                              sm: "#152C5B !important",
+                            },
+                            textAlign: "center",
+                            fontWeight: "bold",
+                            fontSize: {
+                              xs: "10px",
+                              sm: "15px",
+                            },
+                          },
+                        }}
+                        className="dateInput"
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                </Stack>
               </Box>
-            </Box>
-          </Stack>
-          <Stack>
-            <Typography
+              <Stack
+                sx={{
+                  position: "relative",
+                  alignItems: "center",
+                  justifyContent: "between",
+                  flexDirection: "row",
+                  width: "100%",
+                  bgcolor: "#F5F6FF",
+                  padding: "10px 0",
+                }}
+              >
+                <Grid
+                  xs={2}
+                  sx={{
+                    textAlign: "center",
+                    position: "absolute",
+                    left: "0",
+                    height: "100%",
+                  }}
+                >
+                  <Button
+                    sx={{ width: "100%", height: "100%" }}
+                    variant="contained"
+                    color="error"
+                    onClick={() => decraese()}
+                  >
+                    -
+                  </Button>
+                </Grid>
+                <Grid xs={8} sx={{ textAlign: "center", margin: "auto" }}>
+                  <Typography sx={{ fontSize: "1.5rem", color: "#152C5B" }}>
+                    {personCount} person
+                  </Typography>
+                </Grid>
+                <Grid
+                  xs={2}
+                  sx={{
+                    textAlign: "center",
+                    position: "absolute",
+                    right: "0",
+                    height: "100%",
+                  }}
+                >
+                  <Button
+                    sx={{ width: "100%", height: "100%" }}
+                    variant="contained"
+                    color="success"
+                    onClick={() => incraese()}
+                  >
+                    +
+                  </Button>
+                </Grid>
+              </Stack>
+            </Stack>
+          </Grid>
+
+          <Grid xs={10} lg={6}>
+            <Box
               sx={{
-                fontWeight: "bold",
-                color: "background: rgba(21, 44, 91, 1)",
-                fontSize: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              Forget Busy Work,
-              <br />
-              Start Next Vacation
-            </Typography>
-            <Typography>
-              We provide what you need to enjoy your holiday with family. Time
-              to make another memorable moments.
-            </Typography>
-          </Stack>
-        </Container>
+              <img
+                src={Zimage}
+                alt="hero"
+                style={{ borderRadius: "20% 5% 5% 0" }}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
     </>
   );
