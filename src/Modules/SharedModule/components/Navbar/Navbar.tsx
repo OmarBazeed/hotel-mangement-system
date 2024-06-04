@@ -73,7 +73,9 @@ export default function Navbar({
   const getProfileMenu = (
     <Box ml={2} position={"relative"}>
       <Box
-        onClick={() => setProfileMenu(!profileMenu)}
+        onClick={() => {
+          setProfileMenu(!profileMenu);
+        }}
         sx={{ cursor: "pointer" }}
         display={"flex"}
         alignItems={"center"}
@@ -207,7 +209,7 @@ export default function Navbar({
               }}
               edge="start"
               sx={{
-                marginRight: 5,
+                marginRight: 2,
               }}
             >
               <FormatAlignCenter />
@@ -221,11 +223,13 @@ export default function Navbar({
               noWrap
               component="div"
             >
-              <img
-                width={"200px"}
-                src={isDark ? logoDark : logoLight}
-                alt="logo"
-              />
+              <Box display={"flex"} width={{ xs: "130px", md: "200px" }}>
+                <img
+                  width={"100%"}
+                  src={isDark ? logoDark : logoLight}
+                  alt="logo"
+                />
+              </Box>
             </Typography>
             {getProfileMenu}
             <Typography ml={3} mt={1} display={"flex"} alignItems={"center"}>
