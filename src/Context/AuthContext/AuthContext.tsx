@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
 
 // Define the authentication data//
 export interface IAuth {
@@ -23,7 +22,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [loginData, setloginData] = useState<{ role: string } | null>(null);
-  const navigate = useNavigate();
+
   const requestHeaders = {
     Authorization: `${localStorage.getItem("token")}`,
   };
@@ -38,7 +37,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   const logOut = () => {
     localStorage.removeItem("token");
     setloginData(null);
-    navigate("/");
   };
   useEffect(() => {
     if (localStorage.getItem("token")) {
