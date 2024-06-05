@@ -7,9 +7,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 import Zimage from "../../../../assets/images/hero.png";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [personCount, setPersonCount] = useState<number>(1);
+  const navigate = useNavigate();
   const incraese = () => {
     setPersonCount((prev) => prev + 1);
   };
@@ -47,14 +49,25 @@ export default function Home() {
                 <br />
                 Start Next Vacation
               </Typography>
-              <Typography>
+              <Typography sx={{ color: "rgba(176, 176, 176, 1)" }}>
                 We provide what you need to enjoy your holiday with family. Time
                 to make another memorable moments.
               </Typography>
-              <Typography sx={{ fontWeight: "bold", fontSize: "1.3rem" }}>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.3rem",
+                  color: "rgba(21, 44, 91, 1)",
+                }}
+              >
                 Start Booking
               </Typography>
-              <Typography sx={{ marginBottom: "-15px !important" }}>
+              <Typography
+                sx={{
+                  marginBottom: "-15px !important",
+                  color: "rgba(21, 44, 91, 1)",
+                }}
+              >
                 pick a date
               </Typography>
               <Box>
@@ -76,7 +89,10 @@ export default function Home() {
                     }}
                   />
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={["SingleInputDateRangeField"]}>
+                    <DemoContainer
+                      components={["SingleInputDateRangeField"]}
+                      sx={{ paddingTop: "0" }}
+                    >
                       <DateRangePicker
                         slots={{ field: SingleInputDateRangeField }}
                         name="allowedRange"
@@ -92,9 +108,10 @@ export default function Home() {
                             textAlign: "center",
                             fontWeight: "bold",
                             fontSize: {
-                              xs: "10px",
-                              sm: "15px",
+                              xs: "15px",
+                              sm: "18px",
                             },
+                            margin: "auto",
                           },
                         }}
                         className="dateInput"
@@ -103,7 +120,12 @@ export default function Home() {
                   </LocalizationProvider>
                 </Stack>
               </Box>
-              <Typography sx={{ marginBottom: "-15px !important" }}>
+              <Typography
+                sx={{
+                  marginBottom: "-15px !important",
+                  color: "rgba(21, 44, 91, 1)",
+                }}
+              >
                 Capacity
               </Typography>
               <Stack
@@ -127,7 +149,13 @@ export default function Home() {
                   }}
                 >
                   <Button
-                    sx={{ width: "100%", height: "100%" }}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      fontWeight: "bold",
+                      fontSize: "2em",
+                      borderRadius: "0",
+                    }}
                     variant="contained"
                     color="error"
                     onClick={() => decraese()}
@@ -151,7 +179,14 @@ export default function Home() {
                   }}
                 >
                   <Button
-                    sx={{ width: "100%", height: "100%" }}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      fontSize: "2em",
+                      borderRadius: "0",
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
                     variant="contained"
                     color="success"
                     onClick={() => incraese()}
@@ -165,8 +200,11 @@ export default function Home() {
                 sx={{
                   width: "50%",
                   color: "white",
-                  bgcolor: "#3252DF",
+                  bgcolor: "rgba(50, 82, 223, 0.3)",
+                  padding: "12px 8px",
+                  marginTop: "60px !important",
                 }}
+                onClick={() => navigate("/rooms-data")}
               >
                 Explore
               </Button>
