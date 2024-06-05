@@ -20,17 +20,78 @@ import AdDashboardLayout from "./Modules/SharedModule/components/LayOuts/AdDashb
 import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/AuthLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
+import { useState } from "react";
+import { blue } from "@mui/material/colors";
+
+declare module "@mui/material/styles" {
+  interface Palette {
+    bgSidebar: Palette["primary"];
+    bgNav: Palette["primary"];
+    bgitem: Palette["primary"];
+    bditem: Palette["primary"];
+  }
+
+  interface PaletteOptions {
+    bgSidebar?: PaletteOptions["primary"];
+    bgNav?: PaletteOptions["primary"];
+    bgitem?: PaletteOptions["primary"];
+    bditem?: PaletteOptions["primary"];
+  }
+}
 
 export default function App() {
+  const [mode, setTheme] = useState(
+    localStorage.getItem("theme") === null
+      ? "dark"
+      : localStorage.getItem("theme") === "light"
+      ? "light"
+      : "dark"
+  );
+
   const darkTheme = createTheme({
     palette: {
-      mode: "dark",
+      mode,
+      ...(mode === "light"
+        ? {
+            // palette values for light mode
+            bgSidebar: {
+              main: "#203FC7",
+              contrastText: "#fff",
+            },
+            bgNav: {
+              main: "#F8F9FB",
+              contrastText: "#000",
+            },
+            bgitem: {
+              main: "rgba(26, 27, 30, 0.17)",
+            },
+            bditem: {
+              main: "#152C5B",
+            },
+          }
+        : {
+            // palette values for dark mode
+            bgSidebar: {
+              main: "#121212",
+              contrastText: "#fff",
+            },
+            bgNav: {
+              main: "#272727",
+              contrastText: "#fff",
+            },
+            bgitem: {
+              main: "rgb(84, 84, 84, 0.35)",
+            },
+            bditem: {
+              main: "rgb(84, 84, 84)",
+            },
+          }),
     },
   });
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <LandingPage />,
+      element: <LandingPage setTheme={setTheme} />,
       errorElement: <NotFound />,
     },
     {
@@ -81,7 +142,7 @@ export default function App() {
     },
     {
       path: "/dashboard",
-      element: <AdDashboardLayout />,
+      element: <AdDashboardLayout setTheme={setTheme} />,
       errorElement: <NotFound />,
       children: [
         {
