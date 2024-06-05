@@ -1,11 +1,12 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../../Navbar/Navbar";
+import { DashlayoutProps } from "../../../../../Interfaces/interFaces";
 import Footer from "../../Footer/Footer";
+import Navbar from "../../Navbar/Navbar";
 
-export default function LandingLayout() {
+export default function LandingLayout({ setTheme }: DashlayoutProps) {
   return (
     <>
-      <Navbar />
+      <Navbar setTheme={setTheme} />
       <Outlet />
       <Footer />
     </>

@@ -26,9 +26,15 @@ import {
   emailValidation,
   passwordValidation,
 } from "../../../../Utils/InputValidations";
+import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 
 export default function Signin() {
-  const [isDark, setIsDark] = useState(true);
+  const { savLoginData } = useAuth();
+  const [isDark, setIsDark] = useState(() => {
+    const value = localStorage.getItem("theme");
+    if (value === "dark" || value === null) return true;
+    return false;
+  });
   const [showPassword, setShowPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -59,6 +65,7 @@ export default function Signin() {
       setSpinner(false);
       toast.success(res.data.message, signUpWaitToast);
       navigateTolayout(res.data.data.user.role);
+      savLoginData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(
@@ -69,7 +76,6 @@ export default function Signin() {
       setSpinner(false);
     }
   };
-
   return (
     <>
       <Box
