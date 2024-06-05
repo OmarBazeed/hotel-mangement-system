@@ -35,3 +35,11 @@ export interface SideBarProps {
 export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface FacilitiesInterface {
+  _id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: { userName: string; _id: string };
+}

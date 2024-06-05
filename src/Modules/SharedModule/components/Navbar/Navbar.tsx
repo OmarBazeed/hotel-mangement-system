@@ -197,7 +197,7 @@ export default function Navbar({
   return (
     <>
       {loginData?.role === "admin" ? (
-        <AppBar position="absolute">
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton
               color="inherit"
