@@ -94,9 +94,8 @@ export default function SideBar({ open }: SideBarProps) {
         <List>
           {sidebarList.map((item) => {
             return (
-              <Tooltip title={item.title}>
+              <Tooltip key={item.title} title={item.title}>
                 <ListItem
-                  key={item.title}
                   disablePadding
                   sx={{ display: "block" }}
                   style={{

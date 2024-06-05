@@ -19,8 +19,15 @@ export default function AdDashboardLayout({ setTheme }: DashlayoutProps) {
     <>
       <Box sx={{ display: "flex" }}>
         <Navbar setOpen={setOpen} open={open} setTheme={setTheme} />
-        <SideBar open={open} />
-        <Box component="main" sx={{ flexGrow: 1, mt: "64px" }}>
+        <Box
+          component="main"
+          sx={{
+            mt: "64px",
+            minWidth: "100%",
+          }}
+          display="flex"
+        >
+          <SideBar open={open} />
           <Outlet />
         </Box>
       </Box>
