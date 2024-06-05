@@ -14,6 +14,7 @@ export interface IAuth {
   savLoginData: () => void;
   logOut: () => void;
   requestHeaders: { Authorization: string };
+  token: string | null;
 }
 
 export const AuthContext = createContext<IAuth | null>(null);
@@ -49,6 +50,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     savLoginData,
     requestHeaders,
     logOut,
+    token
   };
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

@@ -35,3 +35,28 @@ export interface SideBarProps {
 export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface IBookingStatus {
+  pending: number;
+  completed: number;
+}
+export interface IUsers {
+  adminsCount: number;
+  usersCount: number;
+}
+
+export interface AuthContextType {
+  saveAdminData: () => void;
+  userRole: string | null;
+  token: string | null;
+  logout: () => void;
+  userData: string | null;
+}
+
+export interface ICharts {
+  rooms: number;
+  facilities: number;
+  ads: number;
+  bookings: IBookingStatus;
+  users: IUsers;
+}
