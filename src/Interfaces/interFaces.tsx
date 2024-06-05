@@ -43,3 +43,7 @@ export interface FacilitiesInterface {
   updatedAt: string;
   createdBy: { userName: string; _id: string };
 }
+
+export interface facilitiesForm {
+  name: string;
+}

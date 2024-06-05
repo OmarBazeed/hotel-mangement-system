@@ -1,13 +1,28 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FacilitiesInterface } from "../../../../../Interfaces/interFaces";
-import { Box, Grid, Typography, Button } from "@mui/material";
+import {
+  FacilitiesInterface,
+  facilitiesForm,
+} from "../../../../../Interfaces/interFaces";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+  Modal,
+  Backdrop,
+  Fade,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { DeleteForever, Draw } from "@mui/icons-material";
-
+import { DeleteForever, Draw, HighlightOff } from "@mui/icons-material";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
+import delImg from "../../../../../assets/images/noData.png";
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -15,7 +30,41 @@ const muiCache = createCache({
 
 export default function FacilitiesList() {
   const [facilities, setFacilities] = useState<FacilitiesInterface[]>([]);
+  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [spinner, setSpinner] = useState<boolean>(false);
+  const [facID, setFacID] = useState<string | null>(null);
+  const [facName, setFacName] = useState<string | null>(null);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<facilitiesForm>();
 
+  const handleOpen = () => setOpen(true);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const handleClose = () => {
+    setOpen(false);
+    setFacID(null);
+    setFacName(null);
+    setValue("name", "");
+    setIsUpdate(false);
+  };
+  const handleUpdate = (id: string, name: string) => {
+    setFacID(id);
+    setFacName(name);
+    handleOpen();
+    setValue("name", name);
+    setIsUpdate(true);
+  };
+  const handleDelete = (id: string, name: string) => {
+    setFacID(id);
+    setFacName(name);
+    handleOpenDelete();
+  };
   const columns = [
     {
       name: "name",
@@ -43,22 +92,20 @@ export default function FacilitiesList() {
       },
     },
     {
-      name: "Action",
+      name: "datafac",
+
+      label: "Action",
       options: {
         filter: false,
-        customBodyRender: () => {
+        customBodyRender: (value: { id: string; name: string }) => {
           return (
             <>
               <DeleteForever
-                onClick={() => {
-                  alert("deleteeeeeeee");
-                }}
+                onClick={() => handleDelete(value.id, value.name)}
                 sx={{ mr: 2, cursor: "pointer" }}
               />
               <Draw
-                onClick={() => {
-                  alert("updateeeeee");
-                }}
+                onClick={() => handleUpdate(value.id, value.name)}
                 sx={{ cursor: "pointer" }}
               />
             </>
@@ -87,11 +134,91 @@ export default function FacilitiesList() {
           },
         }
       );
-
-      setFacilities(data.data.facilities);
+      const reRenderFacilities = data.data.facilities.map(
+        (fac: FacilitiesInterface) => ({
+          ...fac,
+          datafac: { id: fac._id, name: fac.name },
+        })
+      );
+      setFacilities(reRenderFacilities);
+      // console.log(local);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onSubmitAdd = async (data: facilitiesForm) => {
+    setSpinner(true);
+    
+    try {
+      const res = await axios.post(
+        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities`,
+        data,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setSpinner(false);
+      getFacilities();
+      handleClose();
+      toast.success(res.data.message);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail add");
+      }
+      setSpinner(false);
+    }
+  };
+  const onSubmitUpdate = async (data: facilitiesForm) => {
+    setSpinner(true);
+   
+    try {
+      const res = await axios.put(
+        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        data,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      getFacilities();
+      handleClose();
+      toast.success(res.data.message);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail add");
+      }
+      setSpinner(false);
+    }
+    setSpinner(false);
+  };
+  const onSubmitDelete = async () => {
+    setSpinner(true);
+   
+    try {
+      const res = await axios.delete(
+        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      getFacilities();
+      handleCloseDelete();
+      toast.success(res.data.message);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail add");
+      }
+      setSpinner(false);
+    }
+    setSpinner(false);
   };
 
   useEffect(() => {
@@ -127,6 +254,7 @@ export default function FacilitiesList() {
               md={6}
             >
               <Button
+                onClick={handleOpen}
                 sx={{
                   py: 1,
                   px: 3,
@@ -150,6 +278,148 @@ export default function FacilitiesList() {
           </Box>
         </CacheProvider>
       </Box>
+
+      {/* modal add and edit */}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Typography
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                {isUpdate ? `Update this ${facName}` : " Add Facility"}
+              </Typography>
+              <HighlightOff
+                sx={{ cursor: "pointer" }}
+                onClick={handleClose}
+                color="error"
+              />
+            </Box>
+            <Box
+              py={3}
+              onSubmit={handleSubmit(!isUpdate ? onSubmitAdd : onSubmitUpdate)}
+              component="form"
+              noValidate
+              autoComplete="off"
+              width={"100%"}
+            >
+              <Controller
+                name="name"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Name is requierd" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="text"
+                    id="filled-error"
+                    label="Name"
+                    sx={{ mt: 3 }}
+                    error={!!errors.name}
+                    helperText={errors.name ? errors.name?.message : ""}
+                  />
+                )}
+              />
+              {errors?.name && (
+                <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                  {errors?.name?.message}
+                </Typography>
+              )}
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2, mb: 2, py: 1, display: "flex", ml: "auto" }}
+              >
+                {spinner ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
+      {/* modal delete */}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={openDelete}
+        onClose={handleCloseDelete}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={openDelete}>
+          <Box sx={style}>
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Typography
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                {`Delete this ${facName}`}
+              </Typography>
+              <HighlightOff
+                sx={{ cursor: "pointer" }}
+                onClick={handleCloseDelete}
+                color="error"
+              />
+            </Box>
+            <Box py={4} textAlign={"center"}>
+              <img src={delImg} alt="" />
+              <Typography py={2} variant="body1">
+                {` Delete This ${facName} ?`}
+              </Typography>
+              <Typography variant="caption">
+                are you sure you want to delete this item ? if you are sure just
+                click on delete it
+              </Typography>
+            </Box>
+            <Button
+              onClick={onSubmitDelete}
+              sx={{ display: "flex", ml: "auto" }}
+              variant="contained"
+              color="error"
+            >
+              Delete
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </>
   );
 }
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: "10px",
+  boxShadow: 24,
+  p: 4,
+};
