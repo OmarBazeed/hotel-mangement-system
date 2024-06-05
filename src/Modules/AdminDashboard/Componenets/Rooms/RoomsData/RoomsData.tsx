@@ -73,15 +73,19 @@ export default function RoomsData() {
     <Box onSubmit={handleSubmit(onSubmit)}
         component="form"
         noValidate
+        sx={{width: "100%", display: "flex"}}
         autoComplete="off" style={{
       flexDirection: "column",
       margin: "5",
     }}>
       <Typography mb={2}>View All Rooms</Typography>
       <Typography variant="h4" fontWeight="bold">Add New Room</Typography>
-      <Stack padding={12} direction="column" spacing={2}>
+      <Stack padding={12} direction="column" spacing={2} sx={{alignItems: "center"}}>
         <Stack>
-          <TextField fullWidth label="Room Number">Item 1</TextField>
+          <TextField sx={{width: "100%"}} label="Room Number"
+          type="text"
+          
+          >Item 1</TextField>
         </Stack>
         <Stack direction="row" spacing={2}>
           <TextField fullWidth label="Price">Item 1</TextField>
@@ -89,6 +93,13 @@ export default function RoomsData() {
         </Stack>
         <Stack direction="row" spacing={2}>
           <TextField fullWidth label="Discount">Item 1</TextField>
+          {errors?.email && (
+                    <Typography sx={{ ml: 2 }} variant="caption" color="error">
+                      {errors?.email?.message}
+                    </Typography>
+                  )}
+
+
           <TextField fullWidth label="Facilities">Item 1</TextField>
         </Stack>
         {/* image  */}
@@ -193,7 +204,6 @@ export default function RoomsData() {
               )}
         </Button>
       </Stack>
-      
     </Box>
   )
 }

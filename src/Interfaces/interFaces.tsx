@@ -46,16 +46,15 @@ export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
 
-<<<<<<< HEAD
 export interface RoomInterface {
   id: number;
   roomNumber: number;
+  imgs: File;
   price: number;
   capacity: number,
   discount: number;
   category: string;
 }
-=======
 export interface FacilitiesInterface {
   _id: string;
   name: string;
@@ -102,4 +101,3 @@ export interface Charts {
   bookings: IBookingStatus;
   users: IUsers;
 }
->>>>>>> f9c76ff4033ceae1b45b3f44ad690ffbe3c52375

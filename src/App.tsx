@@ -7,6 +7,7 @@ import AdsList from "./Modules/AdminDashboard/Componenets/Ads/AdsList/AdsList";
 import BookingsList from "./Modules/AdminDashboard/Componenets/BookingsList/BookingsList";
 import Dashboard from "./Modules/AdminDashboard/Componenets/Dashboard/Dashboard";
 import FacilitiesList from "./Modules/AdminDashboard/Componenets/Facilities/FacilitiesList/FacilitiesList";
+import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
 import RoomsList from "./Modules/AdminDashboard/Componenets/Rooms/RoomsList/RoomsList";
 import UsersList from "./Modules/AdminDashboard/Componenets/Users/UsersList/UsersList";
 import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/ForgetPassword";
@@ -25,12 +26,6 @@ import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/Aut
 import LandingLayout from "./Modules/SharedModule/components/LayOuts/LandingPageLayout/LandingLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
-<<<<<<< HEAD
-import { useState } from "react";
-import { blue } from "@mui/material/colors";
-import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
-=======
->>>>>>> f9c76ff4033ceae1b45b3f44ad690ffbe3c52375
 
 declare module "@mui/material/styles" {
   interface Palette {
