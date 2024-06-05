@@ -15,6 +15,7 @@ import {
   ListItemIcon,
   ListItemText,
   Theme,
+  Tooltip,
   styled,
   useTheme,
 } from "@mui/material";
@@ -93,44 +94,45 @@ export default function SideBar({ open }: SideBarProps) {
         <List>
           {sidebarList.map((item) => {
             return (
-              <ListItem
-                key={item.title}
-                disablePadding
-                sx={{ display: "block" }}
-                style={{
-                  backgroundColor:
-                    item.path === location.pathname
-                      ? `${theme.palette.bgitem.main}`
-                      : "",
-                  borderLeft:
-                    item.path === location.pathname
-                      ? `solid 6px ${theme.palette.bditem.main}`
-                      : "",
-                }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
+              <Tooltip key={item.title} title={item.title}>
+                <ListItem
+                  disablePadding
+                  sx={{ display: "block" }}
+                  style={{
+                    backgroundColor:
+                      item.path === location.pathname
+                        ? `${theme.palette.bgitem.main}`
+                        : "",
+                    borderLeft:
+                      item.path === location.pathname
+                        ? `solid 6px ${theme.palette.bditem.main}`
+                        : "",
                   }}
-                  onClick={() => navigate(item.path)}
                 >
-                  <ListItemIcon
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
                     }}
+                    onClick={() => navigate(item.path)}
                   >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.title}
-                    sx={{ opacity: open ? 1 : 0, fontSize: "5rem" }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.title}
+                      sx={{ opacity: open ? 1 : 0, fontSize: "5rem" }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             );
           })}
         </List>

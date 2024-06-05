@@ -3,10 +3,11 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { Charts } from "../../../../Interfaces/interFaces";
-
+import { PieChart } from "@mui/x-charts/PieChart";
 import { RoomServiceOutlined } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
+import { BarChart } from "@mui/x-charts";
 
 export default function DashboardHome() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -38,7 +39,7 @@ export default function DashboardHome() {
   }, [getCharts]);
 
   return (
-    <>
+    <Stack component={"section"} width="100%" height="100vh" marginTop="30px">
       <Stack
         spacing={3}
         alignItems="center"
@@ -54,7 +55,6 @@ export default function DashboardHome() {
           alignItems="center"
           justifyContent="space-around"
           direction="row"
-          minWidth="25%"
           margin="auto !important"
           sx={{
             bgcolor: "rgba(26, 27, 30, 1)",
@@ -68,7 +68,7 @@ export default function DashboardHome() {
               xs: "10px",
               lg: "20px",
             },
-            minWidth: { xs: "60%", lg: "30%" },
+            minWidth: { xs: "60%", lg: "20%" },
           }}
         >
           <Box>
@@ -90,7 +90,6 @@ export default function DashboardHome() {
           alignItems="center"
           justifyContent="space-around"
           direction="row"
-          minWidth="25%"
           margin="auto !important"
           sx={{
             bgcolor: "rgba(26, 27, 30, 1)",
@@ -104,7 +103,7 @@ export default function DashboardHome() {
               xs: "10px",
               lg: "20px",
             },
-            minWidth: { xs: "60%", lg: "30%" },
+            minWidth: { xs: "60%", lg: "20%" },
           }}
         >
           <Box>
@@ -139,7 +138,7 @@ export default function DashboardHome() {
               xs: "10px",
               lg: "20px",
             },
-            minWidth: { xs: "60%", lg: "30%" },
+            minWidth: { xs: "60%", lg: "20%" },
           }}
         >
           <Box>
@@ -161,8 +160,55 @@ export default function DashboardHome() {
       <Stack
         direction="row"
         alignItems="center"
-        justifyContent="space-between"
-      ></Stack>
-    </>
+        justifyContent="space-around"
+        flexWrap="wrap"
+        marginTop="20px"
+      >
+        <Box
+          sx={{
+            width: {
+              xs: "350px !important",
+              md: "400px !important",
+            },
+          }}
+        >
+          <PieChart
+            series={[
+              {
+                data: [
+                  {
+                    id: 0,
+                    value: chartsData.bookings?.completed,
+                    label: "Completed",
+                  },
+                  {
+                    id: 1,
+                    value: chartsData.bookings?.pending,
+                    label: "Pending",
+                  },
+                ],
+              },
+            ]}
+            height={200}
+          />
+        </Box>
+        <Box
+          sx={{
+            width: {
+              xs: "350px !important",
+              md: "400px !important",
+            },
+          }}
+        >
+          <BarChart
+            height={300}
+            series={[
+              { data: [chartsData.users?.admin], label: "Admin", id: "1" },
+              { data: [chartsData.users?.user], label: "User", id: "2" },
+            ]}
+          />
+        </Box>
+      </Stack>
+    </Stack>
   );
 }
