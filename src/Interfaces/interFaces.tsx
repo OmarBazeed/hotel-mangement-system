@@ -53,7 +53,7 @@ export interface AuthContextType {
   userData: string | null;
 }
 
-export interface ICharts {
+export interface Charts {
   rooms: number;
   facilities: number;
   ads: number;

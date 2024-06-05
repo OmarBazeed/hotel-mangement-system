@@ -1,40 +1,44 @@
-import { Alert, Card, CircularProgress, Grid, Stack } from "@mui/material";
+import { Card, CircularProgress, Grid, Stack } from "@mui/material";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../../Context/AuthContext/AuthContext";
+import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "../../../../Context/AuthContext/AuthContext";
+import { Charts } from "../../../../Interfaces/interFaces";
+
+import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import { ICharts } from "../../../../Interfaces/interFaces";
 
 export default function DashboardHome() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [chartsData, setChartsData] = useState<ICharts | null>(null);
+  const [chartsData, setChartsData] = useState<Charts>({});
 
-  const { token } = useContext(AuthContext);
+  const { requestHeaders, loginData } = useAuth();
 
-  const getCharts = async () => {
+  const getCharts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${getBaseUrl}api/v0/admin/dashboard`, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const response = await axios.get(
+        `${getBaseUrl()}/api/v0/admin/dashboard`,
+        {
+          headers: requestHeaders,
+        }
+      );
       setChartsData(response?.data?.data);
-    } catch (error: any) {
-      setError(error?.response?.data?.message || "Something went wrong.");
-    } finally {
-      setIsLoading(false);
+      console.log(response?.data?.data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail signin");
+      }
     }
-  };
+    setIsLoading(false);
+  }, [requestHeaders]);
 
   useEffect(() => {
     getCharts();
-  }, []);
+  }, [getCharts]);
 
   return (
     <>
-      <Stack gap={6}>
+      <Stack spacing={6}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6} lg={4}>
             {chartsData && <Card title="Rooms" count={chartsData?.rooms} />}
@@ -51,9 +55,9 @@ export default function DashboardHome() {
 
         {isLoading && <CircularProgress sx={{ mx: "auto" }} />}
 
-        {!isLoading && error && <Alert severity="error">{error}</Alert>}
+        {/* {!isLoading && error && <Alert severity="error">{error}</Alert>} */}
 
-        {userRole?.role === "admin" && !isLoading && (
+        {loginData?.role === "admin" && !isLoading && (
           <Grid container spacing={4}>
             {/* donught chart */}
           </Grid>
