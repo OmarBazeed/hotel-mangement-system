@@ -4,6 +4,16 @@ export interface FormData {
   loginData: string;
 }
 
+export interface AddRoomFormData {
+  roomNumber: number;
+  imgs: File;
+  price: number;
+  capacity: number;
+  discount: number;
+  facilities: number;
+}
+
+
 export interface RegisterFormData {
   userName: string;
   email: string;

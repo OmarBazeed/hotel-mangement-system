@@ -6,9 +6,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { RoomInterface } from "../../../../../Interfaces/interFaces";
-import { getBaseUrl } from "../../../../../Utils/Utils";
+import { baseUrl, getBaseUrl } from "../../../../../Utils/Utils";
 
 export default function RoomsList() {
   const navigate = useNavigate();
@@ -48,7 +47,7 @@ export default function RoomsList() {
 
   const getRooms = async(pageNumber: number, pageSize: number)=> {
     try{
-      let response = await axios.get(`${getBaseUrl}/api/v0/admin/rooms?page=1&size=10`,
+      let response = await axios.get(`${baseUrl}/api/v0/admin/rooms?page=1&size=10`,
       {
         headers:{Authorization:`${localStorage.getItem("token")}`},
         params: {
@@ -57,16 +56,18 @@ export default function RoomsList() {
         }
       }
       );
-      console.log(response.data);
-      setRooms(response.data);
+      console.log(response.data.data.rooms);
+      setRooms(response.data.data.rooms);
     }
     catch(error){
       console.log(error);
     }
   }
 
-
-  useEffect(() => {getRooms(1, 10);}, [pageNumber, getRooms]);
+  useEffect(() => {
+    getRooms(1, 10);
+  }, []);
+ 
 
   return (
 
@@ -106,6 +107,7 @@ export default function RoomsList() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            value={10}
             label="Age"
           >
             <MenuItem value={10}>Ten</MenuItem>
@@ -119,6 +121,7 @@ export default function RoomsList() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="facilities"
+            value={10}
             
           >
             <MenuItem value={10}>Ten</MenuItem>
