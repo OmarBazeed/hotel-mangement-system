@@ -1,36 +1,31 @@
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   Avatar,
-  Drawer,
-  IconButton,
-  Toolbar,
-  Typography,
-  styled,
-  useTheme,
+  Box,
   Button,
   Divider,
-  Box,
+  Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  AppBar,
-  MenuItem,
+  Toolbar,
   Tooltip,
-  Menu,
-  Grid,
+  Typography,
+  styled,
+  useTheme,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 // import MenuItem from "@mui/material/MenuItem";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 
 import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MuiAppBar from "@mui/material/AppBar";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
-import { red } from "@mui/material/colors";
-import { useNavigate } from "react-router-dom";
 
 export default function Navbar({
   setTheme,
@@ -40,12 +35,12 @@ export default function Navbar({
 }: AppBarProps) {
   const { loginData, logOut } = useAuth();
   const navigate = useNavigate();
+  const [profileMenu, setProfileMenu] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
     if (value === "dark" || value === null) return true;
     return false;
   });
-  const [profileMenu, setProfileMenu] = useState(false);
   const navBtns = (
     <Box
       display={"flex"}
@@ -115,7 +110,10 @@ export default function Navbar({
           Profile
         </Button>
         <Button
-          onClick={() => logOut()}
+          onClick={() => {
+            logOut();
+            navigate("/");
+          }}
           color="inherit"
           fullWidth
           py={1}
@@ -199,7 +197,7 @@ export default function Navbar({
   return (
     <>
       {loginData?.role === "admin" ? (
-        <AppBar position="absolute">
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton
               color="inherit"

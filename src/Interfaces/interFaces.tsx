@@ -46,6 +46,7 @@ export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
 
+<<<<<<< HEAD
 export interface RoomInterface {
   id: number;
   roomNumber: number;
@@ -54,3 +55,51 @@ export interface RoomInterface {
   discount: number;
   category: string;
 }
+=======
+export interface FacilitiesInterface {
+  _id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: { userName: string; _id: string };
+}
+export interface UsersInterface {
+  _id: string;
+  userName: string;
+  email: string;
+  phoneNumber: string;
+  country: string;
+  profileImage: string;
+}
+
+export interface facilitiesForm {
+  name: string;
+}
+
+export interface IBookingStatus {
+  pending: number;
+  completed: number;
+}
+export interface IUsers {
+  adminsCount: number;
+  usersCount: number;
+  user: number;
+  admin: number;
+}
+
+export interface AuthContextType {
+  saveAdminData: () => void;
+  userRole: string | null;
+  token: string | null;
+  logout: () => void;
+  userData: string | null;
+}
+
+export interface Charts {
+  rooms: number;
+  facilities: number;
+  ads: number;
+  bookings: IBookingStatus;
+  users: IUsers;
+}
+>>>>>>> f9c76ff4033ceae1b45b3f44ad690ffbe3c52375

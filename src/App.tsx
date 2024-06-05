@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import { createTheme, CssBaseline } from "@mui/material";
+import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import AdsList from "./Modules/AdminDashboard/Componenets/Ads/AdsList/AdsList";
@@ -12,17 +13,24 @@ import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/Forge
 import ResetPassword from "./Modules/AuthModule/Components/ResetPassword/ResetPassword";
 import Signin from "./Modules/AuthModule/Components/Signin/Signin";
 import Signup from "./Modules/AuthModule/Components/Signup/Signup";
-import LandingPage from "./Modules/LandingPage/LandingPage.tsx/LandingPage";
+import Favorites from "./Modules/LandingPageModule/components/Favorites/Favorites";
+import LandingPage from "./Modules/LandingPageModule/components/MainLandingPage/LandingPage";
+import RoomDetails from "./Modules/LandingPageModule/components/RoomDetails/RoomDetails";
+import Rooms from "./Modules/LandingPageModule/components/Rooms/Rooms";
 import ConfirmPayment from "./Modules/PaymentModule/Components/ConfirmPayment/ConfirmPayment";
 import DetailsPayment from "./Modules/PaymentModule/Components/DetailsPayment/DetailsPayment";
 import FirstPaymentPage from "./Modules/PaymentModule/Components/FirstPaymentPage/FirstPaymentPage";
 import AdDashboardLayout from "./Modules/SharedModule/components/LayOuts/AdDashboardLayout/AdDashboardLayout";
 import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/AuthLayout";
+import LandingLayout from "./Modules/SharedModule/components/LayOuts/LandingPageLayout/LandingLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
+<<<<<<< HEAD
 import { useState } from "react";
 import { blue } from "@mui/material/colors";
 import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
+=======
+>>>>>>> f9c76ff4033ceae1b45b3f44ad690ffbe3c52375
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -92,8 +100,26 @@ export default function App() {
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <LandingPage setTheme={setTheme} />,
+      element: <LandingLayout setTheme={setTheme} />,
       errorElement: <NotFound />,
+      children: [
+        {
+          index: true,
+          element: <LandingPage />,
+        },
+        {
+          path: "rooms-data",
+          element: <Rooms />,
+        },
+        {
+          path: "single-room-details",
+          element: <RoomDetails />,
+        },
+        {
+          path: "favorites",
+          element: <Favorites />,
+        },
+      ],
     },
     {
       path: "/payment",
