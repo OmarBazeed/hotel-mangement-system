@@ -56,7 +56,12 @@ export default function AdsList() {
     setValue("isActive", false);
     setIsUpdate(false);
   };
-  const handleUpdate = (id: string, name: string, discount: string, isActive: boolean) => {
+  const handleUpdate = (
+    id: string,
+    name: string,
+    discount: string,
+    isActive: boolean
+  ) => {
     setAdID(id);
     setAdName(name);
     handleOpen();
@@ -71,73 +76,73 @@ export default function AdsList() {
     handleOpenDelete();
   };
   const columns = [
-  {
-    name: `roomNumber`,
-    label: "Room Name",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "price",
-    label: "Price",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "discount",
-    label: "Discount",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "capacity",
-    label: "Capacity",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "isActive",
-    label: "Active",
-    options: {
-      customBodyRender: (value) => {
-        return value ? "Active" : "InActive";
-      }
-    }
-  },
-  {
-    name: "dataAd",
-    label: "Actions",
-    options: {
-      filter: false,
-      customBodyRender: (value: { id: string; name: string }) => {
-        return (
-          <>
-            <DeleteForever
-              onClick={() => handleDelete(value.id, value.name)}
-              sx={{ mr: 2, cursor: "pointer" }}
-            />
-            <Draw
-              onClick={() => handleUpdate(value.id, value.name)}
-              sx={{ cursor: "pointer" }}
-            />
-          </>
-        );
+    {
+      name: `roomNumber`,
+      label: "Room Name",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
       },
     },
-  },
-];
+    {
+      name: "price",
+      label: "Price",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "discount",
+      label: "Discount",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "capacity",
+      label: "Capacity",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "isActive",
+      label: "Active",
+      options: {
+        customBodyRender: (value) => {
+          return value ? "Active" : "InActive";
+        },
+      },
+    },
+    {
+      name: "dataAd",
+      label: "Actions",
+      options: {
+        filter: false,
+        customBodyRender: (value: { id: string; name: string }) => {
+          return (
+            <>
+              <DeleteForever
+                onClick={() => handleDelete(value.id, value.name)}
+                sx={{ mr: 2, cursor: "pointer" }}
+              />
+              <Draw
+                onClick={() => handleUpdate(value.id, value.name)}
+                sx={{ cursor: "pointer" }}
+              />
+            </>
+          );
+        },
+      },
+    },
+  ];
 
   const options = {
     selectableRows: "none",
@@ -160,20 +165,19 @@ export default function AdsList() {
       );
       const reRenderAds = data.data.ads.map((ad: AdsInterface) => ({
         ...ad,
-        dataAd: { id: ad._id, name: ad.room.roomNumber }, // Make sure to access correct room property
+        dataAd: { id: ad._id, name: ad.roomNumber }, // Make sure to access correct room property
         isActive: ad.isActive,
-        roomNumber: ad.room.roomNumber,
-        capacity: ad.room.capacity,
-        price: ad.room.price,
-        discount: ad.room.discount  // Make sure to access correct isActive property
+        roomNumber: ad.roomNumber,
+        capacity: ad.capacity,
+        price: ad.price,
+        discount: ad.discount, // Make sure to access correct isActive property
       }));
       setAds(reRenderAds);
-      console.log(reRenderAds)
+      console.log(reRenderAds);
     } catch (error) {
       console.log(error);
     }
   };
-
 
   const onSubmitAdd = async (data: adsForm) => {
     setSpinner(true);
@@ -218,7 +222,7 @@ export default function AdsList() {
       toast.success(res.data.message);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.message || "fail add");
+        toast.error(error.response.data.message || "fail update");
       }
       setSpinner(false);
     }
@@ -345,25 +349,29 @@ export default function AdsList() {
               autoComplete="off"
               width={"100%"}
             >
-              {(!isUpdate ? <Controller
-                name="room"
-                control={control}
-                defaultValue=""
-                rules={{ required: "Name is requierd" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    type="text"
-                    id="filled-error"
-                    label="Name"
-                    sx={{ mt: 3 }}
-                    error={!!errors.room}
-                    helperText={errors.room ? errors.room?.message : ""}
-                  />
-                )}
-              /> : "")}
-              
+              {!isUpdate ? (
+                <Controller
+                  name="room"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: "Name is requierd" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="text"
+                      id="filled-error"
+                      label="Name"
+                      sx={{ mt: 3 }}
+                      error={!!errors.room}
+                      helperText={errors.room ? errors.room?.message : ""}
+                    />
+                  )}
+                />
+              ) : (
+                ""
+              )}
+
               <Controller
                 name="discount"
                 control={control}
@@ -401,7 +409,6 @@ export default function AdsList() {
                   />
                 )}
               />
-              
 
               <Button
                 type="submit"

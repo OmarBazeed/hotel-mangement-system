@@ -4,20 +4,19 @@ import { HighlightOff, RemoveRedEyeSharp } from "@mui/icons-material";
 import {
   Backdrop,
   Box,
-  Button,
   Fade,
   Grid,
   Modal,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 import { UsersInterface } from "../../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../../Utils/Utils";
-import { toast } from "react-toastify";
 
 const muiCache = createCache({
   key: "mui-datatables",
