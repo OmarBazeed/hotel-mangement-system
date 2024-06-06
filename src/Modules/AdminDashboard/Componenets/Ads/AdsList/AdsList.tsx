@@ -21,6 +21,7 @@ import {
   MenuItem,
   SelectChangeEvent,
   FormControl,
+  FormHelperText,
 } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
@@ -45,6 +46,8 @@ export default function AdsList() {
   const [adName, setAdName] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [roomSelect, setRoomSelect] = useState("");
+  const [isActiveSelect, setIsActiveSelect] = useState("");
+
   const {
     handleSubmit,
     control,
@@ -52,8 +55,11 @@ export default function AdsList() {
     formState: { errors },
   } = useForm<adsForm, UpdateAdsForm>();
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleRoomChange = (event: SelectChangeEvent) => {
     setRoomSelect(event.target.value as string);
+  };
+  const handleActiveChange = (event: SelectChangeEvent) => {
+    setIsActiveSelect(event.target.value as string);
   };
   const handleOpen = () => setOpen(true);
   const handleOpenDelete = () => setOpenDelete(true);
@@ -397,7 +403,7 @@ export default function AdsList() {
                         value={roomSelect}
                         label="Room"
                         onChange={(e) => {
-                          handleChange(e);
+                          handleRoomChange(e);
                           field.onChange(e);
                         }}
                       >
@@ -417,24 +423,38 @@ export default function AdsList() {
                 </FormControl>
               ) : ""}
               
-              <Controller
-                name="isActive"
-                control={control}
-                defaultValue=""
-                rules={{ required: "Discount is requierd" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    type="text"
-                    id="filled-error"
-                    label="isActive"
-                    sx={{ mt: 3 }}
-                    error={!!errors.discount}
-                    helperText={errors.discount ? errors.discount?.message : ""}
+
+              <FormControl fullWidth sx={{ mt: 3 }}>
+                  <InputLabel id="isActiveLabel">isActive</InputLabel>
+                  <Controller
+                    name="isActive"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: "isActive is required" }}
+                    render={({ field }) => (
+                      <Select
+                        labelId="demo-simple-select-label"
+                        {...field}
+                        id="demo-simple-select"
+                        value={isActiveSelect}
+                        label="Room"
+                        onChange={(e) => {
+                          handleActiveChange(e);
+                          field.onChange(e);
+                        }}
+                      >
+                        <MenuItem value={"false"}>false</MenuItem>
+                        <MenuItem value={"true"}>true</MenuItem>
+                      </Select>
+                    )}
                   />
-                )}
-              />
+                  {errors.isActive && (
+                    <Typography color="error">
+                      isActive is required
+                    </Typography>
+                  )}
+                </FormControl>
+              
 
 
               <Controller
