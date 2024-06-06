@@ -4,6 +4,16 @@ export interface FormData {
   loginData: string;
 }
 
+export interface AddRoomFormData {
+  roomNumber: number;
+  imgs: File;
+  price: number;
+  capacity: number;
+  discount: number;
+  facilities: number;
+}
+
+
 export interface RegisterFormData {
   userName: string;
   email: string;
@@ -36,6 +46,15 @@ export interface DashlayoutProps {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export interface RoomInterface {
+  id: number;
+  roomNumber: number;
+  imgs: File;
+  price: number;
+  capacity: number,
+  discount: number;
+  category: string;
+}
 export interface FacilitiesInterface {
   _id: string;
   name: string;
