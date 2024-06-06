@@ -6,13 +6,12 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Style from "../../../../AuthModule/Components/Auth.module.css";
-import { AddRoomFormData, RoomInterface } from "../../../../../Interfaces/interFaces";
-import { baseUrl, getBaseUrl } from "../../../../../Utils/Utils";
+import { AddRoomFormData } from "../../../../../Interfaces/interFaces";
+import { getBaseUrl } from "../../../../../Utils/Utils";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CloudUpload, DeleteForever } from "@mui/icons-material";
-import { Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function RoomsData() {
   const navigate = useNavigate();
