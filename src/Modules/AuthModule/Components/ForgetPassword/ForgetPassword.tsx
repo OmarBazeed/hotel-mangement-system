@@ -129,6 +129,7 @@ export default function ForgetPassword() {
                 </Typography>
                 {/* forget pass form */}
                 <Box
+                  className="auth"
                   onSubmit={handleSubmit(onSubmit)}
                   component="form"
                   noValidate

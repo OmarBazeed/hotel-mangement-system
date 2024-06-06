@@ -25,6 +25,7 @@ import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/Aut
 import LandingLayout from "./Modules/SharedModule/components/LayOuts/LandingPageLayout/LandingLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
+import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -177,6 +178,10 @@ export default function App() {
         {
           path: "rooms",
           element: <RoomsList />,
+        },
+        {
+          path: "room-data",
+          element: <RoomsData />,
         },
         {
           path: "ads",

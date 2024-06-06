@@ -144,6 +144,7 @@ export default function Signin() {
                 </Typography>
                 {/* login form */}
                 <Box
+                  className="auth"
                   onSubmit={handleSubmit(onSubmit)}
                   component="form"
                   noValidate

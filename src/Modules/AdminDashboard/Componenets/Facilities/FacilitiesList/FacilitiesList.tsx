@@ -144,6 +144,7 @@ export default function FacilitiesList() {
         })
       );
       setFacilities(reRenderFacilities);
+      console.log(reRenderFacilities);
       // console.log(local);
     } catch (error) {
       console.log(error);

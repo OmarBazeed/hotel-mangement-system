@@ -82,3 +82,25 @@ export interface Charts {
   bookings: IBookingStatus;
   users: IUsers;
 }
+
+export interface RoomsInterface {
+  _id: string;
+  roomNumber: string;
+  price: number;
+  capacity: number;
+  discount: number;
+  facilities: [{ name: string; _id: string }];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: { userName: string; _id: string };
+  images: [];
+}
+
+export interface CreateRoom {
+  roomNumber: string;
+  imgs: [];
+  price: string;
+  capacity: string;
+  discount: string;
+  facilities: [];
+}
