@@ -77,7 +77,6 @@ export default function AdsList() {
     setAdID(id);
     setAdName(name);
     handleOpen();
-    setValue("room", name);
     setValue("discount", discount);
     setValue("isActive", isActive);
     setIsUpdate(true);
@@ -258,9 +257,11 @@ export default function AdsList() {
       getAds();
       handleClose();
       toast.success(res.data.message);
+      console.log(res.data.message);
+      
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.message || "fail add");
+        toast.error(error.response.data.message || "failed to Update");
       }
       setSpinner(false);
     }
@@ -429,7 +430,7 @@ export default function AdsList() {
                   <Controller
                     name="isActive"
                     control={control}
-                    defaultValue=""
+                    defaultValue={undefined}
                     rules={{ required: "isActive is required" }}
                     render={({ field }) => (
                       <Select
