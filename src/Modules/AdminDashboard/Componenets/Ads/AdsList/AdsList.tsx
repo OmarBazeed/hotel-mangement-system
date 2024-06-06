@@ -37,7 +37,7 @@ const muiCache = createCache({
 
 export default function AdsList() {
   const [ads, setAds] = useState<AdsInterface[]>([]);
-  const [rooms, setRooms] = useState("")
+  const [rooms, setRooms] = useState([])
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [spinner, setSpinner] = useState<boolean>(false);
@@ -381,22 +381,25 @@ export default function AdsList() {
               autoComplete="off"
               width={"100%"}
             >
-              {(!isUpdate ? <Controller
-                name="room"
-                control={control}
-                defaultValue=""
-                rules={{ required: "Room is requierd" }}
-                render={({ field }) => (
-                  <>
-                      <InputLabel id="demo-simple-select-label">Room</InputLabel>
+              {!isUpdate ? (
+                <FormControl fullWidth sx={{ mt: 3 }}>
+                  <InputLabel id="demo-simple-select-label">Room</InputLabel>
+                  <Controller
+                    name="room"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: "Room is required" }}
+                    render={({ field }) => (
                       <Select
                         labelId="demo-simple-select-label"
                         {...field}
-                        fullWidth
                         id="demo-simple-select"
                         value={roomSelect}
-                        label="Age"
-                        onChange={handleChange}
+                        label="Room"
+                        onChange={(e) => {
+                          handleChange(e);
+                          field.onChange(e);
+                        }}
                       >
                         {rooms.map((room: roomsInterface) => (
                           <MenuItem key={room._id} value={room._id}>
@@ -404,9 +407,15 @@ export default function AdsList() {
                           </MenuItem>
                         ))}
                       </Select>
-                  </>
-                )}
-              /> : "")}
+                    )}
+                  />
+                  {errors.room && (
+                    <Typography color="error">
+                      {errors.room.message}
+                    </Typography>
+                  )}
+                </FormControl>
+              ) : ""}
               
               <Controller
                 name="isActive"
