@@ -43,6 +43,16 @@ export interface FacilitiesInterface {
   updatedAt: string;
   createdBy: { userName: string; _id: string };
 }
+
+export interface AdsInterface {
+  _id: string;
+  roomNumber: string;
+  price: string;
+  discount: string;
+  capacity: string;
+  isActive: boolean;
+}
+
 export interface UsersInterface {
   _id: string;
   userName: string;
@@ -54,6 +64,16 @@ export interface UsersInterface {
 
 export interface facilitiesForm {
   name: string;
+}
+export interface adsForm {
+  room: string;
+  discount: string;
+  isActive: boolean;
+}
+export interface UpdateAdsForm {
+  room: string;
+  discount: string;
+  isActive: boolean;
 }
 
 export interface IBookingStatus {
