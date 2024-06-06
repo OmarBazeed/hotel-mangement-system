@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   adsForm,
   AdsInterface,
+  roomsInterface,
   UpdateAdsForm,
 } from "../../../../../Interfaces/interFaces";
 import {
@@ -15,6 +16,11 @@ import {
   Fade,
   CircularProgress,
   TextField,
+  Select,
+  InputLabel,
+  MenuItem,
+  SelectChangeEvent,
+  FormControl,
 } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
@@ -31,12 +37,14 @@ const muiCache = createCache({
 
 export default function AdsList() {
   const [ads, setAds] = useState<AdsInterface[]>([]);
+  const [rooms, setRooms] = useState("")
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [spinner, setSpinner] = useState<boolean>(false);
   const [adID, setAdID] = useState<string | null>(null);
   const [adName, setAdName] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [roomSelect, setRoomSelect] = useState("");
   const {
     handleSubmit,
     control,
@@ -44,6 +52,9 @@ export default function AdsList() {
     formState: { errors },
   } = useForm<adsForm, UpdateAdsForm>();
 
+  const handleChange = (event: SelectChangeEvent) => {
+    setRoomSelect(event.target.value as string);
+  };
   const handleOpen = () => setOpen(true);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
@@ -148,6 +159,8 @@ export default function AdsList() {
     print: false,
   };
 
+  
+
   const getAds = async () => {
     try {
       const { data } = await axios.get(
@@ -169,6 +182,29 @@ export default function AdsList() {
       }));
       setAds(reRenderAds);
       console.log(reRenderAds)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getRooms = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://upskilling-egypt.com:3000/api/v0/admin/rooms?page=1&size=1000`,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const reRenderRooms = data.data.rooms.map((room: roomsInterface) => ({
+        ...room,
+        dataAd: { id: room._id, roomNumber: room.roomNumber }, // Make sure to access correct room property
+        roomNumber: room.roomNumber,
+        id: room._id
+      }));
+      setRooms(reRenderRooms);
+      console.log(reRenderRooms)
     } catch (error) {
       console.log(error);
     }
@@ -204,7 +240,7 @@ export default function AdsList() {
 
     try {
       const res = await axios.put(
-        `https://upskilling-egypt.com:3000/api/v0/ads/${adID}`,
+        `https://upskilling-egypt.com:3000/api/v0/admin/ads/${adID}`,
         data,
         {
           headers: {
@@ -250,7 +286,7 @@ export default function AdsList() {
   };
 
   useEffect(() => {
-    getAds();
+    getAds(), getRooms()
   }, []);
 
   return (
@@ -349,40 +385,29 @@ export default function AdsList() {
                 name="room"
                 control={control}
                 defaultValue=""
-                rules={{ required: "Name is requierd" }}
+                rules={{ required: "Room is requierd" }}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    type="text"
-                    id="filled-error"
-                    label="Name"
-                    sx={{ mt: 3 }}
-                    error={!!errors.room}
-                    helperText={errors.room ? errors.room?.message : ""}
-                  />
+                  <>
+                      <InputLabel id="demo-simple-select-label">Room</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        {...field}
+                        fullWidth
+                        id="demo-simple-select"
+                        value={roomSelect}
+                        label="Age"
+                        onChange={handleChange}
+                      >
+                        {rooms.map((room: roomsInterface) => (
+                          <MenuItem key={room._id} value={room._id}>
+                            {room.roomNumber}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                  </>
                 )}
               /> : "")}
               
-              <Controller
-                name="discount"
-                control={control}
-                defaultValue=""
-                rules={{ required: "Discount is requierd" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    type="text"
-                    id="filled-error"
-                    label="Discount"
-                    sx={{ mt: 3 }}
-                    error={!!errors.discount}
-                    helperText={errors.discount ? errors.discount?.message : ""}
-                  />
-                )}
-              />
-
               <Controller
                 name="isActive"
                 control={control}
@@ -395,6 +420,26 @@ export default function AdsList() {
                     type="text"
                     id="filled-error"
                     label="isActive"
+                    sx={{ mt: 3 }}
+                    error={!!errors.discount}
+                    helperText={errors.discount ? errors.discount?.message : ""}
+                  />
+                )}
+              />
+
+
+              <Controller
+                name="discount"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Discount is requierd" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="text"
+                    id="filled-error"
+                    label="Discount"
                     sx={{ mt: 3 }}
                     error={!!errors.discount}
                     helperText={errors.discount ? errors.discount?.message : ""}

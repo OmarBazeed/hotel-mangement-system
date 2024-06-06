@@ -53,6 +53,11 @@ export interface AdsInterface {
   isActive: boolean;
 }
 
+export interface roomsInterface {
+  _id: string;
+  roomNumber: string;
+}
+
 export interface UsersInterface {
   _id: string;
   userName: string;
