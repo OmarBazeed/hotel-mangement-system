@@ -178,7 +178,7 @@ export default function FacilitiesList() {
 
     try {
       const res = await axios.put(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${roomID}`,
         data,
         {
           headers: {
@@ -203,7 +203,7 @@ export default function FacilitiesList() {
 
     try {
       const res = await axios.delete(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${roomID}`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
@@ -417,7 +417,7 @@ export default function FacilitiesList() {
 }
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
