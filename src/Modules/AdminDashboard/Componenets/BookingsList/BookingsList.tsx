@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from "react";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { HighlightOff, RemoveRedEyeSharp } from "@mui/icons-material";
@@ -12,7 +13,6 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
-import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { BookingsInterface } from "../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../Utils/Utils";
@@ -27,17 +27,15 @@ export default function BookingsList() {
   const [bookings, setBookings] = useState<BookingsInterface[]>([]);
   const [open, setOpen] = useState(false);
   const [maxSize, setMaxSize] = useState<number>(10);
-  const [viewedUser, setViewedUser] = useState<BookingsInterface>({});
+  const [viewedUser, setViewedUser] = useState<Partial<BookingsInterface>>({});
 
   const { requestHeaders } = useAuth();
 
   const handleOpen = () => setOpen(true);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   const handleView = (value: BookingsInterface) => {
+    console.log(value);
     setViewedUser(value);
     handleOpen();
   };
@@ -96,10 +94,10 @@ export default function BookingsList() {
   ];
 
   const options = {
-    selectableRows: "none",
+    selectableRows: "none" as const,
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 20, 30, bookings.length],
-    responsive: "vertical",
+    responsive: "vertical" as const,
     download: false,
     print: false,
   };
@@ -113,22 +111,24 @@ export default function BookingsList() {
             headers: requestHeaders,
           }
         );
-        console.log(data.data);
+
         setMaxSize(data.data.totalCount);
-        const reRenderBookings = data.data.bookings.map((booking: BookingsInterface) => ({
-          ...booking,
-          datauser: {
-            roomNumber: booking.room.roomNumber,
-            startDate: booking.startDate,
-            endDate: booking.endDate,
-            totalPrice: booking.totalPrice,
-          },
-        }));
+        const reRenderBookings =
+          data.data.booking.length > 0 &&
+          data.data.booking.map((booking: BookingsInterface) => ({
+            ...booking,
+            roomNumber: booking.room?.roomNumber,
+            userName: booking.user?.name,
+          }));
+
         setBookings(reRenderBookings);
-        console.log(reRenderBookings);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          toast.error(error.response.data.message || "fail in api request");
+          toast.error(
+            error.response.data.message || "Failed to fetch bookings"
+          );
+        } else {
+          console.error("Error during API call:", error);
         }
       }
     },
@@ -161,7 +161,7 @@ export default function BookingsList() {
             </Grid>
           </Grid>
         </Box>
-        {/*Rendering The data table */}
+        {/* Rendering the data table */}
         <CacheProvider value={muiCache}>
           <Box width="90%" mx="auto" my={8}>
             <MUIDataTable
@@ -174,7 +174,7 @@ export default function BookingsList() {
         </CacheProvider>
       </Box>
 
-      {/* modal view */}
+      {/* Modal view */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -205,47 +205,38 @@ export default function BookingsList() {
               />
             </Box>
             <Box width="100%" sx={{ padding: "15px" }}>
-              <Box
-                sx={{ textAlign: "center" }}
-                height="50vh !important"
-              >
-                <img
-                  src={viewedUser.roomNumber}
-                  alt="iamge"
-                  width="inherit"
-                  height="100%"
-                  style={{ margin: "auto" }}
-                />
+              <Box sx={{ textAlign: "center" }} height="50vh !important">
+                {/* Add logic to display the appropriate image */}
               </Box>
               <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography> User : </Typography>
+                  <Typography>User:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.user}
+                    {viewedUser.userName || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography> Room Number : </Typography>
+                  <Typography>Room Number:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.roomNumber}
+                    {viewedUser.roomNumber || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography> Price : </Typography>
+                  <Typography>Price:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.totalPrice}
+                    {viewedUser.totalPrice || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography> Start Date : </Typography>
+                  <Typography>Start Date:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.startDate}
+                    {viewedUser.startDate || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography> End Date : </Typography>
+                  <Typography>End Date:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.endDate}
+                    {viewedUser.endDate || "N/A"}
                   </Typography>
                 </Box>
               </Stack>
