@@ -5,18 +5,19 @@ import {
   Backdrop,
   Box,
   Button,
-  CircularProgress,
   Fade,
   Grid,
   Modal,
+  Stack,
   Typography,
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 import { UsersInterface } from "../../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../../Utils/Utils";
+import { toast } from "react-toastify";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -26,7 +27,7 @@ const muiCache = createCache({
 export default function UsersList() {
   const [users, setUsers] = useState<UsersInterface[]>([]);
   const [open, setOpen] = useState(false);
-  const [spinner, setSpinner] = useState<boolean>(false);
+  const [maxSize, setMaxSize] = useState<number>(10);
   const [viewedUser, setViewedUser] = useState<UsersInterface>({});
 
   const { requestHeaders } = useAuth();
@@ -37,7 +38,7 @@ export default function UsersList() {
     setOpen(false);
   };
 
-  const handleView = (value) => {
+  const handleView = (value: UsersInterface) => {
     setViewedUser(value);
     handleOpen();
   };
@@ -85,7 +86,7 @@ export default function UsersList() {
       label: "Action",
       options: {
         filter: false,
-        customBodyRender: (value: { id: string; name: string }) => (
+        customBodyRender: (value: UsersInterface) => (
           <>
             <RemoveRedEyeSharp
               onClick={() => handleView(value)}
@@ -106,35 +107,40 @@ export default function UsersList() {
     print: false,
   };
 
-  const getUsersList = async () => {
-    try {
-      const { data } = await axios.get(
-        `${getBaseUrl()}/api/v0/admin/users?page=1&size=10`,
-        {
-          headers: requestHeaders,
+  const getUsersList = useCallback(
+    async (maxSize: number) => {
+      try {
+        const { data } = await axios.get(
+          `${getBaseUrl()}/api/v0/admin/users?page=1&size=${maxSize}`,
+          {
+            headers: requestHeaders,
+          }
+        );
+        setMaxSize(data.data.totalCount);
+        const reRenderUsers = data.data.users.map((user: UsersInterface) => ({
+          ...user,
+          datauser: {
+            id: user._id,
+            userName: user.userName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            country: user.country,
+            profileImage: user.profileImage,
+          },
+        }));
+        setUsers(reRenderUsers);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "fail in api request");
         }
-      );
-      console.log(data.data.users);
-      const reRenderUsers = data.data.users.map((user: UsersInterface) => ({
-        ...user,
-        datauser: {
-          id: user._id,
-          userName: user.userName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          country: user.country,
-          profileImage: user.profileImage,
-        },
-      }));
-      setUsers(reRenderUsers);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      }
+    },
+    [requestHeaders]
+  );
 
   useEffect(() => {
-    getUsersList();
-  }, []);
+    getUsersList(maxSize);
+  }, [getUsersList, maxSize]);
 
   return (
     <>
@@ -156,7 +162,7 @@ export default function UsersList() {
                 </Typography>
               </Typography>
             </Grid>
-            <Grid
+            {/* <Grid
               display="flex"
               justifyContent={{ sm: "end", xs: "center" }}
               item
@@ -175,9 +181,10 @@ export default function UsersList() {
               >
                 Add New User
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
+        {/*Rendering The data table */}
         <CacheProvider value={muiCache}>
           <Box width="90%" mx="auto" my={8}>
             <MUIDataTable
@@ -221,33 +228,45 @@ export default function UsersList() {
               />
             </Box>
             <Box width="100%" sx={{ padding: "15px" }}>
-              <Box sx={{ textAlign: "center" }}>
+              <Box
+                sx={{ textAlign: "center" }}
+                width="50vw !important"
+                height="50vh !important"
+              >
                 <img
                   src={viewedUser.profileImage}
                   alt="iamge"
-                  width="200px"
-                  height="200px"
+                  width="100%"
+                  height="100%"
                   style={{ margin: "auto" }}
                 />
               </Box>
-              <Box>
+              <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography fontWeight="bold"> User Name : </Typography>
-                  <Typography>{viewedUser.userName} </Typography>
+                  <Typography> User Name : </Typography>
+                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
+                    {viewedUser.userName}
+                  </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography fontWeight="bold"> Email : </Typography>
-                  <Typography>{viewedUser.email} </Typography>
+                  <Typography> Email : </Typography>
+                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
+                    {viewedUser.email}
+                  </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography fontWeight="bold"> Country : </Typography>
-                  <Typography>{viewedUser.country} </Typography>
+                  <Typography> Country : </Typography>
+                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
+                    {viewedUser.country}
+                  </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography fontWeight="bold"> Phone Number : </Typography>
-                  <Typography>{viewedUser.phoneNumber} </Typography>
+                  <Typography> Phone Number : </Typography>
+                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
+                    {viewedUser.phoneNumber}
+                  </Typography>
                 </Box>
-              </Box>
+              </Stack>
             </Box>
           </Box>
         </Fade>
@@ -257,11 +276,10 @@ export default function UsersList() {
 }
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
   bgcolor: "background.paper",
   borderRadius: "10px",
   boxShadow: 24,

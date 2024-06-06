@@ -10,13 +10,13 @@ import { getBaseUrl } from "../../../../Utils/Utils";
 import { BarChart } from "@mui/x-charts";
 
 export default function DashboardHome() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chartsData, setChartsData] = useState<Charts>({});
 
-  const { requestHeaders, loginData } = useAuth();
+  const { requestHeaders } = useAuth();
 
   const getCharts = useCallback(async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axios.get(
         `${getBaseUrl()}/api/v0/admin/dashboard`,
@@ -31,7 +31,7 @@ export default function DashboardHome() {
         toast.error(error.response.data.message || "fail signin");
       }
     }
-    setIsLoading(false);
+    // setIsLoading(false);
   }, [requestHeaders]);
 
   useEffect(() => {
@@ -39,14 +39,21 @@ export default function DashboardHome() {
   }, [getCharts]);
 
   return (
-    <Stack component={"section"} width="100%" height="100vh" marginTop="30px">
+    <Stack
+      component={"section"}
+      width="100%"
+      display="flex"
+      direction="column"
+      justifyContent="flex-start"
+      gap={12}
+      marginTop={8}
+    >
       <Stack
-        spacing={3}
+        gap="20px"
         alignItems="center"
         justifyContent="space-around"
         direction="row"
         sx={{
-          minHeight: "35vh",
           flexWrap: "wrap",
         }}
       >
@@ -61,8 +68,8 @@ export default function DashboardHome() {
             color: "white",
             borderRadius: "30px",
             minHeight: {
-              xs: "75px",
-              lg: "100px",
+              xs: "50px",
+              lg: "75x",
             },
             padding: {
               xs: "10px",
@@ -70,6 +77,7 @@ export default function DashboardHome() {
             },
             minWidth: { xs: "60%", lg: "20%" },
           }}
+          boxShadow="2px 2px 2px gray"
         >
           <Box>
             <Typography sx={{ fontWeight: "bold", fontSize: "1.2em" }}>
@@ -91,13 +99,14 @@ export default function DashboardHome() {
           justifyContent="space-around"
           direction="row"
           margin="auto !important"
+          boxShadow="2px 2px 2px gray"
           sx={{
             bgcolor: "rgba(26, 27, 30, 1)",
             color: "white",
             borderRadius: "30px",
             minHeight: {
-              xs: "75px",
-              lg: "100px",
+              xs: "50px",
+              lg: "75px",
             },
             padding: {
               xs: "10px",
@@ -126,6 +135,7 @@ export default function DashboardHome() {
           justifyContent="space-around"
           direction="row"
           margin="auto !important"
+          boxShadow="2px 2px 2px gray"
           sx={{
             bgcolor: "rgba(26, 27, 30, 1)",
             color: "white",
@@ -163,6 +173,7 @@ export default function DashboardHome() {
         justifyContent="space-around"
         flexWrap="wrap"
         marginTop="20px"
+        display="flex"
       >
         <Box
           sx={{
@@ -170,8 +181,21 @@ export default function DashboardHome() {
               xs: "350px !important",
               md: "400px !important",
             },
+            height: {
+              md: "100%",
+            },
           }}
         >
+          <Typography
+            marginBottom={8}
+            bgcolor="rgba(26, 27, 30, 1)"
+            width="fit-content"
+            padding={1}
+            borderRadius={2}
+            color="white"
+          >
+            Bookings Status
+          </Typography>
           <PieChart
             series={[
               {
@@ -198,8 +222,21 @@ export default function DashboardHome() {
               xs: "350px !important",
               md: "400px !important",
             },
+            height: {
+              md: "100%",
+            },
           }}
         >
+          <Typography
+            marginBottom={4}
+            bgcolor="rgba(26, 27, 30, 1)"
+            width="fit-content"
+            padding={1}
+            borderRadius={2}
+            color="white"
+          >
+            Uers Status
+          </Typography>
           <BarChart
             height={300}
             series={[
