@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FacilitiesInterface,
   facilitiesForm,
@@ -23,6 +23,7 @@ import { DeleteForever, Draw, HighlightOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
+import { getBaseUrl } from "../../../../../Utils/Utils";
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -36,6 +37,7 @@ export default function FacilitiesList() {
   const [facID, setFacID] = useState<string | null>(null);
   const [facName, setFacName] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [totalCount, setTotalCount] = useState<number>(10);
   const {
     handleSubmit,
     control,
@@ -124,16 +126,17 @@ export default function FacilitiesList() {
     print: false,
   };
 
-  const getFacilities = async () => {
+  const getFacilities = useCallback(async (totalCount: number) => {
     try {
       const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities?page=1&size=1000`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities?page=1&size=${totalCount}`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
           },
         }
       );
+      setTotalCount(data.data.totalCount);
       const reRenderFacilities = data.data.facilities.map(
         (fac: FacilitiesInterface) => ({
           ...fac,
@@ -145,7 +148,7 @@ export default function FacilitiesList() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   const onSubmitAdd = async (data: facilitiesForm) => {
     setSpinner(true);
@@ -161,7 +164,7 @@ export default function FacilitiesList() {
         }
       );
       setSpinner(false);
-      getFacilities();
+      getFacilities(totalCount);
       handleClose();
       toast.success(res.data.message);
     } catch (error) {
@@ -185,7 +188,7 @@ export default function FacilitiesList() {
         }
       );
 
-      getFacilities();
+      getFacilities(totalCount);
       handleClose();
       toast.success(res.data.message);
     } catch (error) {
@@ -209,7 +212,7 @@ export default function FacilitiesList() {
         }
       );
 
-      getFacilities();
+      getFacilities(totalCount);
       handleCloseDelete();
       toast.success(res.data.message);
     } catch (error) {
@@ -222,8 +225,8 @@ export default function FacilitiesList() {
   };
 
   useEffect(() => {
-    getFacilities();
-  }, []);
+    getFacilities(totalCount);
+  }, [getFacilities, totalCount]);
 
   return (
     <>
@@ -379,7 +382,8 @@ export default function FacilitiesList() {
                 variant="h6"
                 component="h2"
               >
-                {`Delete this ${facName}`}
+                Delete this
+                <span style={{ color: "#c62828" }}> {facName} </span>
               </Typography>
               <HighlightOff
                 sx={{ cursor: "pointer" }}
@@ -413,7 +417,7 @@ export default function FacilitiesList() {
 }
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
