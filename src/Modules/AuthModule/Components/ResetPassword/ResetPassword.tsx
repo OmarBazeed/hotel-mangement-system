@@ -142,6 +142,7 @@ export default function ResetPassword() {
                 </Typography>
                 {/* login form */}
                 <Box
+                  className="auth"
                   onSubmit={handleSubmit(onSubmit)}
                   component="form"
                   noValidate

@@ -6,13 +6,13 @@
 }
 
 @media (max-width: 899px) {
-  .MuiFormLabel-root {
+  .auth .MuiFormLabel-root {
     color: #fff !important;
   }
-  .MuiOutlinedInput-notchedOutline {
+  .auth .MuiOutlinedInput-notchedOutline {
     border-color: #fff !important;
   }
-  .MuiInputBase-input {
+  .auth .MuiInputBase-input {
     color: #fff !important;
   }
 }
