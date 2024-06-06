@@ -21,10 +21,8 @@ import {
   MenuItem,
   SelectChangeEvent,
   FormControl,
-  FormHelperText,
 } from "@mui/material";
 import MUIDataTable from "mui-datatables";
-import moment from "moment";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { DeleteForever, Draw, HighlightOff } from "@mui/icons-material";
@@ -73,12 +71,12 @@ export default function AdsList() {
     setValue("isActive", false);
     setIsUpdate(false);
   };
-  const handleUpdate = (id: string, name: string, discount: string, isActive: boolean) => {
+  const handleUpdate = (id: string, name: string) => {
     setAdID(id);
     setAdName(name);
     handleOpen();
-    setValue("discount", discount);
-    setValue("isActive", isActive);
+    setValue("discount", "");
+    setValue("isActive", false);
     setIsUpdate(true);
   };
   const handleDelete = (id: string, name: string) => {
@@ -127,7 +125,7 @@ export default function AdsList() {
     name: "isActive",
     label: "Active",
     options: {
-      customBodyRender: (value) => {
+      customBodyRender: (value: string) => {
         return value ? "Active" : "InActive";
       }
     }
