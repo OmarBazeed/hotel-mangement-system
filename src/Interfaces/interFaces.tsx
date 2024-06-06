@@ -121,3 +121,11 @@ export interface Charts {
   bookings: IBookingStatus;
   users: IUsers;
 }
+export interface BookingsInterface {
+  roomNumber: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  user: string;
+  room: string;
+}
