@@ -7,6 +7,7 @@ import AdsList from "./Modules/AdminDashboard/Componenets/Ads/AdsList/AdsList";
 import BookingsList from "./Modules/AdminDashboard/Componenets/BookingsList/BookingsList";
 import Dashboard from "./Modules/AdminDashboard/Componenets/Dashboard/Dashboard";
 import FacilitiesList from "./Modules/AdminDashboard/Componenets/Facilities/FacilitiesList/FacilitiesList";
+import RoomsData from "./Modules/AdminDashboard/Componenets/Rooms/RoomsData/RoomsData";
 import RoomsList from "./Modules/AdminDashboard/Componenets/Rooms/RoomsList/RoomsList";
 import UsersList from "./Modules/AdminDashboard/Componenets/Users/UsersList/UsersList";
 import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/ForgetPassword";

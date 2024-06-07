@@ -229,13 +229,12 @@ export default function UsersList() {
             <Box width="100%" sx={{ padding: "15px" }}>
               <Box
                 sx={{ textAlign: "center" }}
-                width="50vw !important"
                 height="50vh !important"
               >
                 <img
                   src={viewedUser.profileImage}
                   alt="iamge"
-                  width="100%"
+                  width="inherit"
                   height="100%"
                   style={{ margin: "auto" }}
                 />
