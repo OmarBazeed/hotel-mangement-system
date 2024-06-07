@@ -118,12 +118,12 @@ export default function BookingsList() {
           data.data.booking.length > 0 &&
           data.data.booking.map((booking: BookingsInterface) => ({
             ...booking,
-            datauser: {
             userName: booking.user?.userName,
             roomNumber: booking.room?.roomNumber,
-            Price: booking.totalPrice,
-            startDate: booking.startDate,
-            endDate: booking.endDate,
+            datauser: {
+              totalPrice: booking.totalPrice,
+              startDate: booking.startDate,
+              endDate: booking.endDate,
             }
           }));
 
@@ -194,7 +194,7 @@ export default function BookingsList() {
           },
         }}
       >
-        
+
         <Fade in={open}>
           <Box sx={style}>
             <Box display="flex" justifyContent="space-between">
@@ -216,25 +216,25 @@ export default function BookingsList() {
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>User:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser?.userName || "N/A"}
+                    {viewedUser?.user?.userName || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Room Number:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser?.roomNumber || "N/A"}
+                    {viewedUser?.room?.roomNumber || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Price:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser?.totalPrice || "N/A"}
+                    {viewedUser?.totalPrice || 0}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Start Date:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    
+
                     {moment(viewedUser?.startDate || "N/A").format("llll")}
                   </Typography>
                 </Box>

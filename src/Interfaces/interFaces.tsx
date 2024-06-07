@@ -123,10 +123,8 @@ export interface Charts {
 }
 export interface BookingsInterface {
   userName: string;
-  // user: string;
   roomNumber: string;
   totalPrice: number;
   startDate: string;
   endDate: string;
-  // room: string;
 }
