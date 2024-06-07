@@ -122,10 +122,11 @@ export interface Charts {
   users: IUsers;
 }
 export interface BookingsInterface {
+  userName: string;
+  // user: string;
   roomNumber: string;
+  totalPrice: number;
   startDate: string;
   endDate: string;
-  totalPrice: number;
-  user: string;
-  room: string;
+  // room: string;
 }

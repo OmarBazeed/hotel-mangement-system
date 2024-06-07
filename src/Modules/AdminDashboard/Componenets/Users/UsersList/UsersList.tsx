@@ -4,7 +4,6 @@ import { HighlightOff, RemoveRedEyeSharp } from "@mui/icons-material";
 import {
   Backdrop,
   Box,
-  Button,
   Fade,
   Grid,
   Modal,
@@ -28,7 +27,7 @@ export default function UsersList() {
   const [users, setUsers] = useState<UsersInterface[]>([]);
   const [open, setOpen] = useState(false);
   const [maxSize, setMaxSize] = useState<number>(10);
-  const [viewedUser, setViewedUser] = useState<UsersInterface>({});
+  const [viewedUser, setViewedUser] = useState<Partial<UsersInterface>>({});
 
   const { requestHeaders } = useAuth();
 
@@ -89,6 +88,7 @@ export default function UsersList() {
         customBodyRender: (value: UsersInterface) => (
           <>
             <RemoveRedEyeSharp
+              titleAccess={"View"}
               onClick={() => handleView(value)}
               sx={{ cursor: "pointer" }}
             />
@@ -116,6 +116,7 @@ export default function UsersList() {
             headers: requestHeaders,
           }
         );
+        console.log(data);
         setMaxSize(data.data.totalCount);
         const reRenderUsers = data.data.users.map((user: UsersInterface) => ({
           ...user,

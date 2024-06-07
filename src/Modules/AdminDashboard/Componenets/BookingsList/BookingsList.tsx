@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { HighlightOff, RemoveRedEyeSharp } from "@mui/icons-material";
@@ -17,6 +17,7 @@ import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { BookingsInterface } from "../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../Utils/Utils";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -35,7 +36,6 @@ export default function BookingsList() {
   const handleClose = () => setOpen(false);
 
   const handleView = (value: BookingsInterface) => {
-    console.log(value);
     setViewedUser(value);
     handleOpen();
   };
@@ -59,14 +59,14 @@ export default function BookingsList() {
       label: "Start Date",
       name: "startDate",
       options: {
-        customBodyRender: (value: string) => value,
+        customBodyRender: (value: string) => moment(value).format("llll"),
       },
     },
     {
       label: "End Date",
       name: "endDate",
       options: {
-        customBodyRender: (value: string) => value,
+        customBodyRender: (value: string) => moment(value).format("llll"),
       },
     },
     {
@@ -84,6 +84,7 @@ export default function BookingsList() {
         customBodyRender: (value: BookingsInterface) => (
           <>
             <RemoveRedEyeSharp
+              titleAccess={"View"}
               onClick={() => handleView(value)}
               sx={{ cursor: "pointer" }}
             />
@@ -111,14 +112,19 @@ export default function BookingsList() {
             headers: requestHeaders,
           }
         );
-
+        console.log(data);
         setMaxSize(data.data.totalCount);
         const reRenderBookings =
           data.data.booking.length > 0 &&
           data.data.booking.map((booking: BookingsInterface) => ({
             ...booking,
+            datauser: {
+            userName: booking.user?.userName,
             roomNumber: booking.room?.roomNumber,
-            userName: booking.user?.name,
+            Price: booking.totalPrice,
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+            }
           }));
 
         setBookings(reRenderBookings);
@@ -188,6 +194,7 @@ export default function BookingsList() {
           },
         }}
       >
+        
         <Fade in={open}>
           <Box sx={style}>
             <Box display="flex" justifyContent="space-between">
@@ -205,38 +212,36 @@ export default function BookingsList() {
               />
             </Box>
             <Box width="100%" sx={{ padding: "15px" }}>
-              <Box sx={{ textAlign: "center" }} height="50vh !important">
-                {/* Add logic to display the appropriate image */}
-              </Box>
               <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>User:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.userName || "N/A"}
+                    {viewedUser?.userName || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Room Number:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.roomNumber || "N/A"}
+                    {viewedUser?.roomNumber || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Price:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.totalPrice || "N/A"}
+                    {viewedUser?.totalPrice || "N/A"}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>Start Date:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.startDate || "N/A"}
+                    
+                    {moment(viewedUser?.startDate || "N/A").format("llll")}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="start" alignItems="center">
                   <Typography>End Date:</Typography>
                   <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.endDate || "N/A"}
+                    {moment(viewedUser?.endDate || "N/A").format("llll")}
                   </Typography>
                 </Box>
               </Stack>
