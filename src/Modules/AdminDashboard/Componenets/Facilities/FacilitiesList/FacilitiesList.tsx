@@ -165,7 +165,7 @@ export default function FacilitiesList() {
         }
       );
       setSpinner(false);
-      getFacilities();
+      getFacilities(totalCount);
       handleClose();
       toast.success(res.data.message);
     } catch (error) {
@@ -189,7 +189,7 @@ export default function FacilitiesList() {
         }
       );
 
-      getFacilities();
+      getFacilities(totalCount);
       handleClose();
       toast.success(res.data.message);
     } catch (error) {
@@ -213,7 +213,7 @@ export default function FacilitiesList() {
         }
       );
 
-      getFacilities();
+      getFacilities(totalCount);
       handleCloseDelete();
       toast.success(res.data.message);
     } catch (error) {
