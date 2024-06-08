@@ -208,7 +208,6 @@ export default function RoomsList() {
                 sx={{ mx: 2, cursor: "pointer" }}
               />
               <Draw
-                // onClick={() => handleUpdate(value.id, value.name)}
                 sx={{ cursor: "pointer" }}
               />
             </>
