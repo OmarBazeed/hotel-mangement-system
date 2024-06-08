@@ -8,7 +8,7 @@ import {
   Grid,
   Modal,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
@@ -227,10 +227,7 @@ export default function UsersList() {
               />
             </Box>
             <Box width="100%" sx={{ padding: "15px" }}>
-              <Box
-                sx={{ textAlign: "center" }}
-                height="50vh !important"
-              >
+              <Box sx={{ textAlign: "center" }} height="50vh !important">
                 <img
                   src={viewedUser.profileImage}
                   alt="iamge"

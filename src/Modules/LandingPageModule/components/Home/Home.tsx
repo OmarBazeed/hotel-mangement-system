@@ -86,6 +86,7 @@ export default function Home() {
                       padding: "0 5px",
                       position: "absolute",
                       fontSize: ".8rem",
+                      color: "white",
                     }}
                   />
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
