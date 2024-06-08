@@ -13,7 +13,6 @@ export interface AddRoomFormData {
   facilities: number;
 }
 
-
 export interface RegisterFormData {
   userName: string;
   email: string;
@@ -51,7 +50,7 @@ export interface RoomInterface {
   roomNumber: number;
   imgs: File;
   price: number;
-  capacity: number,
+  capacity: number;
   discount: number;
   category: string;
 }
@@ -153,6 +152,8 @@ export interface BookingsInterface {
   startDate: string;
   endDate: string;
   totalPrice: number;
-  user: string;
-  room: string;
+  user: { userName: string; _id: string };
+  room: { roomNumber: number };
+  userName: string;
+  _id: number;
 }

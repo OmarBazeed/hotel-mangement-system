@@ -1,22 +1,35 @@
-import React, { useCallback, useEffect, useState } from "react";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import { HighlightOff, RemoveRedEyeSharp } from "@mui/icons-material";
+import {
+  DeleteForever,
+  HighlightOff,
+  RemoveRedEyeSharp,
+} from "@mui/icons-material";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import {
   Backdrop,
   Box,
+  Button,
   Fade,
   Grid,
+  IconButton,
   Modal,
-  Stack,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { BookingsInterface } from "../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import { toast } from "react-toastify";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -26,18 +39,44 @@ const muiCache = createCache({
 export default function BookingsList() {
   const [bookings, setBookings] = useState<BookingsInterface[]>([]);
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [maxSize, setMaxSize] = useState<number>(10);
   const [viewedUser, setViewedUser] = useState<Partial<BookingsInterface>>({});
+  const [deletedBook, setDeletedBook] = useState<Partial<BookingsInterface>>(
+    {}
+  );
 
   const { requestHeaders } = useAuth();
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenDelete(false);
+  };
 
   const handleView = (value: BookingsInterface) => {
-    console.log(value);
     setViewedUser(value);
     handleOpen();
+  };
+
+  const handleDelete = async (value: BookingsInterface) => {
+    console.log(value);
+    try {
+      const res = await axios.delete(
+        `${getBaseUrl()}/api/v0/admin/booking/${value._id}`,
+        {
+          headers: requestHeaders,
+        }
+      );
+
+      toast.success(res.data.message || "Successfully deleted booking");
+      getBookingsList(maxSize);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "Failed to fetch bookings");
+      }
+    }
   };
 
   const columns = [
@@ -77,15 +116,24 @@ export default function BookingsList() {
       },
     },
     {
-      name: "datauser",
       label: "Action",
+      name: "datauser",
       options: {
         filter: false,
         customBodyRender: (value: BookingsInterface) => (
           <>
             <RemoveRedEyeSharp
-              onClick={() => handleView(value)}
+              onClick={() => {
+                handleView(value);
+              }}
               sx={{ cursor: "pointer" }}
+            />
+            <DeleteForever
+              onClick={() => {
+                setDeletedBook(value);
+                setOpenDelete(true);
+              }}
+              sx={{ cursor: "pointer", marginLeft: "5px" }}
             />
           </>
         ),
@@ -94,10 +142,10 @@ export default function BookingsList() {
   ];
 
   const options = {
-    selectableRows: "none" as const,
+    selectableRows: "none",
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 20, 30, bookings.length],
-    responsive: "vertical" as const,
+    responsive: "vertical",
     download: false,
     print: false,
   };
@@ -111,14 +159,14 @@ export default function BookingsList() {
             headers: requestHeaders,
           }
         );
-
         setMaxSize(data.data.totalCount);
         const reRenderBookings =
           data.data.booking.length > 0 &&
           data.data.booking.map((booking: BookingsInterface) => ({
             ...booking,
             roomNumber: booking.room?.roomNumber,
-            userName: booking.user?.name,
+            userName: booking.user?.userName,
+            datauser: booking,
           }));
 
         setBookings(reRenderBookings);
@@ -127,8 +175,6 @@ export default function BookingsList() {
           toast.error(
             error.response.data.message || "Failed to fetch bookings"
           );
-        } else {
-          console.error("Error during API call:", error);
         }
       }
     },
@@ -161,7 +207,6 @@ export default function BookingsList() {
             </Grid>
           </Grid>
         </Box>
-        {/* Rendering the data table */}
         <CacheProvider value={muiCache}>
           <Box width="90%" mx="auto" my={8}>
             <MUIDataTable
@@ -173,8 +218,7 @@ export default function BookingsList() {
           </Box>
         </CacheProvider>
       </Box>
-
-      {/* Modal view */}
+      {/* Showing Booking Deatils In A Table */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -205,42 +249,108 @@ export default function BookingsList() {
               />
             </Box>
             <Box width="100%" sx={{ padding: "15px" }}>
-              <Box sx={{ textAlign: "center" }} height="50vh !important">
-                {/* Add logic to display the appropriate image */}
-              </Box>
-              <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>
-                <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography>User:</Typography>
-                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.userName || "N/A"}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography>Room Number:</Typography>
-                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.roomNumber || "N/A"}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography>Price:</Typography>
-                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.totalPrice || "N/A"}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography>Start Date:</Typography>
-                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.startDate || "N/A"}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="start" alignItems="center">
-                  <Typography>End Date:</Typography>
-                  <Typography fontWeight="bold" color="teal" paddingLeft={1}>
-                    {viewedUser.endDate || "N/A"}
-                  </Typography>
-                </Box>
-              </Stack>
+              <TableContainer component={Paper}>
+                <Table
+                  sx={{ minWidth: 650 }}
+                  aria-label="booking details table"
+                >
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>User</TableCell>
+                      <TableCell align="left">
+                        {viewedUser?.user?.userName}
+                        <Tooltip title={viewedUser?.user?._id} placement="top">
+                          <IconButton sx={{ paddingTop: "3px !important" }}>
+                            <ErrorOutlineOutlinedIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Room Number</TableCell>
+                      <TableCell align="left">
+                        {viewedUser?.room?.roomNumber}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Price</TableCell>
+                      <TableCell align="left">
+                        {viewedUser.totalPrice}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell align="left">{viewedUser.startDate}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>End Date</TableCell>
+                      <TableCell align="left">{viewedUser.endDate}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Box>
+          </Box>
+        </Fade>
+      </Modal>
+
+      {/*Delete Modal */}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={openDelete}
+        onClose={handleClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={openDelete}>
+          <Box sx={style}>
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Typography
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Will you Delete
+                <span
+                  style={{
+                    color: "#c62828",
+                    margin: "0 5px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {deletedBook.user?.userName} 's
+                </span>
+                Book ? 😢
+              </Typography>
+              <HighlightOff
+                sx={{ cursor: "pointer" }}
+                onClick={() => setOpenDelete(false)}
+                color="error"
+              />
+            </Box>
+            <Box py={4} textAlign={"center"}>
+              <Typography variant="caption">
+                are you sure you want to delete this item ? if you are sure just
+                click on delete it
+              </Typography>
+            </Box>
+            <Button
+              onClick={() => {
+                handleDelete(deletedBook);
+                setOpenDelete(false);
+              }}
+              sx={{ display: "flex", ml: "auto" }}
+              variant="contained"
+              color="error"
+            >
+              Delete
+            </Button>
           </Box>
         </Fade>
       </Modal>
