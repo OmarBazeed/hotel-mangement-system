@@ -243,9 +243,7 @@ export default function AdsList() {
 
     try {
       const res = await axios.post(`${getBaseUrl()}/api/v0/admin/ads`, adData, {
-        headers: {
-          Authorization: `${localStorage.getItem("token")}`,
-        },
+        headers: requestHeaders,
       });
       setSpinner(false);
       getAds(totalCount);
