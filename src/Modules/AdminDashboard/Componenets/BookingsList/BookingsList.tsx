@@ -62,7 +62,6 @@ export default function BookingsList() {
   };
 
   const handleDelete = async (value: BookingsInterface) => {
-    console.log(value);
     try {
       const res = await axios.delete(
         `${getBaseUrl()}/api/v0/admin/booking/${value._id}`,

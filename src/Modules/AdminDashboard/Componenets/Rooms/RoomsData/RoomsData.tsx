@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 import {
   CreateRoom,
   FacilitiesInterface,
@@ -37,14 +38,14 @@ export default function RoomsData() {
     formState: { errors },
   } = useForm<CreateRoom>();
 
+  const { requestHeaders } = useAuth();
+
   const getFacilities = async () => {
     try {
       const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities?page=1&size=1000`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities?page=1&size=1000`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       const reRenderFacilities = data.data.facilities.map(
@@ -54,10 +55,10 @@ export default function RoomsData() {
         })
       );
       setFacilities(reRenderFacilities);
-      console.log(reRenderFacilities);
-      // console.log(local);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "cannot get facilities");
+      }
     }
   };
   const onSubmit = async (data: CreateRoom) => {
@@ -69,9 +70,7 @@ export default function RoomsData() {
         `${getBaseUrl()}/api/v0/admin/rooms`,
         registerFormData,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       setSpinner(false);
