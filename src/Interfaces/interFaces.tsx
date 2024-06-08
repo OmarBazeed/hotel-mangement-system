@@ -64,11 +64,18 @@ export interface FacilitiesInterface {
 
 export interface AdsInterface {
   _id: string;
-  roomNumber: string;
+  // roomNumber: string;
   price: string;
-  discount: string;
+  // discount: number;
   capacity: string;
   isActive: boolean;
+  room: {
+    discount: string;
+    roomNumber: string;
+    capacity: number;
+    price: number;
+  };
+  name: string;
 }
 
 export interface roomsInterface {

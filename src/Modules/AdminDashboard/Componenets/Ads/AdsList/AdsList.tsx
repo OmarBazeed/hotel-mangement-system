@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   adsForm,
   AdsInterface,
@@ -29,6 +29,9 @@ import { DeleteForever, Draw, HighlightOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
+import { getBaseUrl } from "../../../../../Utils/Utils";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
+
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -36,7 +39,7 @@ const muiCache = createCache({
 
 export default function AdsList() {
   const [ads, setAds] = useState<AdsInterface[]>([]);
-  const [rooms, setRooms] = useState([])
+  const [rooms, setRooms] = useState([]);
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [spinner, setSpinner] = useState<boolean>(false);
@@ -44,7 +47,8 @@ export default function AdsList() {
   const [adName, setAdName] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [roomSelect, setRoomSelect] = useState("");
-  const [isActiveSelect, setIsActiveSelect] = useState("");
+  const [isActiveSelect, setIsActiveSelect] = useState<string | boolean>("");
+  const [totalCount, setTotalCount] = useState(10);
 
   const {
     handleSubmit,
@@ -52,13 +56,16 @@ export default function AdsList() {
     setValue,
     formState: { errors },
   } = useForm<adsForm, UpdateAdsForm>();
-
+  const { requestHeaders } = useAuth();
   const handleRoomChange = (event: SelectChangeEvent) => {
     setRoomSelect(event.target.value as string);
   };
+
   const handleActiveChange = (event: SelectChangeEvent) => {
-    setIsActiveSelect(event.target.value as string);
+    const isActive = event.target.value === "true";
+    setIsActiveSelect(isActive);
   };
+
   const handleOpen = () => setOpen(true);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
@@ -70,88 +77,98 @@ export default function AdsList() {
     setValue("discount", "");
     setValue("isActive", false);
     setIsUpdate(false);
+    setRoomSelect("");
+    setIsActiveSelect("");
   };
-  const handleUpdate = (id: string, name: string) => {
-    setAdID(id);
-    setAdName(name);
+
+  const handleUpdate = (value: AdsInterface) => {
+    setAdID(value._id);
+    setAdName(value.room.roomNumber);
     handleOpen();
-    setValue("discount", "");
-    setValue("isActive", false);
+    setValue("discount", value.room.discount);
+    setValue("isActive", value.isActive);
+    setIsActiveSelect(String(value.isActive)); // here iam getting the activation status of the clicked item to redisplay in the defaultValue of selec input
     setIsUpdate(true);
   };
-  const handleDelete = (id: string, name: string) => {
-    setAdID(id);
-    setAdName(name);
+
+  const handleDelete = (value: AdsInterface) => {
+    setAdID(value._id);
+    setAdName(value.room.roomNumber);
     handleOpenDelete();
   };
+
   const columns = [
-  {
-    name: `roomNumber`,
-    label: "Room Name",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "price",
-    label: "Price",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "discount",
-    label: "Discount",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "capacity",
-    label: "Capacity",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? value : "nothing";
-      }
-    }
-  },
-  {
-    name: "isActive",
-    label: "Active",
-    options: {
-      customBodyRender: (value: string) => {
-        return value ? "Active" : "InActive";
-      }
-    }
-  },
-  {
-    name: "dataAd",
-    label: "Actions",
-    options: {
-      filter: false,
-      customBodyRender: (value: { id: string; name: string }) => {
-        return (
-          <>
-            <DeleteForever
-              onClick={() => handleDelete(value.id, value.name)}
-              sx={{ mr: 2, cursor: "pointer" }}
-            />
-            <Draw
-              onClick={() => handleUpdate(value.id, value.name)}
-              sx={{ cursor: "pointer" }}
-            />
-          </>
-        );
+    {
+      name: `roomNumber`,
+      label: "Room Name",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
       },
     },
-  },
-];
+    {
+      name: "price",
+      label: "Price",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "discount",
+      label: "Discount",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "capacity",
+      label: "Capacity",
+      options: {
+        customBodyRender: (value: string) => {
+          return value ? value : "nothing";
+        },
+      },
+    },
+    {
+      name: "isActive",
+      label: "Active",
+      options: {
+        customBodyRender: (value: boolean) => {
+          return value ? "Active" : "Inactive";
+        },
+      },
+    },
+    {
+      name: "dataSingleAd",
+      label: "Actions",
+      options: {
+        filter: false,
+        customBodyRender: (value: AdsInterface) => {
+          return (
+            <>
+              <DeleteForever
+                onClick={() => {
+                  handleDelete(value);
+                }}
+                sx={{ mr: 2, cursor: "pointer" }}
+              />
+              <Draw
+                onClick={() => {
+                  handleUpdate(value);
+                }}
+                sx={{ cursor: "pointer" }}
+              />
+            </>
+          );
+        },
+      },
+    },
+  ];
 
   const options = {
     selectableRows: "none",
@@ -162,73 +179,76 @@ export default function AdsList() {
     print: false,
   };
 
-  
-
-  const getAds = async () => {
-    try {
-      const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/ads?page=1&size=1000`,
-        {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+  const getAds = useCallback(
+    async (totalCount: number) => {
+      try {
+        const { data } = await axios.get(
+          `${getBaseUrl()}/api/v0/admin/ads?page=1&size=${totalCount}`,
+          {
+            headers: requestHeaders,
+          }
+        );
+        const reRenderAds = data.data.ads.map((ad: AdsInterface) => ({
+          ...ad,
+          dataAd: { id: ad._id, name: ad.room.roomNumber },
+          isActive: ad.isActive,
+          roomNumber: ad.room.roomNumber,
+          capacity: ad.room.capacity,
+          price: ad.room.price,
+          discount: ad.room.discount,
+          dataSingleAd: ad,
+        }));
+        setAds(reRenderAds);
+        setTotalCount(data.data.totalCount);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "Failed to fetch Ads");
         }
-      );
-      const reRenderAds = data.data.ads.map((ad: AdsInterface) => ({
-        ...ad,
-        dataAd: { id: ad._id, name: ad.room.roomNumber }, // Make sure to access correct room property
-        isActive: ad.isActive,
-        roomNumber: ad.room.roomNumber,
-        capacity: ad.room.capacity,
-        price: ad.room.price,
-        discount: ad.room.discount  // Make sure to access correct isActive property
-      }));
-      setAds(reRenderAds);
-      console.log(reRenderAds)
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      }
+    },
+    [requestHeaders]
+  );
 
   const getRooms = async () => {
     try {
       const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/rooms?page=1&size=1000`,
+        `${getBaseUrl()}/api/v0/admin/rooms?page=1&size=1000`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       const reRenderRooms = data.data.rooms.map((room: roomsInterface) => ({
         ...room,
-        dataAd: { id: room._id, roomNumber: room.roomNumber }, // Make sure to access correct room property
+        dataAd: { id: room._id, roomNumber: room.roomNumber },
         roomNumber: room.roomNumber,
-        id: room._id
+        id: room._id,
       }));
       setRooms(reRenderRooms);
-      console.log(reRenderRooms)
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "Failed to fetch Rooms");
+      }
     }
   };
-
 
   const onSubmitAdd = async (data: adsForm) => {
     setSpinner(true);
 
+    // here i have to be sure about the inputs (data) which i need to send ==> 3 datas
+    const adData = {
+      room: data.room,
+      discount: data.discount,
+      isActive: data.isActive,
+    };
+
     try {
-      const res = await axios.post(
-        `https://upskilling-egypt.com:3000/api/v0/admin/ads`,
-        data,
-        {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.post(`${getBaseUrl()}/api/v0/admin/ads`, adData, {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
       setSpinner(false);
-      getAds();
+      getAds(totalCount);
       handleClose();
       toast.success(res.data.message);
     } catch (error) {
@@ -238,25 +258,29 @@ export default function AdsList() {
       setSpinner(false);
     }
   };
+
   const onSubmitUpdate = async (data: adsForm) => {
     setSpinner(true);
 
+    // here i have to be sure about the inputs (data) which i need to send ==> only 2 datas
+    // the error was becuse the submittion was seeing the room as a data with value of "" so we were sending 3 inputs not only two
+    const updateData = {
+      discount: data.discount,
+      isActive: data.isActive,
+    };
+
     try {
       const res = await axios.put(
-        `https://upskilling-egypt.com:3000/api/v0/admin/ads/${adID}`,
-        data,
+        `${getBaseUrl()}/api/v0/admin/ads/${adID}`,
+        updateData,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 
-      getAds();
+      toast.success(res.data.message || "ad updated");
+      getAds(totalCount);
       handleClose();
-      toast.success(res.data.message);
-      console.log(res.data.message);
-      
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "failed to Update");
@@ -265,20 +289,19 @@ export default function AdsList() {
     }
     setSpinner(false);
   };
+
   const onSubmitDelete = async () => {
     setSpinner(true);
 
     try {
       const res = await axios.delete(
-        `https://upskilling-egypt.com:3000/api/v0/admin/ads/${adID}`,
+        `${getBaseUrl()}/api/v0/admin/ads/${adID}`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 
-      getAds();
+      getAds(totalCount);
       handleCloseDelete();
       toast.success(res.data.message);
     } catch (error) {
@@ -291,23 +314,17 @@ export default function AdsList() {
   };
 
   useEffect(() => {
-    getAds(), getRooms()
-  }, []);
+    getAds(totalCount);
+    getRooms();
+  }, [totalCount]);
 
   return (
     <>
       <Box component={`section`} width="100%">
-        <Box p={3} component={"header"} boxShadow={1}>
-          <Grid container rowSpacing={2}>
-            <Grid
-              display={"flex"}
-              justifyContent={{ sm: "start", xs: "center" }}
-              item
-              xs={12}
-              sm={6}
-              md={6}
-            >
-              <Typography variant="h5" fontWeight={"500"}>
+        <Box p={3} component={"header"} width="100%">
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={6}>
+              <Typography variant="h5" gutterBottom>
                 ADS Table Details
                 <Typography variant="body1">
                   You can check all details
@@ -370,7 +387,7 @@ export default function AdsList() {
                 variant="h6"
                 component="h2"
               >
-                {isUpdate ? `Update this ${adName}` : " Add Ads"}
+                {isUpdate ? `Update this ${adName}` : "Add Ads"}
               </Typography>
               <HighlightOff
                 sx={{ cursor: "pointer" }}
@@ -380,7 +397,7 @@ export default function AdsList() {
             </Box>
             <Box
               py={3}
-              onSubmit={handleSubmit(!isUpdate ? onSubmitAdd : onSubmitUpdate)}
+              onSubmit={handleSubmit(isUpdate ? onSubmitUpdate : onSubmitAdd)}
               component="form"
               noValidate
               autoComplete="off"
@@ -415,52 +432,47 @@ export default function AdsList() {
                     )}
                   />
                   {errors.room && (
-                    <Typography color="error">
-                      {errors.room.message}
-                    </Typography>
+                    <Typography color="error">{errors.room.message}</Typography>
                   )}
                 </FormControl>
-              ) : ""}
-              
+              ) : null}
 
               <FormControl fullWidth sx={{ mt: 3 }}>
-                  <InputLabel id="isActiveLabel">isActive</InputLabel>
-                  <Controller
-                    name="isActive"
-                    control={control}
-                    defaultValue={undefined}
-                    rules={{ required: "isActive is required" }}
-                    render={({ field }) => (
-                      <Select
-                        labelId="demo-simple-select-label"
-                        {...field}
-                        id="demo-simple-select"
-                        value={isActiveSelect}
-                        label="Room"
-                        onChange={(e) => {
-                          handleActiveChange(e);
-                          field.onChange(e);
-                        }}
-                      >
-                        <MenuItem value={"false"}>false</MenuItem>
-                        <MenuItem value={"true"}>true</MenuItem>
-                      </Select>
-                    )}
-                  />
-                  {errors.isActive && (
-                    <Typography color="error">
-                      isActive is required
-                    </Typography>
+                <InputLabel id="isActiveLabel">isActive</InputLabel>
+                <Controller
+                  name="isActive"
+                  control={control}
+                  defaultValue={isUpdate ? String(isActiveSelect) : ""}
+                  rules={{ required: "isActive is required" }}
+                  render={({ field }) => (
+                    <Select
+                      labelId="isActiveLabel"
+                      {...field}
+                      id="isActive-select"
+                      value={String(isActiveSelect)}
+                      label="isActive"
+                      onChange={(e) => {
+                        handleActiveChange(e);
+                        field.onChange(e);
+                      }}
+                    >
+                      <MenuItem value={"false"}>false</MenuItem>
+                      <MenuItem value={"true"}>true</MenuItem>
+                    </Select>
                   )}
-                </FormControl>
-              
-
+                />
+                {errors.isActive && (
+                  <Typography color="error">
+                    {errors.isActive.message}
+                  </Typography>
+                )}
+              </FormControl>
 
               <Controller
                 name="discount"
                 control={control}
                 defaultValue=""
-                rules={{ required: "Discount is requierd" }}
+                rules={{ required: "Discount is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -470,11 +482,10 @@ export default function AdsList() {
                     label="Discount"
                     sx={{ mt: 3 }}
                     error={!!errors.discount}
-                    helperText={errors.discount ? errors.discount?.message : ""}
+                    helperText={errors.discount ? errors.discount.message : ""}
                   />
                 )}
               />
-              
 
               <Button
                 type="submit"
@@ -548,7 +559,7 @@ export default function AdsList() {
 }
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
