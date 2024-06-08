@@ -9,9 +9,9 @@ export default function AdDashboardLayout({ setTheme }: DashlayoutProps) {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    window.innerWidth < 750 ? setOpen(false) : setOpen(true);
+    window.innerWidth < 900 ? setOpen(false) : setOpen(true);
     window.addEventListener("resize", function () {
-      window.innerWidth < 750 ? setOpen(false) : setOpen(true);
+      window.innerWidth < 900 ? setOpen(false) : setOpen(true);
     });
   }, []);
 
