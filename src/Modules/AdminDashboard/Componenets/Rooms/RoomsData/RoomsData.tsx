@@ -330,7 +330,9 @@ export default function RoomsData() {
                       return URL.createObjectURL(img);
                     });
                     setSelectedImages(imgsArr);
-                    // setValue("imgs", selectedFilesArr);
+                    selectedFilesArr?.length > 5
+                      ? setIsClicked(true)
+                      : setIsClicked(false);
                   }}
                 />
 
