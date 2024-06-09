@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
+import delImg from "../../../../assets/images/noData.png";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
@@ -335,6 +336,9 @@ export default function BookingsList() {
               />
             </Box>
             <Box py={4} textAlign={"center"}>
+              <Box>
+                <img src={delImg} alt="" />
+              </Box>
               <Typography variant="caption">
                 are you sure you want to delete this item ? if you are sure just
                 click on delete it
