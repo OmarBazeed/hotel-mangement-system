@@ -1,4 +1,4 @@
-import { CloudUpload, DeleteForever } from "@mui/icons-material";
+import { CloudUpload } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   CreateRoom,
@@ -24,56 +24,66 @@ import { getBaseUrl } from "../../../../../Utils/Utils";
 import style from "../Rooms.module.css";
 
 export default function RoomsData() {
-  const [image, setImage] = useState(null);
-  const [fileName, setFileName] = useState("No Selected File");
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const [facilities, setFacilities] = useState<FacilitiesInterface[]>([]);
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<CreateRoom>();
+  const roomData = location.state?.roomData;
+  const resetFormValue = () => {
+    if (roomData) {
+      reset({
+        roomNumber: roomData.roomNumber,
+        price: roomData.price,
+        capacity: roomData.capacity,
+        discount: roomData.discount,
+        facilities: roomData.facilities.map(
+          (fac: FacilitiesInterface) => fac._id
+        ),
+      });
+    }
+  };
 
   const getFacilities = async () => {
     try {
       const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities?page=1&size=1000`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities?page=1&size=1000`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
           },
         }
       );
-      const reRenderFacilities = data.data.facilities.map(
-        (fac: FacilitiesInterface) => ({
-          ...fac,
-          datafac: { id: fac._id, name: fac.name },
-        })
-      );
-      setFacilities(reRenderFacilities);
-      console.log(reRenderFacilities);
-      // console.log(local);
+      setFacilities(data.data.facilities);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail get facilities");
+      }
     }
   };
   const onSubmit = async (data: CreateRoom) => {
     setSpinner(true);
     setIsClicked(true);
-    const registerFormData = appendToFormData(data);
+    const roomFormData = appendToFormData(data);
     try {
-      const res = await axios.post(
-        `${getBaseUrl()}/api/v0/admin/rooms`,
-        registerFormData,
-        {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios({
+        method: roomData ? "put" : "post",
+        url: roomData
+          ? `${getBaseUrl()}/api/v0/admin/rooms/${roomData._id}`
+          : `${getBaseUrl()}/api/v0/admin/rooms`,
+        data: roomFormData,
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
       setSpinner(false);
       toast.success(res.data.message);
       navigate("/dashboard/rooms");
@@ -101,7 +111,9 @@ export default function RoomsData() {
   };
   useEffect(() => {
     getFacilities();
-  }, []);
+    resetFormValue();
+    selectedImages.length > 5 ? setIsClicked(true) : setIsClicked(false);
+  }, [selectedImages.length]);
   return (
     <>
       <Box component={`section`} width="100%">
@@ -274,7 +286,7 @@ export default function RoomsData() {
                   }}
                   render={({ field }) => (
                     <FormControl
-                      error={!!errors.discount}
+                      error={!!errors.facilities}
                       sx={{ mt: 3 }}
                       fullWidth
                     >
@@ -305,7 +317,7 @@ export default function RoomsData() {
 
             {/* image  */}
             <Box className={style.formImage}>
-              <Box className="mb-2">
+              <Box width={"100%"} className="mb-2">
                 <input
                   {...register("imgs", {
                     required: "Images is Required",
@@ -314,54 +326,95 @@ export default function RoomsData() {
                   accept="image/*"
                   multiple
                   onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setFileName(file.name);
-                      setImage(URL.createObjectURL(file));
-                    }
+                    const selectedFiles = e.target.files;
+                    const selectedFilesArr = Array.from(selectedFiles);
+                    const imgsArr = selectedFilesArr.map((img) => {
+                      return URL.createObjectURL(img);
+                    });
+                    setSelectedImages(imgsArr);
                   }}
                 />
-                {image ? (
+
+                <Box
+                  py={2}
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <img src={image} width={60} height={60} alt={fileName} />
-                  </Box>
-                ) : (
-                  <Box
-                    py={1}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
+                    width={"70px"}
+                    display={"flex"}
+                    justifyContent={"center"}
                   >
                     <CloudUpload />
-                    <span>Choose an Item Images to Upload</span>
                   </Box>
+                  <span>Choose an Item Images to Upload</span>
+                </Box>
+                {selectedImages.length > 0 && (
+                  <>
+                    <Box display={"flex"} mb={1} justifyContent={"center"}>
+                      <Typography variant="h6">You selected </Typography>
+                      <Typography
+                        ml={1}
+                        variant="h6"
+                        sx={{
+                          color: selectedImages.length > 5 ? "red" : "#203fc7",
+                        }}
+                      >
+                        {selectedImages.length} images
+                      </Typography>
+                    </Box>
+                    {selectedImages.length > 5 && (
+                      <Typography
+                        mb={1}
+                        textAlign={"center"}
+                        variant="body1"
+                        color="error"
+                      >
+                        You cannot select more than 5 images, please re-select 5
+                        images again
+                      </Typography>
+                    )}
+                  </>
                 )}
+                <Box display={"flex"} justifyContent={"center"}>
+                  {selectedImages &&
+                    selectedImages.map((img, i) => {
+                      return (
+                        <Box display={"flex"} mx={1} key={i}>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <img
+                              width={"100%"}
+                              height={"100px"}
+                              src={img}
+                              alt="room-images"
+                            />
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                </Box>
               </Box>
-              <span>
-                {fileName}
-                {image ? (
-                  <DeleteForever
-                    color="error"
-                    sx={{ ml: ".6rem", cursor: "pointer" }}
-                    onClick={() => {
-                      setFileName("No Selected File");
-                      setImage(null);
-                    }}
-                  />
-                ) : null}
-              </span>
+
               {errors.imgs && (
                 <Typography sx={{ ml: 2 }} variant="caption" color="error">
                   {errors.imgs.message}
                 </Typography>
               )}
+              {roomData && selectedImages.length === 0 && (
+                <span
+                  style={{
+                    padding: "10px",
+                    fontWeight: "bold",
+                    color: "red",
+                  }}
+                >
+                  Upload new images please !!
+                </span>
+              )}
             </Box>
+
             <Box
               mt={3}
               mx={"auto"}

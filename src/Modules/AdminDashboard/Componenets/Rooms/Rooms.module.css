@@ -1,19 +1,18 @@
-
 .formImage {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 2px dashed #203FC7;
+  border: 2px dashed #203fc7;
   margin-top: 1.4rem;
   border-radius: 6px;
 }
 .formImage input {
-  width: 30% !important;
+  width: 200px !important;
   position: absolute;
-  top: 10%;
-  left: 28%;
+  top: 19px;
+  left: 40%;
   cursor: pointer;
   opacity: 0;
 }

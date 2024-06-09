@@ -26,6 +26,7 @@ import {
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
 import { useNavigate } from "react-router-dom";
+import { getBaseUrl } from "../../../../../Utils/Utils";
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -96,7 +97,7 @@ export default function RoomsList() {
   const getRooms = async () => {
     try {
       const { data } = await axios.get(
-        `https://upskilling-egypt.com:3000/api/v0/admin/rooms?page=1&size=1000`,
+        `${getBaseUrl()}/api/v0/admin/rooms?page=1&size=1000`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
@@ -120,9 +121,10 @@ export default function RoomsList() {
         },
       }));
       setRooms(reRenderRooms);
-      console.log(reRenderRooms);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail adding");
+      }
     }
   };
   const columns = [
@@ -206,7 +208,11 @@ export default function RoomsList() {
                 sx={{ mx: 2, cursor: "pointer" }}
               />
               <Draw
-                // onClick={() => handleUpdate(value.id, value.name)}
+                onClick={() =>
+                  navigate("/dashboard/room-data", {
+                    state: { roomData: value },
+                  })
+                }
                 sx={{ cursor: "pointer" }}
               />
             </>
