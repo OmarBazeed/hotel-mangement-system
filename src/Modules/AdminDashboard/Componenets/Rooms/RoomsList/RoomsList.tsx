@@ -150,12 +150,13 @@ export default function RoomsList() {
         filter: false,
         customBodyRender: (value: string[]) => (
           <Tooltip title="view images" placement="top">
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                setImages(value);
+                handleOpenImgModal();
+              }}
+            >
               <Avatar
-                onClick={() => {
-                  setImages(value);
-                  handleOpenImgModal();
-                }}
                 alt="Remy Sharp"
                 src={value[0]}
                 sx={{ width: 56, height: 56, cursor: "pointer" }}
@@ -433,10 +434,9 @@ export default function RoomsList() {
               <Grid container spacing={2}>
                 <Grid xs={12} md={6} item className="room-image">
                   <Tooltip title="Click Me" placement="top">
-                    <IconButton>
+                    <IconButton onClick={() => handleOpenImgModal()}>
                       <img
                         style={{ cursor: "pointer", maxHeight: "30vh" }}
-                        onClick={() => handleOpenImgModal()}
                         width={"100%"}
                         src={images[0]}
                         alt="room-image"
