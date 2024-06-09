@@ -13,20 +13,20 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
-import { getBaseUrl } from "../../../../Utils/Utils";
-import logoDark from "../../../../assets/images/logo-dark.svg";
-import logoLight from "../../../../assets/images/logo-light.svg";
-import Style from "../Auth.module.css";
 import {
   emailValidation,
   passwordValidation,
 } from "../../../../Utils/InputValidations";
-import { useAuth } from "../../../../Context/AuthContext/AuthContext";
+import { getBaseUrl } from "../../../../Utils/Utils";
+import logoDark from "../../../../assets/images/logo-dark.svg";
+import logoLight from "../../../../assets/images/logo-light.svg";
+import Style from "../Auth.module.css";
 
 export default function Signin() {
   const { savLoginData } = useAuth();
@@ -38,13 +38,17 @@ export default function Signin() {
   const [showPassword, setShowPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  // const [addAclass, setAddAclass] = useState<boolean>(false);
+  const [endPoint, setEndPoint] = useState<string>("");
+
   const navigate = useNavigate();
-  const navigateTolayout = (userInfo: string) => {
-    userInfo == "admin" ? navigate("/dashboard") : navigate("/");
-  };
+  const location = useLocation();
+
   const signUpWaitToast = {
     onClose: () => setIsClicked(false),
+  };
+
+  const navigateTolayout = (userInfo: string) => {
+    userInfo === "admin" ? navigate("/dashboard") : navigate("/");
   };
 
   const {
@@ -54,11 +58,13 @@ export default function Signin() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
+    const zendPoint = endPoint;
+    console.log(zendPoint);
     setSpinner(true);
     setIsClicked(true);
     try {
       const res = await axios.post(
-        `${getBaseUrl()}/api/v0/admin/users/login`,
+        `${getBaseUrl()}/api/v0/${zendPoint}/users/login`,
         data
       );
       localStorage.setItem("token", res.data.data.token);
@@ -76,6 +82,15 @@ export default function Signin() {
       setSpinner(false);
     }
   };
+
+  useEffect(() => {
+    if (location.pathname === "/auth") {
+      setEndPoint("portal");
+    } else {
+      setEndPoint("admin");
+    }
+  }, [location.pathname]);
+
   return (
     <>
       <Box
