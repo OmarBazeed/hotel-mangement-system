@@ -1,33 +1,44 @@
-import { useEffect, useState } from "react";
-import { RoomsInterface } from "../../../../../Interfaces/interFaces";
-import axios from "axios";
-import {
-  Avatar,
-  Backdrop,
-  Box,
-  Button,
-  Fade,
-  Grid,
-  ImageList,
-  ImageListItem,
-  Modal,
-  Typography,
-} from "@mui/material";
-import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import MUIDataTable from "mui-datatables";
-import { getBaseUrl } from "../../../../../Utils/Utils";
-import moment from "moment";
-import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
+import { CacheProvider } from "@emotion/react";
 import {
   DeleteForever,
   Draw,
   HighlightOff,
   RemoveRedEyeSharp,
 } from "@mui/icons-material";
+import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import DiscountIcon from "@mui/icons-material/Discount";
+import DoneIcon from "@mui/icons-material/Done";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import FaceIcon from "@mui/icons-material/Face";
+import GroupIcon from "@mui/icons-material/Group";
+import PortraitIcon from "@mui/icons-material/Portrait";
+import {
+  Avatar,
+  Backdrop,
+  Box,
+  Button,
+  Card,
+  Fade,
+  Grid,
+  IconButton,
+  ImageList,
+  ImageListItem,
+  Modal,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import moment from "moment";
+import MUIDataTable from "mui-datatables";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
+import { RoomsInterface } from "../../../../../Interfaces/interFaces";
+import { getBaseUrl } from "../../../../../Utils/Utils";
 
 const muiCache = createCache({
   key: "mui-datatables",
@@ -138,15 +149,19 @@ export default function RoomsList() {
       options: {
         filter: false,
         customBodyRender: (value: string[]) => (
-          <Avatar
-            onClick={() => {
-              setImages(value);
-              handleOpenImgModal();
-            }}
-            alt="Remy Sharp"
-            src={value[0]}
-            sx={{ width: 56, height: 56, cursor: "pointer" }}
-          />
+          <Tooltip title="view images" placement="top">
+            <IconButton>
+              <Avatar
+                onClick={() => {
+                  setImages(value);
+                  handleOpenImgModal();
+                }}
+                alt="Remy Sharp"
+                src={value[0]}
+                sx={{ width: 56, height: 56, cursor: "pointer" }}
+              />
+            </IconButton>
+          </Tooltip>
         ),
       },
     },
@@ -416,14 +431,18 @@ export default function RoomsList() {
             </Box>
             <Box mt={3}>
               <Grid container spacing={2}>
-                <Grid xs={12} md={6} item>
-                  <img
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleOpenImgModal()}
-                    width={"100%"}
-                    src={images[0]}
-                    alt="room-image"
-                  />
+                <Grid xs={12} md={6} item className="room-image">
+                  <Tooltip title="Click Me" placement="top">
+                    <IconButton>
+                      <img
+                        style={{ cursor: "pointer", maxHeight: "30vh" }}
+                        onClick={() => handleOpenImgModal()}
+                        width={"100%"}
+                        src={images[0]}
+                        alt="room-image"
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
                 <Grid
                   display={"flex"}
@@ -432,32 +451,61 @@ export default function RoomsList() {
                   md={6}
                   item
                 >
-                  <Box>
-                    <Typography variant="h6">ID : {viewRoom._id}</Typography>
-                    <Typography variant="h6">
-                      Name : {viewRoom.roomNumber}
+                  <Card
+                    sx={{
+                      padding: "7px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "7px",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                    >
+                      <PortraitIcon /> ID : {viewRoom._id}
+                    </Typography>
+                    <Typography
+                      sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                    >
+                      <AddHomeWorkIcon /> Name : {viewRoom.roomNumber}
                     </Typography>
 
-                    <Typography variant="h6">
-                      Price : {viewRoom.price}
+                    <Typography
+                      sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                    >
+                      <AttachMoneyIcon /> Price : {viewRoom.price}
                     </Typography>
-                  </Box>
+                  </Card>
                 </Grid>
               </Grid>
               <Box mt={{ xs: 0, md: 2 }}>
-                <Typography variant="h6">
-                  Capacity : {viewRoom.capacity}
+                <Typography
+                  variant="h6"
+                  sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                >
+                  <GroupIcon /> Capacity : {viewRoom.capacity}
                 </Typography>
-                <Typography variant="h6">
-                  Discount : {viewRoom.discount}
+                <Typography
+                  variant="h6"
+                  sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                >
+                  <DiscountIcon /> Discount : {viewRoom.discount}
                 </Typography>
                 <Typography variant="h6">
                   Facilities :
                   {facilities.length > 0 ? (
                     facilities.map((fac) => (
-                      <span style={{ marginLeft: "3px" }} key={fac.name}>
-                        {" "}
-                        {fac.name},{" "}
+                      <span
+                        style={{
+                          marginLeft: "3px",
+                          background: "#90caf9",
+                          borderRadius: "5px",
+                          padding: "3px",
+                        }}
+                        key={fac.name}
+                      >
+                        {fac.name}
                       </span>
                     ))
                   ) : (
@@ -465,14 +513,25 @@ export default function RoomsList() {
                   )}
                 </Typography>
 
-                <Typography variant="h6">
-                  Created By : {viewRoom?.createdBy}
+                <Typography
+                  variant="h6"
+                  sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                >
+                  <FaceIcon /> Created By : {viewRoom?.createdBy}
                 </Typography>
-                <Typography variant="h6">
-                  Created At : {moment(viewRoom?.createdAt).format("llll")}
+                <Typography
+                  variant="h6"
+                  sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                >
+                  <DoneIcon /> Created At :{" "}
+                  {moment(viewRoom?.createdAt).format("llll")}
                 </Typography>
-                <Typography variant="h6">
-                  Updated At : {moment(viewRoom?.updatedAt).fromNow()}
+                <Typography
+                  variant="h6"
+                  sx={{ display: "flex", alignItems: "center", gap: "3px" }}
+                >
+                  <DoneAllIcon /> Updated At :{" "}
+                  {moment(viewRoom?.updatedAt).fromNow()}
                 </Typography>
               </Box>
             </Box>
@@ -551,7 +610,7 @@ const styleModalView = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "95%", md: "50%" },
+  width: { xs: "95%", md: "55%" },
   bgcolor: "background.paper",
   borderRadius: "10px",
   boxShadow: 24,

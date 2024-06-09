@@ -161,26 +161,6 @@ export default function UsersList() {
                 </Typography>
               </Typography>
             </Grid>
-            {/* <Grid
-              display="flex"
-              justifyContent={{ sm: "end", xs: "center" }}
-              item
-              xs={12}
-              sm={6}
-              md={6}
-            >
-              <Button
-                onClick={() => console.log("object")}
-                sx={{
-                  py: 1,
-                  px: 3,
-                }}
-                variant="contained"
-                color="info"
-              >
-                Add New User
-              </Button>
-            </Grid> */}
           </Grid>
         </Box>
         {/*Rendering The data table */}
@@ -226,14 +206,18 @@ export default function UsersList() {
                 color="error"
               />
             </Box>
-            <Box width="100%" sx={{ padding: "15px" }}>
-              <Box sx={{ textAlign: "center" }} height="50vh !important">
+            <Box width="100%" sx={{ padding: "8px" }}>
+              <Box
+                sx={{ textAlign: "center" }}
+                maxHeight="50vh !important"
+                maxWidth="50vw !important"
+              >
                 <img
                   src={viewedUser.profileImage}
                   alt="iamge"
-                  width="inherit"
                   height="100%"
-                  style={{ margin: "auto" }}
+                  style={{ margin: "auto", maxWidth: "50vw" }}
+                  max-width="50vw"
                 />
               </Box>
               <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>

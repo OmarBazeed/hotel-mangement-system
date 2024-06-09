@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { Charts } from "../../../../Interfaces/interFaces";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { RoomServiceOutlined } from "@mui/icons-material";
+import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
+import Shop2Icon from "@mui/icons-material/Shop2";
+import CampaignIcon from "@mui/icons-material/Campaign";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "../../../../Utils/Utils";
 import { BarChart } from "@mui/x-charts";
@@ -86,7 +88,7 @@ export default function DashboardHome() {
             </Typography>
           </Box>
           <Box>
-            <RoomServiceOutlined sx={{ fontSize: "3.5em" }} />
+            <AddHomeWorkIcon sx={{ fontSize: "3em" }} />
           </Box>
         </Stack>
         <Stack
@@ -122,7 +124,7 @@ export default function DashboardHome() {
             </Typography>
           </Box>
           <Box>
-            <RoomServiceOutlined sx={{ fontSize: "3.5em" }} />
+            <Shop2Icon sx={{ fontSize: "3em" }} />
           </Box>
         </Stack>
         <Stack
@@ -158,7 +160,7 @@ export default function DashboardHome() {
             </Typography>
           </Box>
           <Box>
-            <RoomServiceOutlined sx={{ fontSize: "3.5em" }} />
+            <CampaignIcon sx={{ fontSize: "3em" }} />
           </Box>
         </Stack>
       </Stack>

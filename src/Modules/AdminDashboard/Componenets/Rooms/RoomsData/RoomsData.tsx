@@ -80,9 +80,7 @@ export default function RoomsData() {
           ? `${getBaseUrl()}/api/v0/admin/rooms/${roomData._id}`
           : `${getBaseUrl()}/api/v0/admin/rooms`,
         data: roomFormData,
-        headers: {
-          Authorization: `${localStorage.getItem("token")}`,
-        },
+        headers: requestHeaders,
       });
       setSpinner(false);
       toast.success(res.data.message);
@@ -113,7 +111,7 @@ export default function RoomsData() {
     getFacilities();
     resetFormValue();
     selectedImages.length > 5 ? setIsClicked(true) : setIsClicked(false);
-  }, [selectedImages.length]);
+  }, []);
   return (
     <>
       <Box component={`section`} width="100%">
@@ -332,6 +330,7 @@ export default function RoomsData() {
                       return URL.createObjectURL(img);
                     });
                     setSelectedImages(imgsArr);
+                    // setValue("imgs", selectedFilesArr);
                   }}
                 />
 
