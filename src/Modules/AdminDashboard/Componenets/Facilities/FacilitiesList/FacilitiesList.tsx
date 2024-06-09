@@ -24,6 +24,7 @@ import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
 import { getBaseUrl } from "../../../../../Utils/Utils";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -44,6 +45,8 @@ export default function FacilitiesList() {
     setValue,
     formState: { errors },
   } = useForm<facilitiesForm>();
+
+  const { requestHeaders } = useAuth();
 
   const handleOpen = () => setOpen(true);
   const handleOpenDelete = () => setOpenDelete(true);
@@ -131,9 +134,7 @@ export default function FacilitiesList() {
       const { data } = await axios.get(
         `${getBaseUrl()}/api/v0/admin/room-facilities?page=1&size=${totalCount}`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       setTotalCount(data.data.totalCount);
@@ -144,10 +145,10 @@ export default function FacilitiesList() {
         })
       );
       setFacilities(reRenderFacilities);
-      console.log(reRenderFacilities);
-      // console.log(local);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "failed to get facilities");
+      }
     }
   }, []);
 
@@ -156,12 +157,10 @@ export default function FacilitiesList() {
 
     try {
       const res = await axios.post(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities`,
         data,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       setSpinner(false);
@@ -180,12 +179,10 @@ export default function FacilitiesList() {
 
     try {
       const res = await axios.put(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities/${facID}`,
         data,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 
@@ -205,11 +202,9 @@ export default function FacilitiesList() {
 
     try {
       const res = await axios.delete(
-        `https://upskilling-egypt.com:3000/api/v0/admin/room-facilities/${facID}`,
+        `${getBaseUrl()}/api/v0/admin/room-facilities/${facID}`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 

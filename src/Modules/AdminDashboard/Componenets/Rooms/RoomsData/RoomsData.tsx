@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 import {
   CreateRoom,
   FacilitiesInterface,
@@ -30,6 +31,7 @@ export default function RoomsData() {
   const navigate = useNavigate();
   const location = useLocation();
   const [facilities, setFacilities] = useState<FacilitiesInterface[]>([]);
+  const { requestHeaders } = useAuth();
   const {
     register,
     handleSubmit,
@@ -57,9 +59,7 @@ export default function RoomsData() {
       const { data } = await axios.get(
         `${getBaseUrl()}/api/v0/admin/room-facilities?page=1&size=1000`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
       setFacilities(data.data.facilities);

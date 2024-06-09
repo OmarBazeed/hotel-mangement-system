@@ -87,7 +87,7 @@ export default function AdsList() {
     handleOpen();
     setValue("discount", value.room.discount);
     setValue("isActive", value.isActive);
-    setIsActiveSelect(String(value.isActive)); // here iam getting the activation status of the clicked item to redisplay in the defaultValue of selec input
+    setIsActiveSelect(String(value.isActive));
     setIsUpdate(true);
   };
 
@@ -234,7 +234,6 @@ export default function AdsList() {
   const onSubmitAdd = async (data: adsForm) => {
     setSpinner(true);
 
-    // here i have to be sure about the inputs (data) which i need to send ==> 3 datas
     const adData = {
       room: data.room,
       discount: data.discount,
@@ -243,9 +242,7 @@ export default function AdsList() {
 
     try {
       const res = await axios.post(`${getBaseUrl()}/api/v0/admin/ads`, adData, {
-        headers: {
-          Authorization: `${localStorage.getItem("token")}`,
-        },
+        headers: requestHeaders,
       });
       setSpinner(false);
       getAds(totalCount);
@@ -262,8 +259,6 @@ export default function AdsList() {
   const onSubmitUpdate = async (data: adsForm) => {
     setSpinner(true);
 
-    // here i have to be sure about the inputs (data) which i need to send ==> only 2 datas
-    // the error was becuse the submittion was seeing the room as a data with value of "" so we were sending 3 inputs not only two
     const updateData = {
       discount: data.discount,
       isActive: data.isActive,

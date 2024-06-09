@@ -16,7 +16,9 @@ import {
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import MUIDataTable from "mui-datatables";
+import { getBaseUrl } from "../../../../../Utils/Utils";
 import moment from "moment";
+import { useAuth } from "../../../../../Context/AuthContext/AuthContext";
 import {
   DeleteForever,
   Draw,
@@ -26,7 +28,7 @@ import {
 import { toast } from "react-toastify";
 import delImg from "../../../../../assets/images/noData.png";
 import { useNavigate } from "react-router-dom";
-import { getBaseUrl } from "../../../../../Utils/Utils";
+
 const muiCache = createCache({
   key: "mui-datatables",
   prepend: true,
@@ -62,6 +64,8 @@ export default function RoomsList() {
   };
   const handleOpenViewModal = () => setOpenViewModal(true);
 
+  const { requestHeaders } = useAuth();
+
   const handleCloseViewModal = () => {
     setOpenViewModal(false);
     setViewRoom({});
@@ -77,11 +81,9 @@ export default function RoomsList() {
   const onSubmitDelete = async () => {
     try {
       const res = await axios.delete(
-        `https://upskilling-egypt.com:3000/api/v0/admin/rooms/${roomID}`,
+        `${getBaseUrl()}/api/v0/admin/rooms/${roomID}`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 
@@ -99,9 +101,7 @@ export default function RoomsList() {
       const { data } = await axios.get(
         `${getBaseUrl()}/api/v0/admin/rooms?page=1&size=1000`,
         {
-          headers: {
-            Authorization: `${localStorage.getItem("token")}`,
-          },
+          headers: requestHeaders,
         }
       );
 
@@ -536,7 +536,7 @@ export default function RoomsList() {
 }
 
 const styleModaleFac = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -547,7 +547,7 @@ const styleModaleFac = {
   p: 4,
 };
 const styleModalView = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -559,7 +559,7 @@ const styleModalView = {
 };
 
 const styleModalImages = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
