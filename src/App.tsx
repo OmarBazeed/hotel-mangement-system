@@ -160,6 +160,10 @@ export default function App() {
           path: "reset-password",
           element: <ResetPassword />,
         },
+        {
+          path: "ad-signin",
+          element: <Signin />,
+        },
       ],
     },
     {
