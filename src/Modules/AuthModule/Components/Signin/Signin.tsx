@@ -13,9 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { FormData } from "../../../../Interfaces/interFaces";
@@ -38,10 +38,8 @@ export default function Signin() {
   const [showPassword, setShowPassword] = useState("password");
   const [spinner, setSpinner] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  const [endPoint, setEndPoint] = useState<string>("");
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   const signUpWaitToast = {
     onClose: () => setIsClicked(false),
@@ -58,13 +56,11 @@ export default function Signin() {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    const zendPoint = endPoint;
-    console.log(zendPoint);
     setSpinner(true);
     setIsClicked(true);
     try {
       const res = await axios.post(
-        `${getBaseUrl()}/api/v0/${zendPoint}/users/login`,
+        `${getBaseUrl()}/api/v0/admin/users/login`,
         data
       );
       localStorage.setItem("token", res.data.data.token);
@@ -82,14 +78,6 @@ export default function Signin() {
       setSpinner(false);
     }
   };
-
-  useEffect(() => {
-    if (location.pathname === "/auth") {
-      setEndPoint("portal");
-    } else {
-      setEndPoint("admin");
-    }
-  }, [location.pathname]);
 
   return (
     <>

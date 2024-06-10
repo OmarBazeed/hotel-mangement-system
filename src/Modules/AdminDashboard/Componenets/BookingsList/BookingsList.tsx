@@ -293,7 +293,6 @@ export default function BookingsList() {
           </Box>
         </Fade>
       </Modal>
-
       {/*Delete Modal */}
       <Modal
         aria-labelledby="transition-modal-title"
@@ -370,4 +369,5 @@ const style = {
   borderRadius: "10px",
   boxShadow: 24,
   p: 4,
+  maxWidth: "100%",
 };

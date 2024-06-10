@@ -326,7 +326,7 @@ export default function RoomsList() {
               <Typography
                 id="transition-modal-title"
                 variant="h6"
-                component="h2"
+                component="h1"
               >
                 Room Facility
               </Typography>
@@ -339,7 +339,15 @@ export default function RoomsList() {
             <Box mt={3}>
               {facilities.length > 0 ? (
                 facilities.map((fac) => (
-                  <Typography variant="h5" key={fac.name}>
+                  <Typography
+                    variant="h5"
+                    key={fac.name}
+                    bgcolor="#1976d21f"
+                    margin={1}
+                    padding={1}
+                    sx={{ boxShadow: "1px 1px 1px 1px gray" }}
+                    borderRadius={3}
+                  >
                     {fac.name}
                   </Typography>
                 ))
@@ -434,7 +442,10 @@ export default function RoomsList() {
               <Grid container spacing={2}>
                 <Grid xs={12} md={6} item className="room-image">
                   <Tooltip title="Click Me" placement="top">
-                    <IconButton onClick={() => handleOpenImgModal()}>
+                    <IconButton
+                      onClick={() => handleOpenImgModal()}
+                      sx={{ width: "100%" }}
+                    >
                       <img
                         style={{ cursor: "pointer", maxHeight: "30vh" }}
                         width={"100%"}

@@ -210,14 +210,16 @@ export default function UsersList() {
               <Box
                 sx={{ textAlign: "center" }}
                 maxHeight="50vh !important"
-                maxWidth="50vw !important"
+                maxWidth="70vw !important"
               >
                 <img
                   src={viewedUser.profileImage}
                   alt="iamge"
-                  height="100%"
-                  style={{ margin: "auto", maxWidth: "50vw" }}
-                  max-width="50vw"
+                  style={{
+                    margin: "auto",
+                    maxWidth: "70vw",
+                    maxHeight: "50vh",
+                  }}
                 />
               </Box>
               <Stack direction="column" spacing={2} sx={{ padding: "15px" }}>

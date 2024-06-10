@@ -14,6 +14,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -47,25 +48,30 @@ export default function Signup() {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [image, setImage] = useState(null);
   const [fileName, setFileName] = useState("No Selected File");
-  const [fileInputKey, setFileInputKey] = useState<number>(0); // Key to force re-render file input
+  const [showSecret, setShowSecret] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const signUpWaitToast = {
     onClose: () => setIsClicked(false),
   };
-
+  const resetSecretKey = () => {
+    setValue("role", "");
+  };
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<RegisterFormData>();
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     setSpinner(true);
     setIsClicked(true);
     const registerFormData = appendToFormData(data);
+
+    console.log(registerFormData);
     try {
       const response = await axios.post(
         `${getBaseUrl()}/api/v0/admin/users`,
@@ -86,6 +92,7 @@ export default function Signup() {
   };
 
   const appendToFormData = (data: RegisterFormData) => {
+    const UserRole = data.role === "0123456" ? "admin" : "user";
     const formData = new FormData();
     formData.append("userName", data.userName);
     formData.append("email", data.email);
@@ -93,9 +100,8 @@ export default function Signup() {
     formData.append("confirmPassword", data.confirmPassword);
     formData.append("phoneNumber", data.phoneNumber);
     formData.append("country", data.country);
-    formData.append("role", "user");
+    formData.append("role", UserRole);
     formData.append("profileImage", data.profileImage[0]);
-
     return formData;
   };
 
@@ -143,11 +149,70 @@ export default function Signup() {
             md={6}
             className={`${Style.signUp} ${Style.ptXs}`}
           >
-            <Box width={{ md: "65%", xs: "90%" }}>
+            <Box
+              width={{ md: "65%", xs: "90%" }}
+              onSubmit={handleSubmit(onSubmit)}
+              component="form"
+              noValidate
+            >
               <Box>
-                <Typography mb={3} fontWeight={"500"} variant="h5">
-                  Sign up
-                </Typography>
+                <Stack
+                  display={"flex"}
+                  flexDirection={"row"}
+                  gap={1}
+                  alignItems={"center"}
+                  width={"100%"}
+                  justifyContent={"space-between"}
+                  marginBottom={2}
+                >
+                  <Typography fontWeight={"500"} variant="h5">
+                    Sign up
+                  </Typography>
+                  <Button
+                    sx={{ textDecoration: "underline", cursor: "pointer" }}
+                    onClick={() => {
+                      setShowSecret(!showSecret);
+                      resetSecretKey();
+                    }}
+                  >
+                    {showSecret ? "As user ?" : "sercret key"}
+                  </Button>
+                  <Controller
+                    name="role"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      pattern: {
+                        value: /0123456/,
+                        message: "Key Must Match To Provided",
+                      },
+                      required: false,
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        type="password"
+                        label="Secret Key"
+                        sx={{
+                          maxWidth: "50%",
+                          display: `${showSecret ? "block" : "none"}`,
+                        }}
+                        error={!!errors.role}
+                        helperText={errors?.role?.message}
+                      />
+                    )}
+                  />
+                </Stack>
+                {errors?.userName && (
+                  <Typography
+                    sx={{ ml: 2, textAlign: "right" }}
+                    variant="caption"
+                    color="error"
+                  >
+                    {errors?.userName?.message}
+                  </Typography>
+                )}
                 <Typography fontWeight={"500"} variant="body2">
                   If you already have an account register
                 </Typography>
@@ -168,14 +233,7 @@ export default function Signup() {
                   </Button>
                 </Typography>
                 {/* login form */}
-                <Box
-                  className="auth"
-                  onSubmit={handleSubmit(onSubmit)}
-                  component="form"
-                  noValidate
-                  autoComplete="off"
-                  width={"100%"}
-                >
+                <Box className="auth" autoComplete="off" width={"100%"}>
                   <Controller
                     name="userName"
                     control={control}
@@ -376,7 +434,6 @@ export default function Signup() {
                   <Box className={Style.formImage}>
                     <Box className="mb-2">
                       <input
-                        key={fileInputKey}
                         {...register("profileImage", {
                           required: "Image is Required",
                         })}
@@ -387,7 +444,6 @@ export default function Signup() {
                           if (file) {
                             setFileName(file.name);
                             setImage(URL.createObjectURL(file));
-                            setFileInputKey((prev) => prev + 1);
                           }
                         }}
                       />
@@ -427,7 +483,6 @@ export default function Signup() {
                           onClick={() => {
                             setFileName("No Selected File");
                             setImage(null);
-                            setFileInputKey((prev) => prev + 1);
                           }}
                         />
                       ) : null}
