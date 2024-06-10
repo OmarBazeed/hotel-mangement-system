@@ -321,7 +321,9 @@ export default function Navbar({
               >
                 {navItems.map((item) => (
                   <Box mx={1} sx={{ cursor: "pointer" }} key={item}>
-                    {item}
+                    <Button variant="text" onClick={() => navigate("#")}>
+                      {item}
+                    </Button>
                   </Box>
                 ))}
               </Box>

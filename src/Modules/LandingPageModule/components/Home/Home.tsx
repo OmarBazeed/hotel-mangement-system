@@ -198,10 +198,9 @@ export default function Home() {
               </Stack>
               <Button
                 variant="contained"
+                color="primary"
                 sx={{
                   width: "50%",
-                  color: "white",
-                  bgcolor: "rgba(50, 82, 223, 0.3)",
                   padding: "12px 8px",
                   marginTop: "60px !important",
                 }}
