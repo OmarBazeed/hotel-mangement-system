@@ -14,10 +14,11 @@ import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/Forge
 import ResetPassword from "./Modules/AuthModule/Components/ResetPassword/ResetPassword";
 import Signin from "./Modules/AuthModule/Components/Signin/Signin";
 import Signup from "./Modules/AuthModule/Components/Signup/Signup";
+import Explore from "./Modules/LandingPageModule/components/Explore/Rooms";
 import Favorites from "./Modules/LandingPageModule/components/Favorites/Favorites";
 import LandingPage from "./Modules/LandingPageModule/components/MainLandingPage/LandingPage";
+import Reviews from "./Modules/LandingPageModule/components/Reviews/Reviews";
 import RoomDetails from "./Modules/LandingPageModule/components/RoomDetails/RoomDetails";
-import Rooms from "./Modules/LandingPageModule/components/Rooms/Rooms";
 import ConfirmPayment from "./Modules/PaymentModule/Components/ConfirmPayment/ConfirmPayment";
 import DetailsPayment from "./Modules/PaymentModule/Components/DetailsPayment/DetailsPayment";
 import FirstPaymentPage from "./Modules/PaymentModule/Components/FirstPaymentPage/FirstPaymentPage";
@@ -26,7 +27,6 @@ import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/Aut
 import LandingLayout from "./Modules/SharedModule/components/LayOuts/LandingPageLayout/LandingLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
-import Reviews from "./Modules/LandingPageModule/components/Reviews/Reviews";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -105,7 +105,7 @@ export default function App() {
         },
         {
           path: "explore",
-          element: <Rooms />,
+          element: <Explore />,
         },
         {
           path: "single-room-details",
