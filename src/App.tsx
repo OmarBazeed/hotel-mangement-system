@@ -105,7 +105,7 @@ export default function App() {
         },
         {
           path: "explore",
-          element: <Rooms />,
+          element: <Explore />,
         },
         {
           path: "single-room-details",
@@ -114,10 +114,6 @@ export default function App() {
         {
           path: "favorites",
           element: <Favorites />,
-        },
-        {
-          path: "explore",
-          element: <Explore />,
         },
       ],
     },
