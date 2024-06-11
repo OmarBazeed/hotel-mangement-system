@@ -103,7 +103,7 @@ export default function App() {
           element: <LandingPage />,
         },
         {
-          path: "rooms-data",
+          path: "explore",
           element: <Rooms />,
         },
         {
@@ -159,10 +159,6 @@ export default function App() {
         {
           path: "reset-password",
           element: <ResetPassword />,
-        },
-        {
-          path: "ad-signin",
-          element: <Signin />,
         },
       ],
     },
