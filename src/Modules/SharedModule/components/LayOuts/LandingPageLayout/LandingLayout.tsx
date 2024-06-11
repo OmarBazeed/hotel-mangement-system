@@ -11,7 +11,7 @@ export default function LandingLayout({ setTheme }: DashlayoutProps) {
         <Navbar setTheme={setTheme} />
         <Outlet />
       </Stack>
-      
+      <Footer />
     </>
   );
 }
