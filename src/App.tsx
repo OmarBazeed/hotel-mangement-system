@@ -117,8 +117,8 @@ export default function App() {
         },
         {
           path: "explore",
-          element: <Explore />
-        }
+          element: <Explore />,
+        },
       ],
     },
     {

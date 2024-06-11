@@ -1,6 +1,5 @@
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
+import React from "react";
+import { Box, Button, Divider, Grid, Stack, Typography, Breadcrumbs, Link } from "@mui/material";
 import { getBaseUrl } from '../../../../Utils/Utils';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -11,9 +10,10 @@ import { toast } from 'react-toastify';
 
 export default function Explore() {
     const [rooms, setRooms] = useState<RoomsInterface[]>([]);
-
     const { requestHeaders } = useAuth();
 
+
+    //getRooms Api Call
     const getRooms = async () => {
         try {
           const { data } = await axios.get(
