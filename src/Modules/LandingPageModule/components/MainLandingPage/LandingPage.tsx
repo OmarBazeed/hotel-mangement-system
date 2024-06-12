@@ -3,7 +3,6 @@ import Home from "../Home/Home";
 import HousesAndHotels from "../HousesAndHotels/HousesAndHotels";
 import PopularAds from "../PopularAds/PopularAds";
 import Reviews from "../Reviews/Reviews";
-import Footer from "../../../SharedModule/components/Footer/Footer";
 
 export default function LandingPage() {
   return (
@@ -26,9 +25,6 @@ export default function LandingPage() {
       </Box>
       <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>
         <Reviews />
-      </Box>
-      <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>
-        <Footer />
       </Box>
     </Box>
   );
