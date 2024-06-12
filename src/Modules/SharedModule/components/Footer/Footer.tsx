@@ -1,89 +1,66 @@
-import { Grid, Stack, Typography } from "@mui/material";
+import {
+  Grid,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Box,
+} from "@mui/material";
 import { useState } from "react";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
 
 export default function Footer() {
+  const theme = useTheme();
+  const isXsOrSmaller = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
-    if (value === "dark" || value === null) return true;
-    return false;
+    return value === "dark" || value === null;
   });
 
   return (
-    <>
+    <Box sx={{ width: "100%", padding: "50px 0", backgroundColor: "#f9f9f9" }}>
       <hr color="#E5E5E5" />
-      <Grid
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "50px",
-          position: "absolute",
-          width: "100%",
-        }}
-      >
-        <Stack direction={"row"}>
-          <Stack spacing={2}>
-            <img
-              width={"140px"}
-              src={isDark ? logoDark : logoLight}
-              alt="logo"
-            />
-            <Typography width={"60%"} color={"#B0B0B0"}>
-              We kaboom your beauty holiday instantly and memorable.
-            </Typography>
-          </Stack>
-          <Stack direction={"row"} spacing={20}>
-            <Stack spacing={2}>
-              <Stack>
-                <Typography variant="h6" color={"#152C5B"}>
-                  For Beginners
-                </Typography>
-              </Stack>
-              <Stack spacing={1}>
-                <Typography color={"#B0B0B0"}>New Account</Typography>
-                <Typography color={"#B0B0B0"}>Start Booking a Room</Typography>
-                <Typography color={"#B0B0B0"}>Use Payments</Typography>
-              </Stack>
-            </Stack>
-            <Stack spacing={2}>
-              <Stack>
-                <Typography variant="h6" color={"#152C5B"}>
-                  Explore Us
-                </Typography>
-              </Stack>
-              <Stack spacing={1}>
-                <Typography color={"#B0B0B0"}>Our Careers</Typography>
-                <Typography color={"#B0B0B0"}>privacy</Typography>
-                <Typography color={"#B0B0B0"}>Terms & conditions</Typography>
-              </Stack>
-            </Stack>
-            <Stack spacing={2}>
-              <Stack>
-                <Typography variant="h6" color={"#152C5B"}>
-                  Contact Us
-                </Typography>
-              </Stack>
-              <Stack spacing={1}>
-                <Typography color={"#B0B0B0"}>support@staycation.id</Typography>
-                <Typography color={"#B0B0B0"}>021-2208-1996</Typography>
-                <Typography color={"#B0B0B0"}>
-                  Staycation, Kemang, Jakarta
-                </Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-        </Stack>
-        <Typography
-          marginTop={"50px"}
-          marginBottom={"-20px"}
-          color={"#B0B0B0"}
-          display={"flex"}
-          justifyContent={"center"}
-        >
-          Copyright 2019 • All rights reserved • Staycation
-        </Typography>
+      <Grid container spacing={4} sx={{ padding: "10px 20px" }}>
+        <Grid item xs={12} md={3}>
+          <img width={"140px"} src={isDark ? logoDark : logoLight} alt="logo" />
+          <Typography width={isXsOrSmaller ? "100%" : "60%"} color={"#B0B0B0"}>
+            We kaboom your beauty holiday instantly and memorable.
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Typography variant="h6" color={"#152C5B"} gutterBottom>
+            For Beginners
+          </Typography>
+          <Typography color={"#B0B0B0"}>New Account</Typography>
+          <Typography color={"#B0B0B0"}>Start Booking a Room</Typography>
+          <Typography color={"#B0B0B0"}>Use Payments</Typography>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Typography variant="h6" color={"#152C5B"} gutterBottom>
+            Explore Us
+          </Typography>
+          <Typography color={"#B0B0B0"}>Our Careers</Typography>
+          <Typography color={"#B0B0B0"}>Privacy</Typography>
+          <Typography color={"#B0B0B0"}>Terms & Conditions</Typography>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Typography variant="h6" color={"#152C5B"} gutterBottom>
+            Contact Us
+          </Typography>
+          <Typography color={"#B0B0B0"}>support@staycation.id</Typography>
+          <Typography color={"#B0B0B0"}>021-2208-1996</Typography>
+          <Typography color={"#B0B0B0"}>Staycation, Kemang, Jakarta</Typography>
+        </Grid>
       </Grid>
-    </>
+      <Typography
+        marginTop={"50px"}
+        color={"#B0B0B0"}
+        display={"flex"}
+        justifyContent={"center"}
+      >
+        Copyright 2019 • All rights reserved • Staycation
+      </Typography>
+    </Box>
   );
 }

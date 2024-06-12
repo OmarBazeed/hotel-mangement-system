@@ -87,6 +87,8 @@ export default function Home() {
                       position: "absolute",
                       fontSize: ".8rem",
                       color: "white",
+                      cursor: "pointer",
+                      zIndex: "3",
                     }}
                   />
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -113,6 +115,8 @@ export default function Home() {
                               sm: "18px",
                             },
                             margin: "auto",
+                            marginLeft: { xs: "50px", md: "0" },
+                            cursor: "pointer",
                           },
                         }}
                         className="dateInput"

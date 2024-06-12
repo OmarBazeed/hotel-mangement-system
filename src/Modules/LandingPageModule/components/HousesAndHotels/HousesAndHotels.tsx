@@ -36,13 +36,13 @@ export default function HousesAndHotels() {
   }, [getRooms]);
 
   return (
-    <Box height={"100vh"}>
-      <Grid container spacing={2} height={"100vh"} padding={3}>
-        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
+    <Box>
+      <Grid container spacing={2} padding={3}>
+        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
           Houses with beauty backyard
         </Typography>
         <Grid item xs={12}>
-          <Grid container spacing={8}>
+          <Grid container spacing={6}>
             {houses.map((house, index) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={house._id}>
                 <Button
@@ -97,8 +97,8 @@ export default function HousesAndHotels() {
             ))}
           </Grid>
         </Grid>
-        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
-          Houses with beauty backyard
+        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
+          Hotels with large living room
         </Typography>
         <Grid item xs={12}>
           <Grid container spacing={8}>

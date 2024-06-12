@@ -9,14 +9,16 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { getBaseUrl } from "../../../../Utils/Utils";
+import { useNavigate } from "react-router-dom";
 
 export default function PopularAds() {
   const [Z5Ads, setZ5Ads] = useState([]);
-
   const [favorites, setFavorites] = useState([]);
   const { requestHeaders } = useAuth();
   const [clickedAdd, setClickedAdd] = useState<boolean>(false);
   const [clickedRemove, setClickedRemove] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   const FavsWaitToast = {
     onClose: () => {
       setClickedAdd(false);
@@ -107,11 +109,7 @@ export default function PopularAds() {
     fetchFavoritedRooms();
   }, [FetchAds, fetchFavoritedRooms]);
   return (
-    <Box
-      sx={{
-        height: "100vh",
-      }}
-    >
+    <Box>
       <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
         Most Popular Ads
       </Typography>
@@ -122,7 +120,7 @@ export default function PopularAds() {
         }}
       >
         <Grid height="80vh" container columns={12} spacing={5}>
-          <Grid item xs={12} md={6} height={"100%"}>
+          <Grid item xs={12} md={6}>
             {CardComponent(
               Z5Ads[0],
               "100%",
@@ -130,14 +128,14 @@ export default function PopularAds() {
               RemoveFromFavs,
               favorites,
               clickedAdd,
-              clickedRemove
+              clickedRemove,
+              navigate
             )}
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={12}
             md={3}
-            height={"100%"}
             display="flex"
             flexDirection="column"
             gap={2}
@@ -149,7 +147,8 @@ export default function PopularAds() {
               RemoveFromFavs,
               favorites,
               clickedAdd,
-              clickedRemove
+              clickedRemove,
+              navigate
             )}
             {CardComponent(
               Z5Ads[2],
@@ -158,14 +157,14 @@ export default function PopularAds() {
               RemoveFromFavs,
               favorites,
               clickedAdd,
-              clickedRemove
+              clickedRemove,
+              navigate
             )}
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={12}
             md={3}
-            height={"100%"}
             display="flex"
             flexDirection="column"
             gap={2}
@@ -177,7 +176,8 @@ export default function PopularAds() {
               RemoveFromFavs,
               favorites,
               clickedAdd,
-              clickedRemove
+              clickedRemove,
+              navigate
             )}
             {CardComponent(
               Z5Ads[4],
@@ -186,7 +186,8 @@ export default function PopularAds() {
               RemoveFromFavs,
               favorites,
               clickedAdd,
-              clickedRemove
+              clickedRemove,
+              navigate
             )}
           </Grid>
         </Grid>
@@ -209,18 +210,19 @@ const CardComponent = (
   RemoveFromFavs: (id: string) => void,
   favorites: string[],
   clickedAdd: boolean,
-  clickedRemove: boolean
+  clickedRemove: boolean,
+  navigate
 ) => {
   // Check if the current room is favorited or not
   const isFavorited = favorites.some(
-    (fav: { id: string }) => fav._id === AD?.room._id
+    (fav: { _id: string }) => fav._id === AD?.room._id
   );
 
   return (
     <Card
       sx={{
         position: "relative",
-        height: height,
+        height: { height },
         background: `url(${AD?.room.images[0]})`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
@@ -283,7 +285,9 @@ const CardComponent = (
         )}
 
         <Button color="info">
-          <RemoveRedEyeOutlined />
+          <RemoveRedEyeOutlined
+            onClick={() => navigate(`/explore/${AD.room._id}`)}
+          />
         </Button>
       </Box>
       <Box
