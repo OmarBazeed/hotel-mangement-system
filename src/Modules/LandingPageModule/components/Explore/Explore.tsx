@@ -1,12 +1,10 @@
-import React, { useCallback } from "react";
-import { Box, Button, Divider, Pagination, Grid, Card, Stack, Typography, Breadcrumbs, Link } from "@mui/material";
-import { getBaseUrl } from '../../../../Utils/Utils';
-import { useEffect, useState } from 'react';
+import { Breadcrumbs, Card, Grid, Link, Pagination, Stack, Typography } from "@mui/material";
 import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { toast } from 'react-toastify';
 import { useAuth } from '../../../../Context/AuthContext/AuthContext';
 import { RoomsInterface } from '../../../../Interfaces/interFaces';
-import { toast } from 'react-toastify';
-import { Favorite, FavoriteBorderOutlined, RemoveRedEyeOutlined } from "@mui/icons-material";
+import { getBaseUrl } from '../../../../Utils/Utils';
 
 
 export default function Explore() {
@@ -44,17 +42,12 @@ export default function Explore() {
           }));
           setRooms(reRenderRooms);
           setTotalPages(Math.ceil(data.data.totalCount / pageSize));
-          console.log(totalPages);
         } catch (error) {
           if (axios.isAxiosError(error) && error.response) {
             toast.error(error.response.data.message || "fail adding");
           }
         }
       };
-
-
-      
-
 
 
     useEffect(() => {
