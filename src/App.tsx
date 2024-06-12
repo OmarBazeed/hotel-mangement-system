@@ -14,7 +14,7 @@ import ForgetPassword from "./Modules/AuthModule/Components/ForgetPassword/Forge
 import ResetPassword from "./Modules/AuthModule/Components/ResetPassword/ResetPassword";
 import Signin from "./Modules/AuthModule/Components/Signin/Signin";
 import Signup from "./Modules/AuthModule/Components/Signup/Signup";
-import Explore from "./Modules/LandingPageModule/components/Explore/Rooms";
+import Explore from "./Modules/LandingPageModule/components/Explore/Explore";
 import Favorites from "./Modules/LandingPageModule/components/Favorites/Favorites";
 import LandingPage from "./Modules/LandingPageModule/components/MainLandingPage/LandingPage";
 import Reviews from "./Modules/LandingPageModule/components/Reviews/Reviews";
