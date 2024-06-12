@@ -27,6 +27,7 @@ import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/Aut
 import LandingLayout from "./Modules/SharedModule/components/LayOuts/LandingPageLayout/LandingLayout";
 import PaymentLayout from "./Modules/SharedModule/components/LayOuts/PaymentLayout/PaymentLayout";
 import NotFound from "./Modules/SharedModule/components/NotFound/NotFound";
+import Reviews from "./Modules/LandingPageModule/components/Reviews/Reviews";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -114,6 +115,10 @@ export default function App() {
         {
           path: "favorites",
           element: <Favorites />,
+        },
+        {
+          path: "reviews",
+          element: <Reviews />,
         },
       ],
     },

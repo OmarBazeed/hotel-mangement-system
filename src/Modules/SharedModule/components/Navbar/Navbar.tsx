@@ -16,9 +16,7 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
-// import MenuItem from "@mui/material/MenuItem";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
-
 import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MuiAppBar from "@mui/material/AppBar";
 import { useState } from "react";
@@ -133,10 +131,20 @@ export default function Navbar({
 
   const navItems =
     loginData?.role === "user"
-      ? ["Home", "Explore", "Reviews", "Favorites", getProfileMenu]
+      ? [
+          { title: "Home", path: "/" },
+          { title: "Explore", path: "/explore" },
+          { title: "Reviews", path: "/reviews" },
+          { title: "Favorites", path: "/favorites" },
+          { component: getProfileMenu },
+        ]
       : loginData === null
-      ? ["Home", "Explore", navBtns]
-      : "";
+      ? [
+          { title: "Home", path: "/" },
+          { title: "Explore", path: "/explore" },
+          { component: navBtns },
+        ]
+      : [];
   const theme = useTheme();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -159,13 +167,22 @@ export default function Navbar({
       <Divider />
       <List>
         {loginData?.role !== "admin"
-          ? navItems.map((item) => (
-              <ListItem key={item} disablePadding>
-                <ListItemButton sx={{ textAlign: "center" }}>
-                  <ListItemText primary={item} />
-                </ListItemButton>
-              </ListItem>
-            ))
+          ? navItems.map((item, index) =>
+              item.component ? (
+                <ListItem key={index} disablePadding>
+                  {item.component}
+                </ListItem>
+              ) : (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton
+                    sx={{ textAlign: "center" }}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <ListItemText primary={item.title} />
+                  </ListItemButton>
+                </ListItem>
+              )
+            )
           : ""}
       </List>
     </Box>
@@ -302,34 +319,37 @@ export default function Navbar({
                 alignItems={"center"}
                 sx={{ flexGrow: 1 }}
                 variant="h6"
-                noWrap
                 component="div"
               >
-                <img
-                  width={"150px"}
-                  src={isDark ? logoDark : logoLight}
-                  alt="logo"
-                />
+                <Box display={"flex"} width={{ xs: "130px", md: "200px" }}>
+                  <img
+                    width={"100%"}
+                    src={isDark ? logoDark : logoLight}
+                    alt="logo"
+                  />
+                </Box>
               </Typography>
-
               <Box
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                sx={{ display: { xs: "none", sm: "flex" } }}
+                alignItems={"center"}
               >
-                {navItems.map((item) => (
-                  <Box mx={1} sx={{ cursor: "pointer" }} key={item}>
-                    <Button variant="text" onClick={() => navigate("#")}>
-                      {item}
+                {navItems.map((item, index) =>
+                  item.component ? (
+                    <Box key={index} display={"flex"}>
+                      {item.component}
+                    </Box>
+                  ) : (
+                    <Button key={index} onClick={() => navigate(item.path)}>
+                      {item.title}
                     </Button>
-                  </Box>
-                ))}
-              </Box>
-
-              <Typography ml={1} mt={1} display={"flex"} alignItems={"center"}>
-                <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
+                  )
+                )}
+                <Typography
+                  ml={3}
+                  mt={1}
+                  display={"flex"}
+                  alignItems={"center"}
+                >
                   <label id="theme-toggle-button">
                     <input
                       type="checkbox"
@@ -379,11 +399,11 @@ export default function Navbar({
                       </g>
                     </svg>
                   </label>
-                </Tooltip>
-              </Typography>
+                </Typography>
+              </Box>
             </Toolbar>
           </AppBar>
-          <nav>
+          <Box component="nav">
             <Drawer
               container={container}
               variant="temporary"
@@ -402,7 +422,7 @@ export default function Navbar({
             >
               {drawer}
             </Drawer>
-          </nav>
+          </Box>
         </>
       ) : (
         ""
