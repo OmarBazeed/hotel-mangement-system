@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Box, Button, Divider, Grid, Card, Stack, Typography, Breadcrumbs, Link } from "@mui/material";
+import { Box, Button, Divider, Pagination, Grid, Card, Stack, Typography, Breadcrumbs, Link } from "@mui/material";
 import { getBaseUrl } from '../../../../Utils/Utils';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -12,13 +12,16 @@ import { Favorite, FavoriteBorderOutlined, RemoveRedEyeOutlined } from "@mui/ico
 export default function Explore() {
     const [rooms, setRooms] = useState<RoomsInterface[]>([]);
     const { requestHeaders } = useAuth();
-    const [favorites, setFavorites] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(10);
+    const pageSize = 20;
+
 
     //getRooms Api Call
-    const getRooms = async () => {
+    const getRooms = async (page: number, pageSize: number) => {
         try {
           const { data } = await axios.get(
-            `${getBaseUrl()}/api/v0/portal/rooms/available?page=1&size=10&startDate=2023-01-20&endDate=2023-01-30`,
+            `${getBaseUrl()}/api/v0/portal/rooms/available?page=${page}&size=${pageSize}&startDate=2023-01-20&endDate=2023-01-30`,
             {
               headers: requestHeaders,
             }
@@ -40,6 +43,8 @@ export default function Explore() {
             },
           }));
           setRooms(reRenderRooms);
+          setTotalPages(Math.ceil(data.data.totalCount / pageSize));
+          console.log(totalPages);
         } catch (error) {
           if (axios.isAxiosError(error) && error.response) {
             toast.error(error.response.data.message || "fail adding");
@@ -48,69 +53,17 @@ export default function Explore() {
       };
 
 
-      const FetchAds = useCallback(async () => {
-        try {
-          const res = await axios.get(`${getBaseUrl()}/api/v0/admin/ads`, {
-            headers: requestHeaders,
-          });
-          const SplicedArray = res.data.data.ads.splice(0, 5);
-          setZ5Ads(SplicedArray);
-          console.log(SplicedArray);
-        } catch (error) {
-          if (axios.isAxiosError(error) && error.response) {
-            toast.error(error.response.data.message || "fail to add to favs");
-          }
-        }
-      }, [requestHeaders]);
+      
 
-
-      const AddToFavs = async (RoomId: string) => {
-        try {
-          const res = await axios.post(
-            `${getBaseUrl()}/api/v0/portal/favorite-rooms`,
-            {
-              roomId: RoomId,
-            },
-            {
-              headers: requestHeaders,
-            }
-          );
-          toast.success(res?.data.message || "added to favs");
-    
-          // Update favorites state with the new favorite room
-          setFavorites([...favorites, RoomId]);
-        } catch (error) {
-          if (axios.isAxiosError(error) && error.response) {
-            toast.error(error.response.data.message || "fail to add to favs");
-          }
-        }
-      };
-
-
-      const RemoveFromFavs = async (RoomId: string) => {
-        try {
-          const res = await axios.delete(
-            `${getBaseUrl()}/api/v0/portal/favorite-rooms/${RoomId}`,
-            {
-              headers: requestHeaders,
-              data: { roomId: RoomId },
-            }
-          );
-          toast.success(res?.data.message || "Removed From favs");
-    
-          setFavorites(favorites.filter((fav) => fav !== RoomId));
-        } catch (error) {
-          if (axios.isAxiosError(error) && error.response) {
-            toast.error(error.response.data.message || "fail to Remove From favs");
-          }
-        }
-      };
 
 
     useEffect(() => {
-        getRooms(),
-        FetchAds()
-    }, []);
+        getRooms(page, pageSize)
+    }, [page, pageSize]);
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+  };
 
     return (
     <>
@@ -129,7 +82,7 @@ export default function Explore() {
        justifyContent={"start"}
        marginBottom={"60px"}
       >
-        <Breadcrumbs aria-label="breadcrumb">
+        <Breadcrumbs aria-label="breadcrumb" sx={{marginLeft: "20px"}}>
             <Link underline="hover" color="inherit" href="/">
                 Home
             </Link>
@@ -141,172 +94,54 @@ export default function Explore() {
             </Link>
         </Breadcrumbs> 
       </Stack>
-      <Card
-      sx={{
-        position: "relative",
-        height: height,
-        background: `url(${AD?.room.images[0]})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        "&:hover .overlay": {
-          opacity: 1,
-        },
-      }}
-    >
-      <Typography
-        sx={{
-          textAlign: "right",
-          backgroundColor: "tomato",
-          padding: "5px 7px",
-          width: "fit-content",
-          marginLeft: "auto",
-          borderRadius: "0px 10px 0 10px",
-          fontSize: "1.1rem",
-          fontFamily: "monospace",
-          fontWeight: "bold",
-        }}
-      >
-        ${room.discount} discount per night
-      </Typography>
-      <Box
-        className="overlay"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          opacity: 0,
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        {/* Render "Add to Favorites" button if the room is not favorited */}
-        {!isFavorited && (
-          <Button color="warning" onClick={() => AddToFavs(AD.room._id)}>
-            <FavoriteBorderOutlined />
-          </Button>
-        )}
-        {/* Render "Remove from Favorites" button if the room is favorited */}
-        {isFavorited && (
-          <Button color="warning" onClick={() => RemoveFromFavs(AD.room._id)}>
-            <Favorite />
-          </Button>
-        )}
-
-        <Button color="error">
-          <RemoveRedEyeOutlined />
-        </Button>
-      </Box>
-      <Box
-        marginLeft={"10px"}
-        position="absolute"
-        bottom="10px"
-        left="10px"
-        color={"white"}
-      >
-        <Typography component={"h3"} fontWeight={"900"} fontSize={"1.2rem"}>
-          {room.roomNumber}
-        </Typography>
-        <Typography>{room.roomNumber}</Typography>
-      </Box>
-    </Card>
+      <Grid marginLeft={"25px"}>
+        <Typography color={"#152C5B"} fontWeight={"Bold"} variant="h5">All Rooms</Typography>
+      </Grid>
+      <Grid container spacing={2} padding={"25px"}>
+                {rooms.map((room) => (
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        lg={3}
+                        padding={2}
+                        key={room._id}
+                    >
+                        <Card
+                            sx={{
+                                position: "relative",
+                                height: "300px",
+                                background: room.images && room.images.length > 0 ? `url(${room.images[0]})` : "grey",
+                                backgroundSize: "cover",
+                                backgroundRepeat: "no-repeat",
+                                "&:hover .overlay": {
+                                    opacity: 1,
+                                },
+                            }}
+                        >
+                            <Typography
+                                sx={{
+                                    textAlign: "right",
+                                    backgroundColor: "tomato",
+                                    padding: "5px 7px",
+                                    width: "fit-content",
+                                    marginLeft: "auto",
+                                    borderRadius: "0px 10px 0 10px",
+                                    fontSize: "1.1rem",
+                                    fontFamily: "monospace",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                ${room.discount} discount per night
+                            </Typography>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+            <Grid display={"flex"} justifyContent={"center"} marginTop={"35px"} marginBottom={"35px"}>
+              <Pagination count={totalPages} page={page} onChange={handlePageChange} />
+            </Grid>
     </>
     );
   }
-
-  const CardComponent = (
-        
-    room: {
-      discount: string;
-      images: string[];
-      roomNumber: string;
-      _id: string;
-    },
-  height: string,
-  AddToFavs: (roomid: string) => void,
-  RemoveFromFavs: (id: string) => void,
-  favorites: string[]
-) => {
-  // Check if the current room is favorited
-  const isFavorited = favorites.some((fav) => fav._id === room._id);
-
-  return (
-    <Card
-      sx={{
-        position: "relative",
-        height: height,
-        background: `url(${AD?.room.images[0]})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        "&:hover .overlay": {
-          opacity: 1,
-        },
-      }}
-    >
-      <Typography
-        sx={{
-          textAlign: "right",
-          backgroundColor: "tomato",
-          padding: "5px 7px",
-          width: "fit-content",
-          marginLeft: "auto",
-          borderRadius: "0px 10px 0 10px",
-          fontSize: "1.1rem",
-          fontFamily: "monospace",
-          fontWeight: "bold",
-        }}
-      >
-        ${AD?.room.discount} discount per night
-      </Typography>
-      <Box
-        className="overlay"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          opacity: 0,
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        {/* Render "Add to Favorites" button if the room is not favorited */}
-        {!isFavorited && (
-          <Button color="warning" onClick={() => AddToFavs(AD.room._id)}>
-            <FavoriteBorderOutlined />
-          </Button>
-        )}
-        {/* Render "Remove from Favorites" button if the room is favorited */}
-        {isFavorited && (
-          <Button color="warning" onClick={() => RemoveFromFavs(AD.room._id)}>
-            <Favorite />
-          </Button>
-        )}
-
-        <Button color="error">
-          <RemoveRedEyeOutlined />
-        </Button>
-      </Box>
-      <Box
-        marginLeft={"10px"}
-        position="absolute"
-        bottom="10px"
-        left="10px"
-        color={"white"}
-      >
-        <Typography component={"h3"} fontWeight={"900"} fontSize={"1.2rem"}>
-          {AD?.room.roomNumber}
-        </Typography>
-        <Typography>{AD?.room.roomNumber}</Typography>
-      </Box>
-    </Card>
-  )
-}
