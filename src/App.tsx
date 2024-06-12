@@ -108,7 +108,7 @@ export default function App() {
           element: <Explore />,
         },
         {
-          path: "single-room-details",
+          path: "/explore/:id",
           element: <RoomDetails />,
         },
         {

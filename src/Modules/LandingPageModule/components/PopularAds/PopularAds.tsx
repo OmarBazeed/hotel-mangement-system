@@ -107,7 +107,11 @@ export default function PopularAds() {
     fetchFavoritedRooms();
   }, [FetchAds, fetchFavoritedRooms]);
   return (
-    <>
+    <Box
+      sx={{
+        height: "100vh",
+      }}
+    >
       <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
         Most Popular Ads
       </Typography>
@@ -187,7 +191,7 @@ export default function PopularAds() {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Box>
   );
 }
 
@@ -208,7 +212,9 @@ const CardComponent = (
   clickedRemove: boolean
 ) => {
   // Check if the current room is favorited or not
-  const isFavorited = favorites.some((fav) => fav._id === AD?.room._id);
+  const isFavorited = favorites.some(
+    (fav: { id: string }) => fav._id === AD?.room._id
+  );
 
   return (
     <Card
