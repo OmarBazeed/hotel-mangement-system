@@ -32,7 +32,6 @@ export default function Navbar({
   window,
 }: AppBarProps) {
   const { loginData, logOut, favsNumber } = useAuth();
-  console.log(favsNumber);
   const navigate = useNavigate();
   const [profileMenu, setProfileMenu] = useState(false);
 

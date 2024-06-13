@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { RoomsInterface } from "../../../../Interfaces/interFaces";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Explore() {
   const [rooms, setRooms] = useState<RoomsInterface[]>([]);
@@ -23,25 +23,38 @@ export default function Explore() {
   const [totalPages, setTotalPages] = useState(10);
   const pageSize = 20;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const start = searchParams.get("start");
+  const end = searchParams.get("end");
+  const capacity = searchParams.get("capacity");
+
   //getRooms Api Call
   const getRooms = useCallback(
     async (page: number, pageSize: number) => {
       try {
         const { data } = await axios.get(
-          `${getBaseUrl()}/api/v0/portal/rooms/available?page=${page}&size=${pageSize}`,
+          `${getBaseUrl()}/api/v0/portal/rooms/available`,
           {
             headers: requestHeaders,
+            //query params
+            params: {
+              page: page,
+              size: pageSize,
+              startDate: start,
+              endDate: end,
+              capacity: capacity,
+            },
           }
         );
         setRooms(data.data.rooms);
         setTotalPages(Math.ceil(data.data.totalCount / pageSize));
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          toast.error(error.response.data.message || "fail adding");
+          toast.error(error.response.data.message || "Failed to fetch rooms");
         }
       }
     },
-    [requestHeaders]
+    [requestHeaders, start, end, capacity]
   );
 
   useEffect(() => {

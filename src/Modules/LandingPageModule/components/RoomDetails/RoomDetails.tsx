@@ -1,3 +1,5 @@
+import { HomeMax } from "@mui/icons-material";
+import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import {
   Box,
   Breadcrumbs,
@@ -8,19 +10,18 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getBaseUrl } from "../../../../Utils/Utils";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DateRangePicker } from "@mui/x-date-pickers-pro";
+import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import axios from "axios";
+import dayjs from "dayjs";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
-import { HomeMax } from "@mui/icons-material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
-import { DateRangePicker } from "@mui/x-date-pickers-pro";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
+import { getBaseUrl } from "../../../../Utils/Utils";
 
 export default function RoomDetails() {
   const { id } = useParams<{ id: string }>();
@@ -28,10 +29,35 @@ export default function RoomDetails() {
     _id: string;
     roomNumber: string;
     images: string[];
-    facilities: string[];
+    facilities: { name: string }[];
     discount: number;
-  }>({});
+    price: number;
+  }>({
+    _id: "",
+    roomNumber: "",
+    images: [],
+    facilities: [],
+    discount: 0,
+    price: 0,
+  });
+  const navigate = useNavigate();
   const { requestHeaders } = useAuth();
+  const [reservedDays, setReservedDays] = useState<number>(0);
+
+  // calculate the number of days between two dates on changing the datePicker
+  const handleDateRangeChange = (range: any) => {
+    if (range[0] && range[1]) {
+      const editedDate = {
+        start: dayjs(range[0]).format("YYYY-MM-DD"),
+        end: dayjs(range[1]).format("YYYY-MM-DD"),
+      };
+      const startDate = dayjs(editedDate.start);
+      console.log(startDate);
+      const endDate = dayjs(editedDate.end);
+      const days = endDate.diff(startDate, "day");
+      setReservedDays(days);
+    }
+  };
 
   const getRoomDetails = useCallback(
     async (roomId: string | undefined) => {
@@ -43,7 +69,6 @@ export default function RoomDetails() {
           }
         );
         setRoom(data.data.room);
-        console.log(data.data.room);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           toast.error(error.response.data.message || "fail adding");
@@ -67,10 +92,10 @@ export default function RoomDetails() {
         variant="h5"
         fontWeight="bold"
       >
-        {room?.roomNumber}
+        {room.roomNumber}
       </Typography>
       <Typography display="flex" justifyContent="center" color="#152C5B">
-        {room?._id}
+        {room._id}
       </Typography>
       <Stack
         flexDirection="row"
@@ -88,7 +113,7 @@ export default function RoomDetails() {
             Home
           </Link>
           <Link underline="hover" color="inherit">
-            {room?.roomNumber}
+            {room.roomNumber}
           </Link>
         </Breadcrumbs>
       </Stack>
@@ -99,8 +124,8 @@ export default function RoomDetails() {
         marginBottom="35px"
         spacing={2}
       >
-        {room?.images &&
-          room?.images.map((img, index) => (
+        {room.images &&
+          room.images.map((img, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <Box
                 component="img"
@@ -133,23 +158,24 @@ export default function RoomDetails() {
             marginTop={"30px"}
             flexWrap={"wrap"}
           >
-            {room?.facilities && room?.facilities.length > 0 ? (
-              room?.facilities.map((fac: { name: string }) => {
+            {room.facilities && room.facilities.length > 0 ? (
+              room.facilities.map((fac, index) => {
                 return (
                   <Box
                     display={"flex"}
                     alignItems={"center"}
                     justifyContent={"center"}
-                    bgcolor={"tomato"}
+                    bgcolor={"teal"}
                     flexWrap={"wrap"}
                     sx={{
                       margin: "3px 10px",
                       padding: "10px",
                       borderRadius: "20px",
                     }}
+                    key={index}
                   >
                     <HomeMax />
-                    <Typography marginLeft={1}> {fac?.name}</Typography>
+                    <Typography marginLeft={1}> {fac.name}</Typography>
                   </Box>
                 );
               })
@@ -179,7 +205,7 @@ export default function RoomDetails() {
             </Typography>
             <Box display={"flex"} justifyContent={"start"}>
               <Typography color={"teal"} fontSize={"2rem"} fontWeight={600}>
-                ${room?.price}
+                ${room.price}
               </Typography>
               <Typography
                 fontSize={"2rem"}
@@ -189,7 +215,7 @@ export default function RoomDetails() {
                 per Night
               </Typography>
             </Box>
-            <Box color={"tomato"}>Discount {room?.discount}% Off </Box>
+            <Box color={"tomato"}>Discount {room.discount} % Off </Box>
             <Box>
               <Stack
                 sx={{
@@ -239,19 +265,43 @@ export default function RoomDetails() {
                         },
                       }}
                       className="dateInput"
+                      onChange={handleDateRangeChange}
                     />
                   </DemoContainer>
                 </LocalizationProvider>
               </Stack>
             </Box>
-            <Typography>You will pay $480 USD per 2 Person</Typography>
+            <Typography>
+              You will pay
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "teal",
+                  margin: "0 5px",
+                }}
+              >
+                {reservedDays * room.price}
+              </span>
+              USD per{" "}
+              <span
+                style={{
+                  color: "teal",
+                  margin: "0 5px",
+                }}
+              >
+                2 Person
+              </span>
+            </Typography>
             <Button
               variant="contained"
               color="primary"
               sx={{
                 margin: "30px auto !important",
                 textAlign: "center",
+                filter: "drop-shadow(2px 2px 2px #466a63)",
+                padding: "15px 25px",
               }}
+              onClick={() => navigate("/payment")}
             >
               Continue Book
             </Button>
