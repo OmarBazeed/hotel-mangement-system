@@ -1,5 +1,5 @@
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography, useTheme } from "@mui/material";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,6 +18,8 @@ export default function Home() {
   const decraese = () => {
     personCount <= 1 ? 1 : setPersonCount((prev) => prev - 1);
   };
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   return (
     <>
       <Box
@@ -41,7 +43,7 @@ export default function Home() {
               <Typography
                 sx={{
                   fontWeight: "bold",
-                  color: "rgba(21, 44, 91, 1)",
+                  color: isDark ? "white" : "rgba(21, 44, 91, 1)",
                   fontSize: "2rem",
                 }}
               >
@@ -57,7 +59,7 @@ export default function Home() {
                 sx={{
                   fontWeight: "bold",
                   fontSize: "1.3rem",
-                  color: "rgba(21, 44, 91, 1)",
+                  color: isDark ? "white" : "rgba(21, 44, 91, 1)",
                 }}
               >
                 Start Booking
@@ -65,7 +67,7 @@ export default function Home() {
               <Typography
                 sx={{
                   marginBottom: "-15px !important",
-                  color: "rgba(21, 44, 91, 1)",
+                  color: isDark ? "white" : "rgba(21, 44, 91, 1)",
                 }}
               >
                 pick a date
@@ -128,7 +130,7 @@ export default function Home() {
               <Typography
                 sx={{
                   marginBottom: "-15px !important",
-                  color: "rgba(21, 44, 91, 1)",
+                  color: isDark ? "white" : "rgba(21, 44, 91, 1)",
                 }}
               >
                 Capacity
@@ -164,7 +166,6 @@ export default function Home() {
                     variant="contained"
                     color="error"
                     onClick={() => decraese()}
-                    disabled={personCount == 1}
                   >
                     -
                   </Button>

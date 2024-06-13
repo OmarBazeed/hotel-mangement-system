@@ -29,7 +29,7 @@ export default function Reviews() {
   const getReviews = React.useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `${getBaseUrl()}/api/v0/portal/room-reviews/6668acc5257b76c4added8cc`,
+        `${getBaseUrl()}/api/v0/portal/room-reviews/665bab05a17944edfd9f5d02`,
         {
           headers: requestHeaders,
         }

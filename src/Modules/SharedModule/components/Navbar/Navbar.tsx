@@ -1,3 +1,4 @@
+import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Avatar,
@@ -11,19 +12,18 @@ import {
   ListItemButton,
   ListItemText,
   Toolbar,
-  Tooltip,
   Typography,
   styled,
   useTheme,
 } from "@mui/material";
-import { useAuth } from "../../../../Context/AuthContext/AuthContext";
-import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MuiAppBar from "@mui/material/AppBar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
+import { Badge } from "@mui/material";
 
 export default function Navbar({
   setTheme,
@@ -31,9 +31,11 @@ export default function Navbar({
   open,
   window,
 }: AppBarProps) {
-  const { loginData, logOut } = useAuth();
+  const { loginData, logOut, favsNumber } = useAuth();
+  console.log(favsNumber);
   const navigate = useNavigate();
   const [profileMenu, setProfileMenu] = useState(false);
+
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
     if (value === "dark" || value === null) return true;
@@ -154,36 +156,37 @@ export default function Navbar({
   };
 
   const drawer = (
-    <Box sx={{ textAlign: "center" }}>
-      <Typography
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        my={2}
-        component="div"
-      >
-        <img width={"180px"} src={isDark ? logoDark : logoLight} alt="logo" />
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        MUI
       </Typography>
       <Divider />
       <List>
-        {loginData?.role !== "admin"
-          ? navItems.map((item, index) =>
-              item.component ? (
-                <ListItem key={index} disablePadding>
-                  {item.component}
-                </ListItem>
-              ) : (
-                <ListItem key={index} disablePadding>
-                  <ListItemButton
-                    sx={{ textAlign: "center" }}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <ListItemText primary={item.title} />
-                  </ListItemButton>
-                </ListItem>
-              )
-            )
-          : ""}
+        {navItems.map((item) => (
+          <ListItem key={item.title} disablePadding>
+            {item.title === "Favorites" || item.path === "/favorites" ? (
+              <ListItemButton
+                sx={{
+                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+                onClick={() => navigate(item.path)}
+              >
+                <Badge badgeContent={favsNumber} color="success">
+                  <ListItemText primary={item.title} />
+                </Badge>
+              </ListItemButton>
+            ) : (
+              <ListItemButton
+                sx={{ textAlign: "center" }}
+                onClick={() => navigate(item.path)}
+              >
+                <ListItemText primary={item.title} />
+              </ListItemButton>
+            )}
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
@@ -338,8 +341,24 @@ export default function Navbar({
                     <Box key={index} display={"flex"}>
                       {item.component}
                     </Box>
+                  ) : item.title === "Favorites" ? (
+                    <Button
+                      sx={{ textAlign: "center" }}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <Badge
+                        badgeContent={favsNumber}
+                        color="success"
+                        sx={{ "& span": { top: "1px", right: "-7px" } }}
+                      >
+                        {item.title}
+                      </Badge>
+                    </Button>
                   ) : (
-                    <Button key={index} onClick={() => navigate(item.path)}>
+                    <Button
+                      sx={{ textAlign: "center" }}
+                      onClick={() => navigate(item.path)}
+                    >
                       {item.title}
                     </Button>
                   )

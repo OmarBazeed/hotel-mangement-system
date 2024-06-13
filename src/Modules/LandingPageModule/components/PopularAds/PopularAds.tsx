@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 export default function PopularAds() {
   const [Z5Ads, setZ5Ads] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  const { requestHeaders } = useAuth();
+  const { requestHeaders, setFavsNumber } = useAuth();
   const [clickedAdd, setClickedAdd] = useState<boolean>(false);
   const [clickedRemove, setClickedRemove] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -70,6 +70,7 @@ export default function PopularAds() {
       );
       toast.success(res?.data.message || "added to favs", FavsWaitToast);
       fetchFavoritedRooms();
+      setFavsNumber((prev) => prev + 1);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(
@@ -93,6 +94,7 @@ export default function PopularAds() {
       );
       toast.warning(res?.data.message || "Removed From favs", FavsWaitToast);
       fetchFavoritedRooms();
+      setFavsNumber((prev) => prev - 1);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(
