@@ -1,4 +1,4 @@
-import { HomeMax } from "@mui/icons-material";
+import { Comment, HomeMax } from "@mui/icons-material";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import {
   Box,
@@ -6,10 +6,18 @@ import {
   Button,
   Container,
   Grid,
+  Input,
   Link,
   Stack,
   Typography,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Rating, { IconContainerProps } from "@mui/material/Rating";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DateRangePicker } from "@mui/x-date-pickers-pro";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
@@ -40,10 +48,50 @@ export default function RoomDetails() {
     discount: 0,
     price: 0,
   });
+  const [allComments, setAllComments] = useState<string[]>([]);
   const navigate = useNavigate();
-  const { requestHeaders } = useAuth();
+  const { requestHeaders, loginData } = useAuth();
   const [reservedDays, setReservedDays] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
 
+  const StyledRating = styled(Rating)(({ theme }) => ({
+    "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
+      color: theme.palette.action.disabled,
+    },
+  }));
+
+  const customIcons: {
+    [index: string]: {
+      icon: React.ReactElement;
+      label: string;
+    };
+  } = {
+    1: {
+      icon: <SentimentVeryDissatisfiedIcon color="error" />,
+      label: "Very Dissatisfied",
+    },
+    2: {
+      icon: <SentimentDissatisfiedIcon color="error" />,
+      label: "Dissatisfied",
+    },
+    3: {
+      icon: <SentimentSatisfiedIcon color="warning" />,
+      label: "Neutral",
+    },
+    4: {
+      icon: <SentimentSatisfiedAltIcon color="success" />,
+      label: "Satisfied",
+    },
+    5: {
+      icon: <SentimentVerySatisfiedIcon color="success" />,
+      label: "Very Satisfied",
+    },
+  };
+
+  function IconContainer(props: IconContainerProps) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
   // calculate the number of days between two dates on changing the datePicker
   const handleDateRangeChange = (range: any) => {
     if (range[0] && range[1]) {
@@ -56,6 +104,49 @@ export default function RoomDetails() {
       const endDate = dayjs(editedDate.end);
       const days = endDate.diff(startDate, "day");
       setReservedDays(days);
+    }
+  };
+
+  const getAllRoomComments = useCallback(
+    async (roomId: string | undefined) => {
+      try {
+        const { data } = await axios.get(
+          `${getBaseUrl()}/api/v0/portal/room-comments/${roomId}`,
+          {
+            headers: requestHeaders,
+          }
+        );
+        setAllComments(data.data.roomComments);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "fail adding");
+        }
+      }
+    },
+    [requestHeaders]
+  );
+
+  const handleSendComment = async (
+    RoomID: string | undefined,
+    comment: string
+  ) => {
+    try {
+      const res = await axios.post(
+        `${getBaseUrl()}/api/v0/portal/room-comments`,
+        {
+          roomId: RoomID,
+          comment: comment,
+        },
+        {
+          headers: requestHeaders,
+        }
+      );
+      toast.success(res.data.message || "comment added successfully");
+      setComment("");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "fail adding");
+      }
     }
   };
 
@@ -80,7 +171,8 @@ export default function RoomDetails() {
 
   useEffect(() => {
     getRoomDetails(id);
-  }, [getRoomDetails, id]);
+    getAllRoomComments(id);
+  }, [getAllRoomComments, getRoomDetails, id]);
 
   return (
     <Container maxWidth="xl">
@@ -141,7 +233,13 @@ export default function RoomDetails() {
             </Grid>
           ))}
       </Grid>
-      <Grid container columns={12} spacing={4} justifyContent={"space-between"}>
+      <Grid
+        container
+        columns={12}
+        spacing={4}
+        justifyContent={"space-between"}
+        sx={{ marginTop: "30px" }}
+      >
         <Grid item xs={12} lg={5}>
           <Typography>
             Design is a plan or specification for the construction of an object
@@ -280,9 +378,9 @@ export default function RoomDetails() {
                   margin: "0 5px",
                 }}
               >
-                {reservedDays * room.price}
+                {reservedDays > 0 ? reservedDays * room.price : room.price}
               </span>
-              USD per{" "}
+              USD per
               <span
                 style={{
                   color: "teal",
@@ -308,6 +406,144 @@ export default function RoomDetails() {
           </Stack>
         </Grid>
       </Grid>
+      {loginData ? (
+        <Grid
+          container
+          columns={12}
+          spacing={4}
+          justifyContent={"space-around"}
+          sx={{ marginTop: "40px", paddingLeft: "20px" }}
+        >
+          <Grid xs={12} lg={5}>
+            <Stack
+              component={"section"}
+              display={"flex"}
+              direction={"column"}
+              gap={3}
+              height={"100%"}
+            >
+              <Typography component={"h1"} sx={{ fontWeight: "bold" }}>
+                Rate
+              </Typography>
+              <Box>
+                <StyledRating
+                  name="highlight-selected-only"
+                  defaultValue={3}
+                  IconContainerComponent={IconContainer}
+                  getLabelText={(value: number) => customIcons[value].label}
+                  highlightSelectedOnly
+                  onChange={(e) => console.log(e.target.value)}
+                  sx={{ "& label": { margin: "0 7px" } }}
+                />
+              </Box>
+              <Typography component={"h4"} sx={{ fontWeight: "bold" }}>
+                Message
+              </Typography>
+              <Input
+                aria-label="Demo input"
+                multiline
+                placeholder="Enter Your Message..."
+                sx={{
+                  height: "150px",
+                  background: "rgb(0 0 0 / 8%)",
+                  padding: "10px",
+                  borderRadius: "20px 20px 20px 0",
+                }}
+              />
+              <Button
+                variant="contained"
+                sx={{ width: "25%", marginRight: "auto" }}
+              >
+                Rate
+              </Button>
+            </Stack>
+          </Grid>
+          <Grid xs={12} lg={5}>
+            <Stack
+              component={"section"}
+              display={"flex"}
+              direction={"column"}
+              justifyContent={"space-between"}
+              gap={3}
+              height={"100%"}
+            >
+              <Typography component={"h4"} sx={{ fontWeight: "bold" }}>
+                Add Your Comment
+              </Typography>
+              <Input
+                aria-label="Demo input"
+                multiline
+                placeholder="Enter Your Message..."
+                sx={{
+                  height: "150px",
+                  background: "rgb(0 0 0 / 8%)",
+                  padding: "10px",
+                  borderRadius: "20px 20px 20px 0",
+                }}
+                onChange={(e) => setComment(e.target.value)}
+                defaultValue={comment}
+              />
+              <Button
+                variant="contained"
+                sx={{ width: "25%", marginRight: "auto" }}
+                onClick={() => handleSendComment(id, comment)}
+              >
+                Comment
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
+      ) : (
+        ""
+      )}
+      {allComments.length > 0 &&
+        allComments.map(
+          (
+            com: { comment: string; user: { profileImage: string } },
+            index: number
+          ) => {
+            console.log(com);
+            return (
+              <Stack key={index}>
+                <Stack
+                  display={"flex"}
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  bgcolor={"rgb(0 0 0 / 8%)"}
+                  margin={"10px 0"}
+                  padding={"7px"}
+                >
+                  <Box
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"space-around"}
+                    gap={5}
+                  >
+                    <Box
+                      display={"flex"}
+                      alignItems={"center"}
+                      flexDirection={"column"}
+                    >
+                      <img
+                        src={com?.user?.profileImage}
+                        style={{
+                          height: "50px",
+                          width: "50px",
+                          borderRadius: "25px",
+                          margin: "auto",
+                        }}
+                        alt="..."
+                      />
+                      <Typography>{com.user.userName}</Typography>
+                    </Box>
+                    <Typography>{com.comment}</Typography>
+                  </Box>
+                </Stack>
+              </Stack>
+            );
+          }
+        )}
     </Container>
   );
 }
