@@ -1,5 +1,15 @@
-import { Comment, HomeMax } from "@mui/icons-material";
+import {
+  DeleteOutlineOutlined,
+  HomeMax,
+  ModeEditOutlineOutlined,
+  MoreHorizOutlined,
+} from "@mui/icons-material";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 import {
   Box,
   Breadcrumbs,
@@ -9,15 +19,13 @@ import {
   Input,
   Link,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import Rating, { IconContainerProps } from "@mui/material/Rating";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
-import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
-import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import { styled } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DateRangePicker } from "@mui/x-date-pickers-pro";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
@@ -25,13 +33,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { getBaseUrl } from "../../../../Utils/Utils";
 
 export default function RoomDetails() {
+  // getting RoomId
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<{
     _id: string;
@@ -48,18 +57,52 @@ export default function RoomDetails() {
     discount: 0,
     price: 0,
   });
-  const [allComments, setAllComments] = useState<string[]>([]);
+  const [allComments, setAllComments] = useState<
+    {
+      _id: string;
+      comment: string;
+      user: { profileImage: string; userName: string; _id: string };
+    }[]
+  >([]);
+  const [roomReviews, setRoomReviews] = useState<
+    {
+      _id: string;
+      review: string;
+      rating: number;
+      user: { profileImage: string; userName: string; _id: string };
+    }[]
+  >([]);
   const navigate = useNavigate();
   const { requestHeaders, loginData } = useAuth();
   const [reservedDays, setReservedDays] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
+  const [review, setReview] = useState<string>("");
+  const [rate, setRate] = useState<number>(0);
+  const [showComments, setShowComments] = useState<boolean>(false);
+  const [showReviews, setShowReviews] = useState<boolean>(false);
+  const commentInputRef = useRef<HTMLInputElement>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editingReview, setEditingReview] = useState<string>("");
 
+  const actions = [
+    {
+      icon: <ModeEditOutlineOutlined />,
+      name: "Edit",
+    },
+    {
+      icon: <DeleteOutlineOutlined />,
+      name: "Delete",
+    },
+  ];
+
+  // styling rate
   const StyledRating = styled(Rating)(({ theme }) => ({
     "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
       color: theme.palette.action.disabled,
     },
   }));
-
+  // rate limits
   const customIcons: {
     [index: string]: {
       icon: React.ReactElement;
@@ -92,8 +135,9 @@ export default function RoomDetails() {
     const { value, ...other } = props;
     return <span {...other}>{customIcons[value].icon}</span>;
   }
+
   // calculate the number of days between two dates on changing the datePicker
-  const handleDateRangeChange = (range: any) => {
+  const handleDateRangeChange = (range) => {
     if (range[0] && range[1]) {
       const editedDate = {
         start: dayjs(range[0]).format("YYYY-MM-DD"),
@@ -104,6 +148,81 @@ export default function RoomDetails() {
       const endDate = dayjs(editedDate.end);
       const days = endDate.diff(startDate, "day");
       setReservedDays(days);
+    }
+  };
+
+  const handleActionOnComment = async (
+    action: string,
+    commentId: string,
+    com: { comment: string }
+  ) => {
+    if (action === "Edit") {
+      setEditingCommentId(commentId);
+      setComment(com.comment);
+      if (commentInputRef.current) {
+        commentInputRef.current.focus();
+      }
+    } else if (action === "Delete") {
+      try {
+        const res = await axios.delete(
+          `${getBaseUrl()}/api/v0/portal/room-comments/${commentId}`,
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Comment deleted successfully");
+        getAllRoomComments(id);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(
+            error.response.data.message || "Failed to delete comment"
+          );
+        }
+      }
+    }
+  };
+
+  // sending comment carries two cases one for creation and another for editing
+  const handleSendComment = async () => {
+    try {
+      if (editingCommentId) {
+        // Editing existing comment
+        const res = await axios.patch(
+          `${getBaseUrl()}/api/v0/portal/room-comments/${editingCommentId}`,
+          {
+            comment: comment,
+          },
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Comment edited successfully");
+      } else {
+        // Creating new comment
+        const res = await axios.post(
+          `${getBaseUrl()}/api/v0/portal/room-comments`,
+          {
+            roomId: id,
+            comment: comment,
+          },
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Comment added successfully");
+        setShowComments(!showComments);
+      }
+      setEditingCommentId(null);
+      setComment("");
+      getAllRoomComments(id);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        if (editingCommentId) {
+          toast.error(error.response.data.message || "Failed to edit comment");
+        } else {
+          toast.error(error.response.data.message || "Failed to add comment");
+        }
+      }
     }
   };
 
@@ -125,29 +244,69 @@ export default function RoomDetails() {
     },
     [requestHeaders]
   );
-
-  const handleSendComment = async (
-    RoomID: string | undefined,
-    comment: string
-  ) => {
+  const handleSendRate = async () => {
     try {
-      const res = await axios.post(
-        `${getBaseUrl()}/api/v0/portal/room-comments`,
-        {
-          roomId: RoomID,
-          comment: comment,
-        },
-        {
-          headers: requestHeaders,
-        }
-      );
-      toast.success(res.data.message || "comment added successfully");
-      setComment("");
+      if (editingReviewId) {
+        // Editing existing review
+        const res = await axios.patch(
+          `${getBaseUrl()}/api/v0/portal/room-reviews/${editingReviewId}`,
+          {
+            review: editingReview,
+          },
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Review edited successfully");
+      } else {
+        // Adding new review
+        const res = await axios.post(
+          `${getBaseUrl()}/api/v0/portal/room-reviews`,
+          {
+            roomId: id,
+            rating: rate,
+            review: review,
+          },
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Review added successfully");
+        setRate(3);
+        setReview("");
+        getAllRoomReviews(id);
+      }
+      setEditingReviewId(null);
+      setEditingReview("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "fail adding");
       }
     }
+  };
+
+  const getAllRoomReviews = useCallback(
+    async (roomId: string | undefined) => {
+      try {
+        const { data } = await axios.get(
+          `${getBaseUrl()}/api/v0/portal/room-reviews/${roomId}`,
+          {
+            headers: requestHeaders,
+          }
+        );
+        setRoomReviews(data.data.roomReviews);
+        console.log(data.data.roomReviews);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "fail adding");
+        }
+      }
+    },
+    [requestHeaders]
+  );
+  const handleUpdateReview = (review: { _id: string; review: string }) => {
+    setEditingReviewId(review._id);
+    setEditingReview(review.review);
   };
 
   const getRoomDetails = useCallback(
@@ -172,7 +331,8 @@ export default function RoomDetails() {
   useEffect(() => {
     getRoomDetails(id);
     getAllRoomComments(id);
-  }, [getAllRoomComments, getRoomDetails, id]);
+    getAllRoomReviews(id);
+  }, [getAllRoomComments, getRoomDetails, getAllRoomReviews, id]);
 
   return (
     <Container maxWidth="xl">
@@ -406,6 +566,7 @@ export default function RoomDetails() {
           </Stack>
         </Grid>
       </Grid>
+      {/*Start Review , Comment */}
       {loginData ? (
         <Grid
           container
@@ -428,11 +589,11 @@ export default function RoomDetails() {
               <Box>
                 <StyledRating
                   name="highlight-selected-only"
-                  defaultValue={3}
+                  value={rate}
                   IconContainerComponent={IconContainer}
                   getLabelText={(value: number) => customIcons[value].label}
                   highlightSelectedOnly
-                  onChange={(e) => console.log(e.target.value)}
+                  onChange={(e) => setRate(e.target?.value)}
                   sx={{ "& label": { margin: "0 7px" } }}
                 />
               </Box>
@@ -442,23 +603,27 @@ export default function RoomDetails() {
               <Input
                 aria-label="Demo input"
                 multiline
-                placeholder="Enter Your Message..."
+                placeholder="Enter Your Review..."
                 sx={{
                   height: "150px",
                   background: "rgb(0 0 0 / 8%)",
                   padding: "10px",
-                  borderRadius: "20px 20px 20px 0",
+                  borderRadius: "30px 30px 0 0",
                 }}
+                onChange={(e) => setEditingReview(e.target.value)}
+                value={editingReviewId ? editingReview : review}
               />
+
               <Button
                 variant="contained"
                 sx={{ width: "25%", marginRight: "auto" }}
+                onClick={() => handleSendRate()}
               >
                 Rate
               </Button>
             </Stack>
           </Grid>
-          <Grid xs={12} lg={5}>
+          <Grid xs={12} lg={5} sx={{ marginTop: { xs: "30px", lg: "0" } }}>
             <Stack
               component={"section"}
               display={"flex"}
@@ -473,20 +638,21 @@ export default function RoomDetails() {
               <Input
                 aria-label="Demo input"
                 multiline
-                placeholder="Enter Your Message..."
+                placeholder="Enter Your Comment..."
                 sx={{
                   height: "150px",
                   background: "rgb(0 0 0 / 8%)",
                   padding: "10px",
-                  borderRadius: "20px 20px 20px 0",
+                  borderRadius: "30px 30px 0 0",
                 }}
                 onChange={(e) => setComment(e.target.value)}
-                defaultValue={comment}
+                value={comment}
+                ref={commentInputRef}
               />
               <Button
                 variant="contained"
                 sx={{ width: "25%", marginRight: "auto" }}
-                onClick={() => handleSendComment(id, comment)}
+                onClick={() => handleSendComment()}
               >
                 Comment
               </Button>
@@ -496,54 +662,225 @@ export default function RoomDetails() {
       ) : (
         ""
       )}
-      {allComments.length > 0 &&
-        allComments.map(
-          (
-            com: { comment: string; user: { profileImage: string } },
-            index: number
-          ) => {
-            console.log(com);
-            return (
-              <Stack key={index}>
-                <Stack
-                  display={"flex"}
-                  direction={"row"}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                  bgcolor={"rgb(0 0 0 / 8%)"}
-                  margin={"10px 0"}
-                  padding={"7px"}
-                >
-                  <Box
+      {/*Showing Comments*/}
+      <Grid sx={{ marginTop: "50px" }}>
+        <Button
+          sx={{ width: "100%", fontWeight: "bold", margin: "auto" }}
+          onClick={() => setShowComments(!showComments)}
+        >
+          Room Comments
+        </Button>
+        {allComments.length > 0 ? (
+          allComments.map(
+            (
+              com: {
+                _id: string;
+                comment: string;
+                user: { profileImage: string; userName: string; _id: string };
+              },
+              index: number
+            ) => {
+              return (
+                <Stack key={index} display={showComments ? "block" : "none"}>
+                  <Stack
                     display={"flex"}
+                    direction={"row"}
+                    flexWrap={"wrap"}
+                    justifyContent={"space-between"}
                     alignItems={"center"}
-                    justifyContent={"space-around"}
-                    gap={5}
+                    boxShadow={"2px 2px 2px #466a63"}
+                    margin={"10px 0"}
+                    padding={"7px"}
                   >
                     <Box
                       display={"flex"}
                       alignItems={"center"}
-                      flexDirection={"column"}
+                      justifyContent={"space-around"}
+                      gap={3}
                     >
-                      <img
-                        src={com?.user?.profileImage}
-                        style={{
-                          height: "50px",
-                          width: "50px",
-                          borderRadius: "25px",
-                          margin: "auto",
-                        }}
-                        alt="..."
-                      />
-                      <Typography>{com.user.userName}</Typography>
+                      <Tooltip title={com?.user?.userName} placement="top">
+                        <img
+                          src={com?.user?.profileImage}
+                          style={{
+                            height: "50px",
+                            width: "50px",
+                            borderRadius: "25px",
+                            margin: "auto",
+                          }}
+                          alt="..."
+                        />
+                      </Tooltip>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontFamily: "sans-serif",
+                            fontWeight: "bold",
+                            color: "teal",
+                          }}
+                        >
+                          {com?.user?.userName}
+                        </Typography>
+                        <Typography>{com.comment}</Typography>
+                      </Box>
                     </Box>
-                    <Typography>{com.comment}</Typography>
-                  </Box>
+                    {loginData?._id == com.user._id ? (
+                      <Box
+                        sx={{
+                          transform: "translateZ(0px)",
+                        }}
+                      >
+                        <SpeedDial
+                          ariaLabel="SpeedDial basic example"
+                          sx={{
+                            position: "absolute",
+                            bottom: -27,
+                            right: 0,
+                            "& button": { width: "40px", height: "40px" },
+                          }}
+                          icon={<MoreHorizOutlined />}
+                          direction="left"
+                        >
+                          {actions.map((action) => (
+                            <SpeedDialAction
+                              key={action.name}
+                              icon={action.icon}
+                              tooltipTitle={action.name}
+                              onClick={() =>
+                                handleActionOnComment(action.name, com._id, com)
+                              }
+                            />
+                          ))}
+                        </SpeedDial>
+                      </Box>
+                    ) : (
+                      ""
+                    )}
+                  </Stack>
                 </Stack>
-              </Stack>
-            );
-          }
+              );
+            }
+          )
+        ) : (
+          <Typography
+            component={"h1"}
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              textTransform: "capitalize",
+            }}
+          >
+            no comments yet 😠
+          </Typography>
         )}
+      </Grid>
+      {/*Showing Reviews */}
+      <Grid sx={{ marginTop: "50px" }}>
+        <Button
+          sx={{ width: "100%", fontWeight: "bold", margin: "auto" }}
+          onClick={() => setShowReviews(!showReviews)}
+        >
+          Room Reviews
+        </Button>
+        {roomReviews.length > 0 ? (
+          roomReviews.map(
+            (
+              rev: {
+                _id: string;
+                review: string;
+                rating: number;
+                user: { profileImage: string; userName: string; _id: string };
+              },
+              index: number
+            ) => {
+              return (
+                <Stack key={index} display={showReviews ? "block" : "none"}>
+                  <Stack
+                    display={"flex"}
+                    direction={"row"}
+                    flexWrap={"wrap"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    boxShadow={"2px 2px 2px #466a63"}
+                    margin={"10px 0"}
+                    padding={"7px"}
+                  >
+                    <Box
+                      display={"flex"}
+                      alignItems={"center"}
+                      justifyContent={"space-around"}
+                      gap={3}
+                    >
+                      <Tooltip title={rev?.user?.userName} placement="top">
+                        <img
+                          src={rev?.user?.profileImage}
+                          style={{
+                            height: "50px",
+                            width: "50px",
+                            borderRadius: "25px",
+                            margin: "auto",
+                          }}
+                          alt="..."
+                        />
+                      </Tooltip>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontFamily: "sans-serif",
+                            fontWeight: "bold",
+                            color: "teal",
+                          }}
+                        >
+                          {rev?.user?.userName}
+                        </Typography>
+                        <Rating value={rev?.rating} readOnly />
+                      </Box>
+                    </Box>
+                    {loginData?._id == rev.user._id ? (
+                      <Box
+                        sx={{
+                          transform: "translateZ(0px)",
+                        }}
+                      >
+                        <SpeedDial
+                          ariaLabel="SpeedDial basic example"
+                          sx={{
+                            position: "absolute",
+                            bottom: -27,
+                            right: 0,
+                            "& button": { width: "40px", height: "40px" },
+                          }}
+                          icon={<MoreHorizOutlined />}
+                          direction="left"
+                        >
+                          <SpeedDialAction
+                            key={actions[0].name}
+                            icon={actions[0].icon}
+                            tooltipTitle={actions[0].name}
+                            onClick={() => handleUpdateReview(rev)}
+                          />
+                        </SpeedDial>
+                      </Box>
+                    ) : (
+                      ""
+                    )}
+                  </Stack>
+                </Stack>
+              );
+            }
+          )
+        ) : (
+          <Typography
+            component={"h1"}
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              textTransform: "capitalize",
+            }}
+          >
+            no comments yet 😠
+          </Typography>
+        )}
+      </Grid>
     </Container>
   );
 }

@@ -11,7 +11,7 @@ import {
 } from "react";
 
 export interface IAuth {
-  loginData: { role: string } | null;
+  loginData: { role: string; _id: string } | null;
   savLoginData: () => void;
   logOut: () => void;
   requestHeaders: { Authorization: string };
