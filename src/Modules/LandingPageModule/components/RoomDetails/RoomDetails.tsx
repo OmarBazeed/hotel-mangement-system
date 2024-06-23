@@ -877,7 +877,7 @@ export default function RoomDetails() {
               textTransform: "capitalize",
             }}
           >
-            no comments yet 😠
+            no reviews yet 😠
           </Typography>
         )}
       </Grid>
