@@ -140,3 +140,13 @@ input:checked + .slider:before {
 #toggle:checked + svg #stars {
   opacity: 1;
 }
+
+.swiper {
+  width: 500px;
+}
+
+@media (max-width: 610px) {
+  .swiper {
+    width: 380px;
+  }
+}

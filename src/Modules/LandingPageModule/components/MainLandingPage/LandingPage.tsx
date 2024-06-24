@@ -7,11 +7,13 @@ import Reviews from "../Reviews/Reviews";
 export default function LandingPage() {
   return (
     <Box
+      mt={{ xs: "50px", lg: "0" }}
+      width={"90%"}
+      mx={"auto"}
+      rowGap={4}
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 4,
-        padding: { xs: 2, md: 4 },
       }}
     >
       <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>
@@ -20,7 +22,11 @@ export default function LandingPage() {
       <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>
         <PopularAds />
       </Box>
-      <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>
+      <Box
+        mt={{ lg: 0, md: 20, sm: 70, xs: 70 }}
+        component="section"
+        sx={{ marginBottom: { xs: 2, md: 4 } }}
+      >
         <HousesAndHotels />
       </Box>
       <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>

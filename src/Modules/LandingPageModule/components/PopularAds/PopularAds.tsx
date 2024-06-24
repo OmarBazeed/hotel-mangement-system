@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 export default function PopularAds() {
   const [Z5Ads, setZ5Ads] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  const { requestHeaders, setFavsNumber } = useAuth();
+  const { requestHeaders, setFavsNumber, loginData } = useAuth();
   const [clickedAdd, setClickedAdd] = useState<boolean>(false);
   const [clickedRemove, setClickedRemove] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -44,10 +44,13 @@ export default function PopularAds() {
 
   const FetchAds = useCallback(async () => {
     try {
-      const res = await axios.get(`${getBaseUrl()}/api/v0/admin/ads`, {
-        headers: requestHeaders,
-      });
-      const SplicedArray = res.data.data.ads.splice(0, 5);
+      const res = await axios.get(
+        `${getBaseUrl()}/api/v0/portal/ads?page=1&size=10000`,
+        {
+          headers: requestHeaders,
+        }
+      );
+      const SplicedArray = res.data.data.ads.slice(0, 5);
       setZ5Ads(SplicedArray);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -108,89 +111,80 @@ export default function PopularAds() {
 
   useEffect(() => {
     FetchAds();
-    fetchFavoritedRooms();
+    loginData ? fetchFavoritedRooms() : "";
   }, [FetchAds, fetchFavoritedRooms]);
+  
   return (
     <Box>
       <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
         Most Popular Ads
       </Typography>
-      <Box
-        component="div"
-        sx={{
-          p: 2,
-        }}
-      >
-        <Grid height="80vh" container columns={12} spacing={5}>
-          <Grid item xs={12} md={6}>
-            {CardComponent(
-              Z5Ads[0],
-              "100%",
-              AddToFavs,
-              RemoveFromFavs,
-              favorites,
-              clickedAdd,
-              clickedRemove,
-              navigate
-            )}
+      <Box component="div" mt={2} minHeight={"100vh"}>
+        <Grid minHeight={"80vh"} container>
+          <Grid item xs={12} lg={4}>
+            <Box width={"100%"} height={"100%"}>
+              {CardComponent(
+                Z5Ads[0],
+                AddToFavs,
+                RemoveFromFavs,
+                favorites,
+                clickedAdd,
+                clickedRemove,
+                navigate
+              )}
+            </Box>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={3}
-            display="flex"
-            flexDirection="column"
-            gap={2}
-          >
-            {CardComponent(
-              Z5Ads[1],
-              "50%",
-              AddToFavs,
-              RemoveFromFavs,
-              favorites,
-              clickedAdd,
-              clickedRemove,
-              navigate
-            )}
-            {CardComponent(
-              Z5Ads[2],
-              "50%",
-              AddToFavs,
-              RemoveFromFavs,
-              favorites,
-              clickedAdd,
-              clickedRemove,
-              navigate
-            )}
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={3}
-            display="flex"
-            flexDirection="column"
-            gap={2}
-          >
-            {CardComponent(
-              Z5Ads[3],
-              "50%",
-              AddToFavs,
-              RemoveFromFavs,
-              favorites,
-              clickedAdd,
-              clickedRemove,
-              navigate
-            )}
-            {CardComponent(
-              Z5Ads[4],
-              "50%",
-              AddToFavs,
-              RemoveFromFavs,
-              favorites,
-              clickedAdd,
-              clickedRemove,
-              navigate
-            )}
+          <Grid item xs={12} lg={8}>
+            <Box width={"100%"} height={"100%"}>
+              <Grid height={{ xs: "100%", lg: "50%" }} container>
+                <Grid height={"100%"} item xs={12} md={6}>
+                  {CardComponent(
+                    Z5Ads[1],
+                    AddToFavs,
+                    RemoveFromFavs,
+                    favorites,
+                    clickedAdd,
+                    clickedRemove,
+                    navigate
+                  )}
+                </Grid>
+                <Grid height={"100%"} item xs={12} md={6}>
+                  {CardComponent(
+                    Z5Ads[2],
+                    AddToFavs,
+                    RemoveFromFavs,
+                    favorites,
+                    clickedAdd,
+                    clickedRemove,
+                    navigate
+                  )}
+                </Grid>
+              </Grid>
+              <Grid height={{ xs: "100%", lg: "50%" }} container>
+                <Grid height={"100%"} item xs={12} md={6}>
+                  {CardComponent(
+                    Z5Ads[3],
+                    AddToFavs,
+                    RemoveFromFavs,
+                    favorites,
+                    clickedAdd,
+                    clickedRemove,
+                    navigate
+                  )}
+                </Grid>
+                <Grid height={"100%"} item xs={12} md={6}>
+                  {CardComponent(
+                    Z5Ads[4],
+                    AddToFavs,
+                    RemoveFromFavs,
+                    favorites,
+                    clickedAdd,
+                    clickedRemove,
+                    navigate
+                  )}
+                </Grid>
+              </Grid>
+            </Box>
           </Grid>
         </Grid>
       </Box>
@@ -207,7 +201,6 @@ const CardComponent = (
       _id: string;
     };
   },
-  height: string,
   AddToFavs: (roomid: string) => void,
   RemoveFromFavs: (id: string) => void,
   favorites: string[],
@@ -221,44 +214,60 @@ const CardComponent = (
   );
 
   return (
-    <Card
+    <Box
       sx={{
         position: "relative",
-        height: { height },
-        background: `url(${AD?.room.images[0]})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
+        height: "100%",
+        width: "100%",
         "&:hover .overlay": {
           opacity: 1,
         },
       }}
     >
-      <Typography
-        sx={{
-          textAlign: "right",
-          backgroundColor: "tomato",
-          padding: "5px 7px",
-          width: "fit-content",
-          marginLeft: "auto",
-          borderRadius: "0px 10px 0 10px",
-          fontSize: {
-            sx: ".5rem !important",
-            md: "1.1rem !important",
-          },
-          fontFamily: "emoji",
-          fontWeight: "bold",
-        }}
-      >
-        ${AD?.room.discount} discount per night
-      </Typography>
+      <Box position={"absolute"} top={0} left={0} right={0} bottom={0}>
+        <Box
+          height={"100%"}
+          position={"relative"}
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+        >
+          <img width={"99%"} height={"99%"} src={AD?.room.images[0]} alt="" />
+          <Typography
+            position={"absolute"}
+            top={10}
+            right={10}
+            sx={{
+              textAlign: "right",
+              backgroundColor: "tomato",
+              padding: "5px 7px",
+              width: "fit-content",
+              marginLeft: "auto",
+              borderRadius: "0px 10px 0 10px",
+              fontSize: {
+                sx: ".5rem !important",
+                md: "1.1rem !important",
+              },
+              fontFamily: "emoji",
+              fontWeight: "bold",
+            }}
+          >
+            ${AD?.room.discount} discount per night
+          </Typography>
+        </Box>
+      </Box>
+
       <Box
         className="overlay"
         sx={{
           position: "absolute",
           top: 0,
           left: 0,
-          height: "100%",
-          width: "100%",
+          bottom: 0,
+          right: 0,
+          height: "99%",
+          width: "99%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -304,6 +313,6 @@ const CardComponent = (
         </Typography>
         <Typography>{AD?.room.roomNumber}</Typography>
       </Box>
-    </Card>
+    </Box>
   );
 };

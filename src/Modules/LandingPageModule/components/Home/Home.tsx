@@ -1,15 +1,17 @@
+import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import { Box, Button, Grid, Stack, Typography, useTheme } from "@mui/material";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
-import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
-import Zimage from "../../../../assets/images/hero.png";
-
+import "swiper/css";
+import "swiper/css/effect-cards";
+import { EffectCards, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 export default function Home() {
   const [personCount, setPersonCount] = useState<number>(0);
   const [selectedDateRange, setSelectedDateRange] = useState<{
@@ -54,8 +56,7 @@ export default function Home() {
     <Box
       component="div"
       sx={{
-        p: 2,
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -63,11 +64,11 @@ export default function Home() {
     >
       <Grid
         container
+        flexDirection={{ xs: "column-reverse", lg: "row" }}
         alignItems="center"
         justifyContent="space-around"
-        height="90vh"
       >
-        <Grid xs={10} lg={4}>
+        <Grid item xs={12} md={6}>
           <Stack spacing={3}>
             <Typography
               sx={{
@@ -177,6 +178,7 @@ export default function Home() {
               }}
             >
               <Grid
+                item
                 xs={2}
                 sx={{
                   textAlign: "center",
@@ -200,12 +202,13 @@ export default function Home() {
                   -
                 </Button>
               </Grid>
-              <Grid xs={8} sx={{ textAlign: "center", margin: "auto" }}>
+              <Grid item xs={8} sx={{ textAlign: "center", margin: "auto" }}>
                 <Typography sx={{ fontSize: "1.5rem", color: "#152C5B" }}>
                   {personCount} person
                 </Typography>
               </Grid>
               <Grid
+                item
                 xs={2}
                 sx={{
                   textAlign: "center",
@@ -246,25 +249,52 @@ export default function Home() {
           </Stack>
         </Grid>
 
-        <Grid xs={10} lg={6} sx={{ display: { xs: "none", lg: "block" } }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+        <Grid item xs={12} lg={6}>
+          <Swiper
+            effect={"cards"}
+            grabCursor={true}
+            modules={[EffectCards, Autoplay]}
+            className="mySwiper"
+            autoplay={{
+              delay: 2500,
             }}
           >
-            <img
-              src={Zimage}
-              alt="hero"
-              style={{
-                borderRadius: "20% 5% 5% 0",
-                boxShadow: "2px 2px 2px gray, 4px 4px 4px gray",
-              }}
-            />
-          </Box>
+            {imageList.map((item) => (
+              <SwiperSlide
+                key={item.alt}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+
+                  fontSize: "22px",
+                  fontWeight: "bold",
+                  color: " #fff",
+                  borderRadius: "20% 5% 5% 0",
+                }}
+              >
+                <img
+                  width={"100%"}
+                  height={"500px"}
+                  src={item.src}
+                  alt={item.alt}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </Grid>
       </Grid>
     </Box>
   );
 }
+
+const imageList = [
+  { src: "../../../../src/assets/images/hero.png", alt: "hotel(0)" },
+  { src: "../../../../src/assets/images/hotel(1).jpg", alt: "hotel(1)" },
+  { src: "../../../../src/assets/images/hotel(2).jpg", alt: "hotel(2)" },
+  { src: "../../../../src/assets/images/hotel(3).jpg", alt: "hotel(3)" },
+  { src: "../../../../src/assets/images/hotel(4).jpg", alt: "hotel(4)" },
+  { src: "../../../../src/assets/images/hotel(5).jpg", alt: "hotel(5)" },
+  { src: "../../../../src/assets/images/hotel(6).jpg", alt: "hotel(6)" },
+  { src: "../../../../src/assets/images/hotel(7).jpg", alt: "hotel(7)" },
+];
