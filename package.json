@@ -35,6 +35,7 @@
     "react-swipeable-views": "^0.14.0",
     "react-swipeable-views-utils": "^0.14.0",
     "react-toastify": "^10.0.5",
+    "swiper": "^11.1.4",
     "vite-plugin-require": "^1.2.14"
   },
   "devDependencies": {

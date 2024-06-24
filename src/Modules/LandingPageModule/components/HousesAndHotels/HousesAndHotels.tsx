@@ -16,14 +16,14 @@ export default function HousesAndHotels() {
   const getRooms = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `${getBaseUrl()}/api/v0/portal/rooms/available`,
+        `${getBaseUrl()}/api/v0/portal/rooms/available?page=1&size=10000`,
         {
           headers: requestHeaders,
         }
       );
 
-      setHouses(data.data.rooms.slice(1, 5));
-      setHotels(data.data.rooms.slice(6, 10));
+      setHouses(data.data.rooms.slice(0, 4));
+      setHotels(data.data.rooms.slice(5, 9));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "fail adding");
@@ -44,7 +44,7 @@ export default function HousesAndHotels() {
         <Grid item xs={12}>
           <Grid container spacing={6}>
             {houses.map((house, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={house._id}>
+              <Grid item xs={12} md={6} lg={3} key={house._id}>
                 <Button
                   sx={{ width: "100%", padding: 0 }}
                   onClick={() => navigate(`/explore/${house._id}`)}
@@ -55,7 +55,7 @@ export default function HousesAndHotels() {
                       height: "300px",
                       background:
                         house.images && house.images.length > 0
-                          ? `url(${house.images[0]})`
+                          ? `url(${house?.images[0]})`
                           : "grey",
                       backgroundSize: "cover",
                       backgroundRepeat: "no-repeat",
@@ -103,7 +103,7 @@ export default function HousesAndHotels() {
         <Grid item xs={12}>
           <Grid container spacing={8}>
             {hotels.map((hotel, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={hotel._id}>
+              <Grid item xs={12} md={6} lg={3} key={hotel._id}>
                 <Button
                   sx={{ width: "100%", padding: 0 }}
                   onClick={() => navigate(`/explore/${hotel._id}`)}

@@ -310,8 +310,10 @@ export default function RoomDetails() {
 
   useEffect(() => {
     getRoomDetails(id);
-    getAllRoomComments(id);
-    getAllRoomReviews(id);
+    if (loginData) {
+      getAllRoomComments(id);
+      getAllRoomReviews(id);
+    }
   }, [getAllRoomComments, getRoomDetails, getAllRoomReviews, id]);
 
   return (

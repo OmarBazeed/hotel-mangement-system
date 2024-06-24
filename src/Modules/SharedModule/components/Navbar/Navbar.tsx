@@ -2,6 +2,7 @@ import { FormatAlignCenter, KeyboardArrowDown } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Divider,
@@ -17,13 +18,12 @@ import {
   useTheme,
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
-import { Badge } from "@mui/material";
 
 export default function Navbar({
   setTheme,
@@ -40,6 +40,55 @@ export default function Navbar({
     if (value === "dark" || value === null) return true;
     return false;
   });
+  const darkToggle = (
+    <label id="theme-toggle-button">
+      <input
+        type="checkbox"
+        onChange={() => {
+          localStorage.setItem(
+            "theme",
+            theme.palette.mode === "dark" ? "light" : "dark"
+          );
+          setIsDark(!isDark);
+          setTheme(theme.palette.mode === "light" ? "dark" : "light");
+        }}
+        // defaultChecked
+        checked={isDark}
+        id="toggle"
+      />
+      <svg
+        width={75}
+        viewBox="0 0 69.667 44"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g
+          transform="translate(3.5 3.5)"
+          data-name="Component 15 – 1"
+          id="Component_15_1"
+        >
+          <g
+            filter="url(#container)"
+            transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
+          >
+            <rect
+              fill="#83cbd8"
+              transform="translate(3.5 3.5)"
+              rx="17.5"
+              height={35}
+              width="60.667"
+              data-name="container"
+              id="container"
+            />
+          </g>
+          <g transform="translate(2.333 2.333)" id="button">
+            {isDark ? moon() : sun()}
+          </g>
+          {isDark ? stars() : cloud()}
+        </g>
+      </svg>
+    </label>
+  );
   const navBtns = (
     <Box
       display={"flex"}
@@ -65,7 +114,7 @@ export default function Navbar({
     </Box>
   );
   const getProfileMenu = (
-    <Box ml={2} position={"relative"}>
+    <Box className={`profileMenu`} ml={2} position={"relative"}>
       <Box
         onClick={() => {
           setProfileMenu(!profileMenu);
@@ -137,13 +186,13 @@ export default function Navbar({
           { title: "Explore", path: "/explore" },
           { title: "Reviews", path: "/reviews" },
           { title: "Favorites", path: "/favorites" },
-          { component: getProfileMenu },
+          { title: getProfileMenu },
         ]
       : loginData === null
       ? [
           { title: "Home", path: "/" },
           { title: "Explore", path: "/explore" },
-          { component: navBtns },
+          { title: navBtns },
         ]
       : [];
   const theme = useTheme();
@@ -161,8 +210,8 @@ export default function Navbar({
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item.title} disablePadding>
+        {navItems.map((item, i) => (
+          <ListItem key={i} disablePadding>
             {item.title === "Favorites" || item.path === "/favorites" ? (
               <ListItemButton
                 sx={{
@@ -250,7 +299,8 @@ export default function Navbar({
             </Typography>
             {getProfileMenu}
             <Typography ml={3} mt={1} display={"flex"} alignItems={"center"}>
-              <label id="theme-toggle-button">
+              {darkToggle}
+              {/* <label id="theme-toggle-button">
                 <input
                   type="checkbox"
                   onChange={() => {
@@ -296,7 +346,7 @@ export default function Navbar({
                     {isDark ? stars() : cloud()}
                   </g>
                 </svg>
-              </label>
+              </label> */}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -342,6 +392,7 @@ export default function Navbar({
                     </Box>
                   ) : item.title === "Favorites" ? (
                     <Button
+                      key={index}
                       sx={{ textAlign: "center" }}
                       onClick={() => navigate(item.path)}
                     >
@@ -355,6 +406,7 @@ export default function Navbar({
                     </Button>
                   ) : (
                     <Button
+                      key={index}
                       sx={{ textAlign: "center" }}
                       onClick={() => navigate(item.path)}
                     >
@@ -368,7 +420,8 @@ export default function Navbar({
                   display={"flex"}
                   alignItems={"center"}
                 >
-                  <label id="theme-toggle-button">
+                  {darkToggle}
+                  {/* <label id="theme-toggle-button">
                     <input
                       type="checkbox"
                       onChange={() => {
@@ -416,7 +469,7 @@ export default function Navbar({
                         {isDark ? stars() : cloud()}
                       </g>
                     </svg>
-                  </label>
+                  </label> */}
                 </Typography>
               </Box>
             </Toolbar>
@@ -439,6 +492,14 @@ export default function Navbar({
               }}
             >
               {drawer}
+              <Typography
+                ml={3}
+                mt={1}
+                display={"flex"}
+                justifyContent={"center"}
+              >
+                {darkToggle}
+              </Typography>
             </Drawer>
           </Box>
         </>
