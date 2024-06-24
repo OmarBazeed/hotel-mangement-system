@@ -4,6 +4,7 @@ import {
   ModeEditOutlineOutlined,
   MoreHorizOutlined,
 } from "@mui/icons-material";
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
@@ -82,8 +83,6 @@ export default function RoomDetails() {
   const [showReviews, setShowReviews] = useState<boolean>(false);
   const commentInputRef = useRef<HTMLInputElement>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
-  const [editingReview, setEditingReview] = useState<string>("");
 
   const actions = [
     {
@@ -246,38 +245,23 @@ export default function RoomDetails() {
   );
   const handleSendRate = async () => {
     try {
-      if (editingReviewId) {
-        // Editing existing review
-        const res = await axios.patch(
-          `${getBaseUrl()}/api/v0/portal/room-reviews/${editingReviewId}`,
-          {
-            review: editingReview,
-          },
-          {
-            headers: requestHeaders,
-          }
-        );
-        toast.success(res.data.message || "Review edited successfully");
-      } else {
-        // Adding new review
-        const res = await axios.post(
-          `${getBaseUrl()}/api/v0/portal/room-reviews`,
-          {
-            roomId: id,
-            rating: rate,
-            review: review,
-          },
-          {
-            headers: requestHeaders,
-          }
-        );
-        toast.success(res.data.message || "Review added successfully");
-        setRate(3);
-        setReview("");
-        getAllRoomReviews(id);
-      }
-      setEditingReviewId(null);
-      setEditingReview("");
+      const res = await axios.post(
+        `${getBaseUrl()}/api/v0/portal/room-reviews`,
+        {
+          roomId: id,
+          rating: rate,
+          review: review,
+        },
+        {
+          headers: requestHeaders,
+        }
+      );
+      toast.success(res.data.message || "Review added successfully");
+      setRate(0);
+      setReview("");
+
+      getAllRoomReviews(id);
+      setShowReviews(!showReviews);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "fail adding");
@@ -304,10 +288,6 @@ export default function RoomDetails() {
     },
     [requestHeaders]
   );
-  const handleUpdateReview = (review: { _id: string; review: string }) => {
-    setEditingReviewId(review._id);
-    setEditingReview(review.review);
-  };
 
   const getRoomDetails = useCallback(
     async (roomId: string | undefined) => {
@@ -398,10 +378,10 @@ export default function RoomDetails() {
         columns={12}
         spacing={4}
         justifyContent={"space-between"}
-        sx={{ marginTop: "30px" }}
+        sx={{ marginTop: "30px", paddingLeft: { xs: "25px", md: "0" } }}
       >
         <Grid item xs={12} lg={5}>
-          <Typography>
+          <Typography sx={{ paddingLeft: "0px !important" }}>
             Design is a plan or specification for the construction of an object
             or system or for the implementation of an activity or process, or
             the result of that plan or specification in the form of a prototype,
@@ -448,7 +428,7 @@ export default function RoomDetails() {
           item
           xs={12}
           lg={5}
-          sx={{ border: "1px solid black", marginTop: { xs: "20px", sm: "0" } }}
+          sx={{ border: "1px solid ", marginTop: { xs: "20px", sm: "0" } }}
           padding={2}
         >
           <Stack
@@ -486,19 +466,18 @@ export default function RoomDetails() {
                   sx={{
                     bgcolor: "rgba(21, 44, 91, 1)",
                     height: "100%",
-                    width: "3.8rem",
-                    padding: "0 5px",
+                    width: "3rem",
+                    padding: "0 3px",
                     position: "absolute",
                     fontSize: ".8rem",
                     color: "white",
-                    cursor: "pointer",
-                    zIndex: "3",
+                    zIndex: "1",
                   }}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer
                     components={["SingleInputDateRangeField"]}
-                    sx={{ paddingTop: "0" }}
+                    sx={{ paddingTop: "0", zIndex: "2" }}
                   >
                     <DateRangePicker
                       slots={{ field: SingleInputDateRangeField }}
@@ -573,7 +552,7 @@ export default function RoomDetails() {
           columns={12}
           spacing={4}
           justifyContent={"space-around"}
-          sx={{ marginTop: "40px", paddingLeft: "20px" }}
+          sx={{ marginTop: "40px", paddingLeft: { xs: "25px", md: "0" } }}
         >
           <Grid xs={12} lg={5}>
             <Stack
@@ -606,12 +585,12 @@ export default function RoomDetails() {
                 placeholder="Enter Your Review..."
                 sx={{
                   height: "150px",
-                  background: "rgb(0 0 0 / 8%)",
+                  border: "1px solid #1976d2",
                   padding: "10px",
-                  borderRadius: "30px 30px 0 0",
+                  borderRadius: "30px 0px 0 0",
                 }}
-                onChange={(e) => setEditingReview(e.target.value)}
-                value={editingReviewId ? editingReview : review}
+                onChange={(e) => setReview(e.target.value)}
+                value={review}
               />
 
               <Button
@@ -641,9 +620,9 @@ export default function RoomDetails() {
                 placeholder="Enter Your Comment..."
                 sx={{
                   height: "150px",
-                  background: "rgb(0 0 0 / 8%)",
+                  border: "1px solid #1976d2",
                   padding: "10px",
-                  borderRadius: "30px 30px 0 0",
+                  borderRadius: "30px 0 0 0",
                 }}
                 onChange={(e) => setComment(e.target.value)}
                 value={comment}
@@ -665,10 +644,16 @@ export default function RoomDetails() {
       {/*Showing Comments*/}
       <Grid sx={{ marginTop: "50px" }}>
         <Button
-          sx={{ width: "100%", fontWeight: "bold", margin: "auto" }}
+          sx={{
+            width: "100%",
+            justifyContent: "center",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setShowComments(!showComments)}
         >
-          Room Comments
+          <Typography sx={{ fontWeight: "bold" }}> Room Comments</Typography>
+          <KeyboardArrowDownOutlinedIcon />
         </Button>
         {allComments.length > 0 ? (
           allComments.map(
@@ -685,7 +670,7 @@ export default function RoomDetails() {
                   <Stack
                     display={"flex"}
                     direction={"row"}
-                    flexWrap={"wrap"}
+                    flexWrap={"nowrap"}
                     justifyContent={"space-between"}
                     alignItems={"center"}
                     boxShadow={"2px 2px 2px #466a63"}
@@ -776,10 +761,16 @@ export default function RoomDetails() {
       {/*Showing Reviews */}
       <Grid sx={{ marginTop: "50px" }}>
         <Button
-          sx={{ width: "100%", fontWeight: "bold", margin: "auto" }}
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
           onClick={() => setShowReviews(!showReviews)}
         >
-          Room Reviews
+          <Typography sx={{ fontWeight: "bold" }}> Room Reviews</Typography>
+          <KeyboardArrowDownOutlinedIcon />
         </Button>
         {roomReviews.length > 0 ? (
           roomReviews.map(
@@ -835,34 +826,6 @@ export default function RoomDetails() {
                         <Rating value={rev?.rating} readOnly />
                       </Box>
                     </Box>
-                    {loginData?._id == rev.user._id ? (
-                      <Box
-                        sx={{
-                          transform: "translateZ(0px)",
-                        }}
-                      >
-                        <SpeedDial
-                          ariaLabel="SpeedDial basic example"
-                          sx={{
-                            position: "absolute",
-                            bottom: -27,
-                            right: 0,
-                            "& button": { width: "40px", height: "40px" },
-                          }}
-                          icon={<MoreHorizOutlined />}
-                          direction="left"
-                        >
-                          <SpeedDialAction
-                            key={actions[0].name}
-                            icon={actions[0].icon}
-                            tooltipTitle={actions[0].name}
-                            onClick={() => handleUpdateReview(rev)}
-                          />
-                        </SpeedDial>
-                      </Box>
-                    ) : (
-                      ""
-                    )}
                   </Stack>
                 </Stack>
               );

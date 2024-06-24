@@ -119,13 +119,17 @@ export default function Home() {
                     fontSize: ".8rem",
                     color: "white",
                     cursor: "pointer",
-                    zIndex: "3",
+                    zIndex: "1",
                   }}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer
                     components={["SingleInputDateRangeField"]}
-                    sx={{ paddingTop: "0" }}
+                    sx={{
+                      paddingTop: "0",
+                      overflow: "hidden",
+                      zIndex: "2",
+                    }}
                   >
                     <DateRangePicker
                       slots={{ field: SingleInputDateRangeField }}
@@ -135,18 +139,18 @@ export default function Home() {
                           border: "0",
                         },
                         "& input": {
+                          width: "100%",
                           color: {
                             xs: "#152C5B !important",
                             sm: "#152C5B !important",
                           },
                           textAlign: "center",
-                          fontWeight: "bold",
                           fontSize: {
-                            xs: "15px",
+                            xs: "13px",
                             sm: "18px",
                           },
                           margin: "auto",
-                          marginLeft: { xs: "50px", md: "0" },
+                          marginLeft: { xs: "37px", md: "0" },
                           cursor: "pointer",
                         },
                       }}
@@ -190,7 +194,7 @@ export default function Home() {
                     width: "100%",
                     height: "100%",
                     fontWeight: "bold",
-                    fontSize: "2em",
+                    fontSize: "1.1em",
                     borderRadius: "0",
                   }}
                   variant="contained"
@@ -200,7 +204,14 @@ export default function Home() {
                   -
                 </Button>
               </Grid>
-              <Grid xs={8} sx={{ textAlign: "center", margin: "auto" }}>
+              <Grid
+                xs={8}
+                sx={{
+                  textAlign: "center",
+                  margin: "auto",
+                  height: { xs: "33px", md: "auto" },
+                }}
+              >
                 <Typography sx={{ fontSize: "1.5rem", color: "#152C5B" }}>
                   {personCount} person
                 </Typography>
@@ -218,7 +229,7 @@ export default function Home() {
                   sx={{
                     width: "100%",
                     height: "100%",
-                    fontSize: "2em",
+                    fontSize: "1.1em",
                     borderRadius: "0",
                     fontWeight: "bold",
                     color: "white",
