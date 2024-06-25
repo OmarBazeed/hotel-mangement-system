@@ -180,7 +180,7 @@ export default function FirstPaymentPage() {
               >
                 <Box sx={{ width: "100%" }}>
                   <Controller
-                    name="userName"
+                    name="Name"
                     defaultValue=""
                     control={control}
                     render={({ field }) => (
@@ -188,7 +188,7 @@ export default function FirstPaymentPage() {
                         {...field}
                         fullWidth
                         type="text"
-                        label="User Name"
+                        label="Name"
                       />
                     )}
                   />
@@ -223,19 +223,11 @@ export default function FirstPaymentPage() {
                     width: "100%",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    gap: "10px",
+                    gap: "5em",
                   }}
                 >
                   <Button
-                    sx={{ width: "100%" }}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                  >
-                    pay
-                  </Button>
-                  <Button
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", textAlign: "left" }}
                     variant="contained"
                     color="error"
                     onClick={() =>
@@ -243,7 +235,19 @@ export default function FirstPaymentPage() {
                       navigate("/")
                     }
                   >
-                    cancel
+                    <Typography sx={{ textAlign: "left", width: "100%" }}>
+                      cancel
+                    </Typography>
+                  </Button>
+                  <Button
+                    sx={{ width: "100%" }}
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                  >
+                    <Typography sx={{ textAlign: "left", width: "100%" }}>
+                      pay
+                    </Typography>
                   </Button>
                 </Box>
               </Box>
