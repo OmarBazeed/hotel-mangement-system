@@ -264,19 +264,28 @@ export default function Favorites() {
         </Typography>
       </Grid>
       <Grid container spacing={2} padding={"25px"}>
-        {rooms.map((room) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} padding={2} key={room._id}>
-            {CardComponent(
-              room,
-              "300px",
-              AddToFavs,
-              RemoveFromFavs,
-              rooms,
-              clickedAdd,
-              clickedRemove
-            )}
-          </Grid>
-        ))}
+        {rooms.length > 0 ? (
+          rooms.map((room) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} padding={2} key={room._id}>
+              {CardComponent(
+                room,
+                "300px",
+                AddToFavs,
+                RemoveFromFavs,
+                rooms,
+                clickedAdd,
+                clickedRemove
+              )}
+            </Grid>
+          ))
+        ) : (
+          <Typography
+            sx={{ margin: "auto", fontWeight: "bold", fontSize: "1.5em" }}
+            component={"h1"}
+          >
+            No Romms Added 🤡
+          </Typography>
+        )}
       </Grid>
       <Grid
         display={"flex"}

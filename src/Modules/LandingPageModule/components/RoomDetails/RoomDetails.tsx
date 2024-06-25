@@ -39,6 +39,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { getBaseUrl } from "../../../../Utils/Utils";
+import Alert from "@mui/material/Alert";
 
 export default function RoomDetails() {
   // getting RoomId
@@ -83,6 +84,10 @@ export default function RoomDetails() {
   const [showReviews, setShowReviews] = useState<boolean>(false);
   const commentInputRef = useRef<HTMLInputElement>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [rangeObject, setRangeObject] = useState<{
+    start: string;
+    end: string;
+  }>({ start: "", end: "" });
 
   const actions = [
     {
@@ -143,10 +148,38 @@ export default function RoomDetails() {
         end: dayjs(range[1]).format("YYYY-MM-DD"),
       };
       const startDate = dayjs(editedDate.start);
-      console.log(startDate);
       const endDate = dayjs(editedDate.end);
       const days = endDate.diff(startDate, "day");
       setReservedDays(days);
+      setRangeObject(editedDate);
+    }
+  };
+
+  const handleSendBooking = async () => {
+    if (loginData) {
+      try {
+        const res = await axios.post(
+          `${getBaseUrl()}/api/v0/portal/booking`,
+          {
+            startDate: rangeObject.start,
+            endDate: rangeObject.end,
+            room: id,
+            totalPrice:
+              reservedDays > 0 ? reservedDays * room.price : room.price,
+          },
+          { headers: requestHeaders }
+        );
+        toast.success(res.data.message);
+        setTimeout(() => {
+          navigate(`/payment`);
+        }, 1500);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "Failed to book");
+        }
+      }
+    } else {
+      toast.info("Please login to book");
     }
   };
 
@@ -279,7 +312,6 @@ export default function RoomDetails() {
           }
         );
         setRoomReviews(data.data.roomReviews);
-        console.log(data.data.roomReviews);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           toast.error(error.response.data.message || "fail adding");
@@ -314,7 +346,7 @@ export default function RoomDetails() {
       getAllRoomComments(id);
       getAllRoomReviews(id);
     }
-  }, [getAllRoomComments, getRoomDetails, getAllRoomReviews, id]);
+  }, [getAllRoomComments, getRoomDetails, getAllRoomReviews, id, loginData]);
 
   return (
     <Container maxWidth="xl">
@@ -540,7 +572,7 @@ export default function RoomDetails() {
                 filter: "drop-shadow(2px 2px 2px #466a63)",
                 padding: "15px 25px",
               }}
-              onClick={() => navigate("/payment")}
+              onClick={() => handleSendBooking()}
             >
               Continue Book
             </Button>

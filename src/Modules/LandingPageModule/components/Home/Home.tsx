@@ -48,7 +48,7 @@ export default function Home() {
       }).toString();
       navigate(`/explore?${searchParams}`);
     } else {
-      alert("Please select a date range");
+      navigate(`/explore`);
     }
   };
 
