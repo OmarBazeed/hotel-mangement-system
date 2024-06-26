@@ -5,6 +5,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import Step from "@mui/material/Step";
@@ -13,13 +14,19 @@ import Stepper from "@mui/material/Stepper";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { FormEvent, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { getBaseUrl } from "../../../../Utils/Utils";
+import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import bankImg from "../../../../assets/images/bcs bank.png";
 import mandiriImg from "../../../../assets/images/mandiri.png";
-import { useNavigate } from "react-router-dom";
 
 export default function FirstPaymentPage() {
   const navigate = useNavigate();
   const { control } = useForm();
+  const { requestHeaders, bookingId, subtotal } = useAuth();
+  const theme = useTheme();
 
   const steps = ["1", "2"];
 
@@ -43,7 +50,28 @@ export default function FirstPaymentPage() {
       return;
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    console.log(token);
+
+    if (token) {
+      try {
+        const res = await axios.post(
+          `${getBaseUrl()}/api/v0/portal/booking/${bookingId}/pay`,
+          {
+            token: token.id,
+          },
+          {
+            headers: requestHeaders,
+          }
+        );
+        toast.success(res.data.message || "Successfully paid");
+        setTimeout(() => {
+          navigate("/payment/confirm");
+        }, 1000);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          toast.error(error.response.data.message || "Failed to book");
+        }
+      }
+    }
   };
 
   return (
@@ -84,7 +112,7 @@ export default function FirstPaymentPage() {
             width: "100%",
             height: "70vh",
             textAlign: "center",
-            margin: "50px auto",
+            margin: "30px auto",
           }}
         >
           <Box sx={{ marginBottom: "30px" }}>
@@ -127,7 +155,9 @@ export default function FirstPaymentPage() {
                 gap={1}
               >
                 <Typography> Sub total:</Typography>
-                <Typography> $480 USD </Typography>
+                <Typography color={"teal"} fontWeight={"bold"}>
+                  ${subtotal} USD
+                </Typography>
               </Box>
               <Box
                 display={"flex"}
@@ -136,7 +166,7 @@ export default function FirstPaymentPage() {
                 gap={2}
                 marginBottom={2}
               >
-                <img src={bankImg} width={120} height={50} alt="..." />
+                <img src={bankImg} width={120} height={35} alt="..." />
                 <Box textAlign={"left"}>
                   <Typography>Bank Central Asia</Typography>
                   <Typography>2208 1996</Typography>
@@ -167,6 +197,7 @@ export default function FirstPaymentPage() {
                 justifyContent: "center",
                 alignItems: "flex-start",
                 gap: "15px",
+                marginTop: { xs: "2em", md: "0" },
               }}
             >
               <Box
@@ -209,11 +240,34 @@ export default function FirstPaymentPage() {
                   />
                 </Box>
                 <Box
-                  sx={{ width: "100%" }}
+                  sx={{
+                    width: "100%",
+                  }}
                   bgcolor={"rgba(0, 0, 0, 0.04)"}
                   padding={3}
                 >
-                  <CardElement />
+                  <CardElement
+                    options={{
+                      style: {
+                        base: {
+                          fontSize: "16px",
+                          color:
+                            theme.palette.mode === "dark"
+                              ? "#fff"
+                              : theme.palette.text.primary,
+                          "::placeholder": {
+                            color:
+                              theme.palette.mode === "dark"
+                                ? "#BDBDBD"
+                                : theme.palette.text.disabled,
+                          },
+                        },
+                        invalid: {
+                          color: theme.palette.error.main,
+                        },
+                      },
+                    }}
+                  />
                 </Box>
                 <Box
                   sx={{
@@ -230,14 +284,9 @@ export default function FirstPaymentPage() {
                     sx={{ width: "100%", textAlign: "left" }}
                     variant="contained"
                     color="error"
-                    onClick={() =>
-                      // setActiveStep((prevActiveStep) => prevActiveStep - 1)
-                      navigate("/")
-                    }
+                    onClick={() => navigate("/")}
                   >
-                    <Typography sx={{ textAlign: "left", width: "100%" }}>
-                      cancel
-                    </Typography>
+                    cancel
                   </Button>
                   <Button
                     sx={{ width: "100%" }}
@@ -245,15 +294,12 @@ export default function FirstPaymentPage() {
                     color="primary"
                     type="submit"
                   >
-                    <Typography sx={{ textAlign: "left", width: "100%" }}>
-                      pay
-                    </Typography>
+                    pay
                   </Button>
                 </Box>
               </Box>
             </Grid>
           </Grid>
-          {/*Buttons */}
         </Stack>
       </Stack>
     </Container>

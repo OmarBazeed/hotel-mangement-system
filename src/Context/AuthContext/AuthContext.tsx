@@ -15,8 +15,13 @@ export interface IAuth {
   savLoginData: () => void;
   logOut: () => void;
   requestHeaders: { Authorization: string };
+  // other common variables
   favsNumber: number;
   setFavsNumber: Dispatch<SetStateAction<number>>;
+  bookingId: string;
+  setBookingId: Dispatch<SetStateAction<string>>;
+  subtotal: string | number;
+  setSubtotal: Dispatch<SetStateAction<number | string>>;
 }
 
 export const AuthContext = createContext<IAuth | null>(null);
@@ -25,10 +30,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [loginData, setLoginData] = useState<{ role: string } | null>(null);
-  const [favsNumber, setFavsNumber] = useState(() => {
-    const storedFavsNumber = localStorage.getItem("favsNumber");
-    return storedFavsNumber ? parseInt(storedFavsNumber, 10) : 0;
-  });
 
   const requestHeaders = {
     Authorization: `${localStorage.getItem("token")}`,
@@ -48,6 +49,19 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     setFavsNumber(0);
   };
 
+  const [favsNumber, setFavsNumber] = useState(() => {
+    const storedFavsNumber = localStorage.getItem("favsNumber");
+    return storedFavsNumber ? parseInt(storedFavsNumber, 10) : 0;
+  });
+  const [bookingId, setBookingId] = useState(() => {
+    const storedBookingId = localStorage.getItem("bookingId");
+    return storedBookingId ? storedBookingId : "";
+  });
+  const [subtotal, setSubtotal] = useState(() => {
+    const storedSubtotal = localStorage.getItem("subtotal");
+    return storedSubtotal ? storedSubtotal : 0;
+  });
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       savLoginData();
@@ -62,6 +76,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     logOut,
     favsNumber,
     setFavsNumber,
+    bookingId,
+    setBookingId,
+    subtotal,
+    setSubtotal,
   };
 
   return (

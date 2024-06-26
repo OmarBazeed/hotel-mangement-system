@@ -19,8 +19,7 @@ import Favorites from "./Modules/LandingPageModule/components/Favorites/Favorite
 import LandingPage from "./Modules/LandingPageModule/components/MainLandingPage/LandingPage";
 import Reviews from "./Modules/LandingPageModule/components/Reviews/Reviews";
 import RoomDetails from "./Modules/LandingPageModule/components/RoomDetails/RoomDetails";
-import ConfirmPayment from "./Modules/PaymentModule/Components/ConfirmPayment/ConfirmPayment";
-import DetailsPayment from "./Modules/PaymentModule/Components/DetailsPayment/DetailsPayment";
+import ConfirmPayment from "./Modules/PaymentModule/Components/ConfirmPayment/ConfirmedPayment";
 import FirstPaymentPage from "./Modules/PaymentModule/Components/FirstPaymentPage/FirstPaymentPage";
 import AdDashboardLayout from "./Modules/SharedModule/components/LayOuts/AdDashboardLayout/AdDashboardLayout";
 import AuthLayout from "./Modules/SharedModule/components/LayOuts/AuthLayout/AuthLayout";
@@ -129,10 +128,6 @@ export default function App() {
         {
           index: true,
           element: <FirstPaymentPage />,
-        },
-        {
-          path: "details",
-          element: <DetailsPayment />,
         },
         {
           path: "confirm",

@@ -18,12 +18,15 @@ import {
   useTheme,
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
+import { getBaseUrl } from "../../../../Utils/Utils";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function Navbar({
   setTheme,
@@ -31,7 +34,11 @@ export default function Navbar({
   open,
   window,
 }: AppBarProps) {
-  const { loginData, logOut, favsNumber } = useAuth();
+  const [userProfile, setUserProfile] = useState<{
+    userName: string;
+    profileImage: string;
+  }>({ userName: "", profileImage: "" });
+  const { loginData, logOut, favsNumber, requestHeaders } = useAuth();
   const navigate = useNavigate();
   const [profileMenu, setProfileMenu] = useState(false);
 
@@ -124,13 +131,10 @@ export default function Navbar({
         alignItems={"center"}
       >
         <IconButton sx={{ p: 0 }}>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://mui.com//static/images/avatar/2.jpg"
-          />
+          <Avatar alt="Remy Sharp" src={userProfile.profileImage} />
         </IconButton>
         <Typography ml={1} variant="body1">
-          mElshimi
+          {userProfile.userName}
         </Typography>
         <KeyboardArrowDown />
       </Box>
@@ -179,7 +183,10 @@ export default function Navbar({
     </Box>
   );
 
-  const navItems =
+  const navItems: {
+    title: string | React.ReactNode;
+    path?: string;
+  } =
     loginData?.role === "user"
       ? [
           { title: "Home", path: "/" },
@@ -261,6 +268,27 @@ export default function Navbar({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.bgNav.contrastText,
   }));
+
+  // Get Current User Profile
+  const getUserProfile = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `${getBaseUrl()}/api/v0/portal/users/${loginData?._id}`,
+        {
+          headers: requestHeaders,
+        }
+      );
+      setUserProfile(res.data.data.user);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message || "Failed to book");
+      }
+    }
+  }, [loginData?._id, requestHeaders]);
+
+  useEffect(() => {
+    loginData ? getUserProfile() : "";
+  }, [getUserProfile, loginData]);
 
   return (
     <>

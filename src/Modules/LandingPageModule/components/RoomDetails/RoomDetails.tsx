@@ -4,8 +4,8 @@ import {
   ModeEditOutlineOutlined,
   MoreHorizOutlined,
 } from "@mui/icons-material";
-import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
@@ -39,7 +39,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { getBaseUrl } from "../../../../Utils/Utils";
-import Alert from "@mui/material/Alert";
 
 export default function RoomDetails() {
   // getting RoomId
@@ -75,7 +74,7 @@ export default function RoomDetails() {
     }[]
   >([]);
   const navigate = useNavigate();
-  const { requestHeaders, loginData } = useAuth();
+  const { requestHeaders, loginData, setBookingId, setSubtotal } = useAuth();
   const [reservedDays, setReservedDays] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
   const [review, setReview] = useState<string>("");
@@ -170,6 +169,13 @@ export default function RoomDetails() {
           { headers: requestHeaders }
         );
         toast.success(res.data.message);
+        setBookingId(res.data.data.booking._id);
+        localStorage.setItem("bookingId", res.data.data.booking._id);
+        localStorage.setItem(
+          "subtotal",
+          reservedDays > 0 ? reservedDays * room.price : room.price
+        );
+        setSubtotal(reservedDays > 0 ? reservedDays * room.price : room.price);
         setTimeout(() => {
           navigate(`/payment`);
         }, 1500);
