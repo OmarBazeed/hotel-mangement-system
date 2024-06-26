@@ -31,7 +31,7 @@ export default function Navbar({
   open,
   window,
 }: AppBarProps) {
-  const { loginData, logOut } = useAuth();
+  const { loginData, logOut, userInfo } = useAuth();
   const navigate = useNavigate();
 
   const [isDark, setIsDark] = useState(() => {
@@ -107,11 +107,11 @@ export default function Navbar({
               <Avatar
                 className="avProfile"
                 alt="Remy Sharp"
-                src="https://mui.com//static/images/avatar/2.jpg"
+                src={`${userInfo.profileImage}`}
               />
             </IconButton>
             <Typography className="paProfile" ml={1} variant="body1">
-              mElshimi
+              {userInfo.userName}
             </Typography>
             <KeyboardArrowDown />
           </Box>
@@ -276,7 +276,8 @@ export default function Navbar({
             <Box
               display={"flex"}
               alignItems={"center"}
-              justifyContent={"center"}
+              justifyContent={"end"}
+              flexGrow={1}
             >
               {getProfileMenu}
               <Box mt={1}> {darkToggle}</Box>
