@@ -1,0 +1,9 @@
+.bgChange {
+  background-image: url("../../../../../src/assets/images/resetPass.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+ 
+  border-image: fill 0 linear-gradient(rgba(0, 0, 0, 0.318), #000);
+  color: #fff;
+}

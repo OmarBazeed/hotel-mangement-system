@@ -164,3 +164,14 @@ export interface BookingsInterface {
   userName: string;
   _id: number;
 }
+
+export interface changePassProps {
+  openChangePass: boolean;
+  setOpenChangePass: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface chabgePassForm {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

@@ -328,6 +328,7 @@ export default function Signup() {
                       {errors?.email?.message}
                     </Typography>
                   )}
+
                   <Controller
                     name="password"
                     control={control}
@@ -376,6 +377,7 @@ export default function Signup() {
                       {errors?.password.message}
                     </Typography>
                   )}
+                  
                   {/* confirm password */}
                   <Controller
                     name="confirmPassword"

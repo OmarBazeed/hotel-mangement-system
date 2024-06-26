@@ -25,12 +25,14 @@ import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
+import ChangePassword from "../ChangePassword/ChangePassword";
 export default function Navbar({
   setTheme,
   setOpen,
   open,
   window,
 }: AppBarProps) {
+  const [openChangePass, setOpenChangePass] = useState(false);
   const { loginData, logOut, userInfo } = useAuth();
   const navigate = useNavigate();
 
@@ -106,8 +108,8 @@ export default function Navbar({
             <IconButton sx={{ p: 0 }}>
               <Avatar
                 className="avProfile"
-                alt="Remy Sharp"
-                src={`${userInfo.profileImage}`}
+                alt={userInfo.userName}
+                src={userInfo.profileImage}
               />
             </IconButton>
             <Typography className="paProfile" ml={1} variant="body1">
@@ -134,20 +136,18 @@ export default function Navbar({
               bgcolor={isDark ? "#272727" : "#fff"}
             >
               <Button
+                onClick={() => setOpenChangePass(true)}
                 className="btnProfile"
                 fullWidth
                 color="inherit"
-                py={1}
-                px={4}
                 sx={{
                   "&:hover": {
                     backgroundColor: isDark ? "#121212" : "#e0e0e0",
                   },
                   transition: "all .5s",
                 }}
-                href=""
               >
-                Profile
+                Change Password
               </Button>
               <Button
                 onClick={() => {
@@ -156,8 +156,6 @@ export default function Navbar({
                 }}
                 color="inherit"
                 fullWidth
-                py={1}
-                px={4}
                 sx={{
                   "&:hover": {
                     backgroundColor: isDark ? "#121212" : "#e0e0e0",
@@ -256,6 +254,10 @@ export default function Navbar({
 
   return (
     <>
+      <ChangePassword
+        openChangePass={openChangePass}
+        setOpenChangePass={setOpenChangePass}
+      />
       {loginData?.role === "admin" ? (
         <AppBar position="fixed">
           <Toolbar>
