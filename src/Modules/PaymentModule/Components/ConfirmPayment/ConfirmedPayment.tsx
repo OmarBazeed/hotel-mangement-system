@@ -66,7 +66,7 @@ export default function ConfirmPayment() {
             alt="..."
           />
         </Box>
-        <Box>
+        <Box width={"80%"} sx={{ textAlign: "center" }}>
           <Typography>
             We will inform you via email later once the transaction has been
             accepted
