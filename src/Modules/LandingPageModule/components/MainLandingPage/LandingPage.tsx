@@ -14,6 +14,7 @@ export default function LandingPage() {
       sx={{
         display: "flex",
         flexDirection: "column",
+        overflowX: "hidden",
       }}
     >
       <Box component="section" sx={{ marginBottom: { xs: 2, md: 4 } }}>

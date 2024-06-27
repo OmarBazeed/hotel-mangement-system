@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import {
   ReactNode,
@@ -8,8 +9,18 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from "react";
 
+export interface userInfo {
+  _id: string;
+  userName: string;
+  email: string;
+  country: string;
+  phoneNumber: number;
+  profileImage: string;
+  createdAt: string;
+}
 export interface IAuth {
   loginData: { role: string; _id: string } | null;
   savLoginData: () => void;
@@ -22,6 +33,7 @@ export interface IAuth {
   setBookingId: Dispatch<SetStateAction<string>>;
   subtotal: string | number;
   setSubtotal: Dispatch<SetStateAction<number | string>>;
+  userInfo: userInfo;
 }
 
 export const AuthContext = createContext<IAuth | null>(null);
@@ -29,7 +41,19 @@ export const AuthContext = createContext<IAuth | null>(null);
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [loginData, setLoginData] = useState<{ role: string } | null>(null);
+  const [loginData, setLoginData] = useState<{
+    role: string;
+    _id: string;
+  } | null>(null);
+  const [userInfo, setUserInfo] = useState<userInfo>({
+    _id: "",
+    userName: "",
+    email: "",
+    country: "",
+    phoneNumber: 0,
+    profileImage: "",
+    createdAt: "",
+  });
 
   const requestHeaders = {
     Authorization: `${localStorage.getItem("token")}`,
@@ -39,7 +63,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     const encodedToken = localStorage.getItem("token");
     if (!encodedToken) throw new Error("token not found");
 
-    const decodedToken = jwtDecode(encodedToken) as { role: string };
+    const decodedToken = jwtDecode(encodedToken) as {
+      role: string;
+      _id: string;
+    };
     setLoginData(decodedToken);
   };
 
@@ -61,13 +88,27 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     const storedSubtotal = localStorage.getItem("subtotal");
     return storedSubtotal ? storedSubtotal : 0;
   });
+  const getUser = useCallback(async () => {
+    try {
+      const { data } = await axios.get(
+        `https://upskilling-egypt.com:3000/api/v0/admin/users/${loginData?._id}`,
+        {
+          headers: requestHeaders,
+        }
+      );
+      setUserInfo(data.data.user);
+    } catch (error) {
+      // console.log(error);
+    }
+  }, [loginData?._id]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       savLoginData();
+      getUser();
     }
     localStorage.setItem("favsNumber", favsNumber.toString());
-  }, [favsNumber]);
+  }, [favsNumber, loginData?._id, getUser]);
 
   const contextValue: IAuth = {
     loginData,
@@ -76,6 +117,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     logOut,
     favsNumber,
     setFavsNumber,
+    userInfo,
     bookingId,
     setBookingId,
     subtotal,

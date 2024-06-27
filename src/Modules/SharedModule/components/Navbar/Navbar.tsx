@@ -12,21 +12,20 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Popover,
   Toolbar,
   Typography,
   styled,
   useTheme,
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import { useCallback, useEffect, useState } from "react";
+import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
-import { getBaseUrl } from "../../../../Utils/Utils";
-import axios from "axios";
-import { toast } from "react-toastify";
 
 export default function Navbar({
   setTheme,
@@ -34,21 +33,17 @@ export default function Navbar({
   open,
   window,
 }: AppBarProps) {
-  const [userProfile, setUserProfile] = useState<{
-    userName: string;
-    profileImage: string;
-  }>({ userName: "", profileImage: "" });
-  const { loginData, logOut, favsNumber, requestHeaders } = useAuth();
+  const { loginData, logOut, userInfo, favsNumber } = useAuth();
   const navigate = useNavigate();
-  const [profileMenu, setProfileMenu] = useState(false);
 
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
     if (value === "dark" || value === null) return true;
     return false;
   });
+
   const darkToggle = (
-    <label id="theme-toggle-button">
+    <label style={{ paddingTop: "8px" }} id="theme-toggle-button">
       <input
         type="checkbox"
         onChange={() => {
@@ -96,91 +91,89 @@ export default function Navbar({
       </svg>
     </label>
   );
-  const navBtns = (
-    <Box
-      display={"flex"}
-      justifyItems={"center"}
-      alignItems={"center"}
-      gap={2}
-      flexDirection={{ xs: "column", md: "row" }}
-    >
-      <Button
-        onClick={() => navigate("/auth/signup")}
-        variant="contained"
-        disableElevation
-      >
-        Register
-      </Button>
-      <Button
-        onClick={() => navigate("/auth")}
-        variant="contained"
-        disableElevation
-      >
-        Login Now
-      </Button>
-    </Box>
-  );
+
+  const regBtn = <Box>Register</Box>;
+  const logBtn = <Box>Login Now</Box>;
+
   const getProfileMenu = (
-    <Box className={`profileMenu`} ml={2} position={"relative"}>
-      <Box
-        onClick={() => {
-          setProfileMenu(!profileMenu);
-        }}
-        sx={{ cursor: "pointer" }}
-        display={"flex"}
-        alignItems={"center"}
-      >
-        <IconButton sx={{ p: 0 }}>
-          <Avatar alt="Remy Sharp" src={userProfile.profileImage} />
-        </IconButton>
-        <Typography ml={1} variant="body1">
-          {userProfile.userName}
-        </Typography>
-        <KeyboardArrowDown />
-      </Box>
-      <Box
-        display={profileMenu ? "block" : "none"}
-        borderRadius={1}
-        boxShadow={3}
-        border={"solid 1px #bdbdbd"}
-        bgcolor={isDark ? "#272727" : "#fff"}
-        position={"absolute"}
-        top={"45px"}
-      >
-        <Button
-          fullWidth
-          color="inherit"
-          py={1}
-          px={4}
-          sx={{
-            "&:hover": {
-              backgroundColor: isDark ? "#121212" : "#e0e0e0",
-            },
-            transition: "all .5s",
-          }}
-        >
-          Profile
-        </Button>
-        <Button
-          onClick={() => {
-            logOut();
-            navigate("/");
-          }}
-          color="inherit"
-          fullWidth
-          py={1}
-          px={4}
-          sx={{
-            "&:hover": {
-              backgroundColor: isDark ? "#121212" : "#e0e0e0",
-            },
-            transition: "all .5s",
-          }}
-        >
-          Logout
-        </Button>
-      </Box>
-    </Box>
+    <PopupState variant="popover" popupId="demo-popup-popover">
+      {(popupState) => (
+        <div>
+          <Box
+            {...bindTrigger(popupState)}
+            sx={{ cursor: "pointer" }}
+            display={"flex"}
+            alignItems={"center"}
+          >
+            <IconButton sx={{ p: 0 }}>
+              <Avatar
+                className="avProfile"
+                alt="Remy Sharp"
+                src={`${userInfo.profileImage}`}
+              />
+            </IconButton>
+            <Typography className="paProfile" ml={1} variant="body1">
+              {userInfo.userName}
+            </Typography>
+            <KeyboardArrowDown />
+          </Box>
+
+          <Popover
+            {...bindPopover(popupState)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <Box
+              borderRadius={1}
+              boxShadow={3}
+              border={"solid 1px #bdbdbd"}
+              bgcolor={isDark ? "#272727" : "#fff"}
+            >
+              <Button
+                className="btnProfile"
+                fullWidth
+                color="inherit"
+                py={1}
+                px={4}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: isDark ? "#121212" : "#e0e0e0",
+                  },
+                  transition: "all .5s",
+                }}
+                href=""
+              >
+                Profile
+              </Button>
+              <Button
+                onClick={() => {
+                  logOut();
+                  navigate("/");
+                }}
+                color="inherit"
+                fullWidth
+                py={1}
+                px={4}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: isDark ? "#121212" : "#e0e0e0",
+                  },
+                  transition: "all .5s",
+                }}
+              >
+                Logout
+              </Button>
+            </Box>
+          </Popover>
+        </div>
+      )}
+    </PopupState>
   );
 
   const navItems: {
@@ -193,13 +186,13 @@ export default function Navbar({
           { title: "Explore", path: "/explore" },
           { title: "Reviews", path: "/reviews" },
           { title: "Favorites", path: "/favorites" },
-          { title: getProfileMenu },
         ]
       : loginData === null
       ? [
           { title: "Home", path: "/" },
           { title: "Explore", path: "/explore" },
-          { title: navBtns },
+          { title: regBtn, path: "/auth/signup" },
+          { title: logBtn, path: "/auth" },
         ]
       : [];
   const theme = useTheme();
@@ -219,7 +212,7 @@ export default function Navbar({
       <List>
         {navItems.map((item, i) => (
           <ListItem key={i} disablePadding>
-            {item.title === "Favorites" || item.path === "/favorites" ? (
+            {item.path === "/favorites" ? (
               <ListItemButton
                 sx={{
                   textAlign: "center",
@@ -228,7 +221,7 @@ export default function Navbar({
                 }}
                 onClick={() => navigate(item.path)}
               >
-                <Badge badgeContent={favsNumber} color="success">
+                <Badge badgeContent={favsNumber} color="primary">
                   <ListItemText primary={item.title} />
                 </Badge>
               </ListItemButton>
@@ -269,27 +262,6 @@ export default function Navbar({
     color: theme.palette.bgNav.contrastText,
   }));
 
-  // Get Current User Profile
-  const getUserProfile = useCallback(async () => {
-    try {
-      const res = await axios.get(
-        `${getBaseUrl()}/api/v0/portal/users/${loginData?._id}`,
-        {
-          headers: requestHeaders,
-        }
-      );
-      setUserProfile(res.data.data.user);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.message || "Failed to book");
-      }
-    }
-  }, [loginData?._id, requestHeaders]);
-
-  useEffect(() => {
-    loginData ? getUserProfile() : "";
-  }, [getUserProfile, loginData]);
-
   return (
     <>
       {loginData?.role === "admin" ? (
@@ -309,73 +281,15 @@ export default function Navbar({
               <FormatAlignCenter />
             </IconButton>
 
-            <Typography
+            <Box
               display={"flex"}
               alignItems={"center"}
-              sx={{ flexGrow: 1 }}
-              variant="h6"
-              noWrap
-              component="div"
+              justifyContent={"end"}
+              flexGrow={1}
             >
-              <Box display={"flex"} width={{ xs: "130px", md: "200px" }}>
-                <img
-                  width={"100%"}
-                  src={isDark ? logoDark : logoLight}
-                  alt="logo"
-                />
-              </Box>
-            </Typography>
-            {getProfileMenu}
-            <Typography ml={3} mt={1} display={"flex"} alignItems={"center"}>
-              {darkToggle}
-              {/* <label id="theme-toggle-button">
-                <input
-                  type="checkbox"
-                  onChange={() => {
-                    localStorage.setItem(
-                      "theme",
-                      theme.palette.mode === "dark" ? "light" : "dark"
-                    );
-                    setIsDark(!isDark);
-                    setTheme(theme.palette.mode === "light" ? "dark" : "light");
-                  }}
-                  // defaultChecked
-                  checked={isDark}
-                  id="toggle"
-                />
-                <svg
-                  width={75}
-                  viewBox="0 0 69.667 44"
-                  xmlnsXlink="http://www.w3.org/1999/xlink"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g
-                    transform="translate(3.5 3.5)"
-                    data-name="Component 15 – 1"
-                    id="Component_15_1"
-                  >
-                    <g
-                      filter="url(#container)"
-                      transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
-                    >
-                      <rect
-                        fill="#83cbd8"
-                        transform="translate(3.5 3.5)"
-                        rx="17.5"
-                        height={35}
-                        width="60.667"
-                        data-name="container"
-                        id="container"
-                      />
-                    </g>
-                    <g transform="translate(2.333 2.333)" id="button">
-                      {isDark ? moon() : sun()}
-                    </g>
-                    {isDark ? stars() : cloud()}
-                  </g>
-                </svg>
-              </label> */}
-            </Typography>
+              {getProfileMenu}
+              <Box mt={1}> {darkToggle}</Box>
+            </Box>
           </Toolbar>
         </AppBar>
       ) : (
@@ -414,22 +328,35 @@ export default function Navbar({
                 alignItems={"center"}
               >
                 {navItems.map((item, index) =>
-                  item.component ? (
-                    <Box key={index} display={"flex"}>
-                      {item.component}
-                    </Box>
+                  item.title == regBtn ? (
+                    <Button
+                      variant="contained"
+                      key={index}
+                      sx={{ textAlign: "center", mr: 2 }}
+                      onClick={() => navigate(item.path)}
+                    >
+                      {item.title}
+                    </Button>
+                  ) : item.title == logBtn ? (
+                    <Button
+                      variant="contained"
+                      key={index}
+                      sx={{ textAlign: "center", mr: 1 }}
+                      onClick={() => navigate(item.path)}
+                    >
+                      {item.title}
+                    </Button>
                   ) : item.title === "Favorites" ? (
                     <Button
                       key={index}
-                      sx={{ textAlign: "center" }}
+                      sx={{
+                        textAlign: "center",
+                        marginRight: "15px !important",
+                      }}
                       onClick={() => navigate(item.path)}
                     >
-                      <Badge
-                        badgeContent={favsNumber}
-                        color="success"
-                        sx={{ "& span": { top: "1px", right: "-7px" } }}
-                      >
-                        {item.title}
+                      <Badge badgeContent={favsNumber} color="primary">
+                        <ListItemText primary={item.title} />
                       </Badge>
                     </Button>
                   ) : (
@@ -442,63 +369,14 @@ export default function Navbar({
                     </Button>
                   )
                 )}
-                <Typography
-                  ml={3}
-                  mt={1}
+                <Box
                   display={"flex"}
                   alignItems={"center"}
+                  justifyContent={"center"}
                 >
-                  {darkToggle}
-                  {/* <label id="theme-toggle-button">
-                    <input
-                      type="checkbox"
-                      onChange={() => {
-                        localStorage.setItem(
-                          "theme",
-                          theme.palette.mode === "dark" ? "light" : "dark"
-                        );
-                        setIsDark(!isDark);
-                        setTheme(
-                          theme.palette.mode === "light" ? "dark" : "light"
-                        );
-                      }}
-                      // defaultChecked
-                      checked={isDark}
-                      id="toggle"
-                    />
-                    <svg
-                      width={75}
-                      viewBox="0 0 69.667 44"
-                      xmlnsXlink="http://www.w3.org/1999/xlink"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g
-                        transform="translate(3.5 3.5)"
-                        data-name="Component 15 – 1"
-                        id="Component_15_1"
-                      >
-                        <g
-                          filter="url(#container)"
-                          transform="matrix(1, 0, 0, 1, -3.5, -3.5)"
-                        >
-                          <rect
-                            fill="#83cbd8"
-                            transform="translate(3.5 3.5)"
-                            rx="17.5"
-                            height={35}
-                            width="60.667"
-                            data-name="container"
-                            id="container"
-                          />
-                        </g>
-                        <g transform="translate(2.333 2.333)" id="button">
-                          {isDark ? moon() : sun()}
-                        </g>
-                        {isDark ? stars() : cloud()}
-                      </g>
-                    </svg>
-                  </label> */}
-                </Typography>
+                  {loginData?.role === "user" ? getProfileMenu : ""}
+                  <Box mt={1}> {darkToggle}</Box>
+                </Box>
               </Box>
             </Toolbar>
           </AppBar>
@@ -520,14 +398,17 @@ export default function Navbar({
               }}
             >
               {drawer}
-              <Typography
-                ml={3}
+              <Box
                 mt={1}
                 display={"flex"}
-                justifyContent={"center"}
+                flexDirection={"column"}
+                alignItems={"center"}
+                textAlign={"center"}
+                rowGap={3}
               >
+                {loginData?.role === "user" ? getProfileMenu : ""}
                 {darkToggle}
-              </Typography>
+              </Box>
             </Drawer>
           </Box>
         </>

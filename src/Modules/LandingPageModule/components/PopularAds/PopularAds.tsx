@@ -45,10 +45,8 @@ export default function PopularAds() {
   const FetchAds = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${getBaseUrl()}/api/v0/portal/ads?page=1&size=10000`,
-        {
-          headers: requestHeaders,
-        }
+        `${getBaseUrl()}/api/v0/portal/ads?page=1&size=10000`
+        
       );
       const SplicedArray = res.data.data.ads.slice(0, 5);
       setZ5Ads(SplicedArray);
@@ -57,7 +55,7 @@ export default function PopularAds() {
         toast.error(error.response.data.message || "fail to add to favs");
       }
     }
-  }, [requestHeaders]);
+  }, []);
 
   const AddToFavs = async (RoomId: string) => {
     setClickedAdd(true);
