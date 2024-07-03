@@ -7,6 +7,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/effect-cards";
@@ -21,6 +22,7 @@ export default function Home() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t, i18n } = useTranslation();
 
   const incraese = () => {
     setPersonCount((prev) => prev + 1);
@@ -77,9 +79,7 @@ export default function Home() {
                 fontSize: "2rem",
               }}
             >
-              Forget Busy Work,
-              <br />
-              Start Next Vacation
+              {t("home.header")}
             </Typography>
             <Typography sx={{ color: "rgba(176, 176, 176, 1)" }}>
               We provide what you need to enjoy your holiday with family. Time

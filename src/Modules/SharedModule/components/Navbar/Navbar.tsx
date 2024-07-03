@@ -42,6 +42,11 @@ export default function Navbar({
     return false;
   });
 
+  const locales = {
+    en: { title: "English" },
+    ar: { title: "Arabic" },
+  };
+
   const darkToggle = (
     <label style={{ paddingTop: "8px" }} id="theme-toggle-button">
       <input
@@ -236,6 +241,7 @@ export default function Navbar({
           </ListItem>
         ))}
       </List>
+      <Typography>hello</Typography>
     </Box>
   );
 
@@ -295,6 +301,7 @@ export default function Navbar({
       ) : (
         ""
       )}
+      {/*mobile view */}
       {loginData?.role !== "admin" ? (
         <>
           <AppBar component="nav">
