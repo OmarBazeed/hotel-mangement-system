@@ -26,6 +26,9 @@ import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export default function Navbar({
   setTheme,
@@ -42,10 +45,24 @@ export default function Navbar({
     return false;
   });
 
-  const locales = {
-    en: { title: "English" },
-    ar: { title: "Arabic" },
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openLang = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLanguageChange = (langCode) => {
+    console.log("Selected language:", langCode);
+    handleClose();
+  };
+
+  const languages = [
+    { code: "en", label: "English" },
+    { code: "ar", label: "Arabic" },
+  ];
 
   const darkToggle = (
     <label style={{ paddingTop: "8px" }} id="theme-toggle-button">
@@ -208,6 +225,9 @@ export default function Navbar({
     setMobileOpen((prevState) => !prevState);
   };
 
+  {
+    /*mobile view */
+  }
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
@@ -241,6 +261,7 @@ export default function Navbar({
           </ListItem>
         ))}
       </List>
+      {/*select language */}
       <Typography>hello</Typography>
     </Box>
   );
@@ -301,7 +322,7 @@ export default function Navbar({
       ) : (
         ""
       )}
-      {/*mobile view */}
+      {/*desktop view */}
       {loginData?.role !== "admin" ? (
         <>
           <AppBar component="nav">
@@ -383,6 +404,43 @@ export default function Navbar({
                 >
                   {loginData?.role === "user" ? getProfileMenu : ""}
                   <Box mt={1}> {darkToggle}</Box>
+                </Box>
+                {/*select language */}
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Button
+                    id="language-button"
+                    aria-controls="language-menu"
+                    aria-haspopup="true"
+                    aria-expanded={openLang ? "true" : undefined}
+                    onClick={handleClick}
+                    color="inherit"
+                  >
+                    Language <KeyboardArrowDownIcon />
+                  </Button>
+                  <Menu
+                    id="language-menu"
+                    anchorEl={anchorEl}
+                    open={openLang}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    sx={{ top: "50px", right: "50px" }}
+                  >
+                    {languages.map((lang) => (
+                      <MenuItem
+                        key={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
+                      >
+                        {lang.label}
+                      </MenuItem>
+                    ))}
+                  </Menu>
                 </Box>
               </Box>
             </Toolbar>
