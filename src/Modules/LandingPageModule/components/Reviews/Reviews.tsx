@@ -14,6 +14,7 @@ import review1 from "../../../../assets/reviewsImgs/download (1).jpeg";
 import review2 from "../../../../assets/reviewsImgs/download (2).jpeg";
 import review3 from "../../../../assets/reviewsImgs/download (3).jpeg";
 import review4 from "../../../../assets/reviewsImgs/download.jpeg";
+import { t } from "i18next";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -22,35 +23,34 @@ export default function Reviews() {
     {
       id: 1,
       img: review1,
-      review: "A Quirky and Wild Ride Through Four Rooms",
-      desc: '"Four Rooms" is a delightful rollercoaster of absurdity and creativity. Each segment, directed by different auteurs like Quentin Tarantino and Robert Rodriguez, brings a unique flavor to the overall narrative',
+      review: t("reviews.1.review"),
+      desc: t("reviews.1.desc"),
       rating: 4,
-      roomName: "chalet 4",
+      roomName: t("reviews.1.roomName"),
     },
     {
       id: 2,
       img: review2,
-      review: "An Anthology of Eccentricities and Twists",
-      desc: "Each room presents a mini-story that feels like a wild ride through the imaginations of its directors. Quentin Tarantino segment is a standout, filled with his trademark dialogue and unexpected twists that keep you hooked ",
+      review: t("reviews.2.review"),
+      desc: t("reviews.2.desc"),
       rating: 2,
-      roomName: "Green Room",
+      roomName: t("reviews.2.roomName"),
     },
     {
       id: 3,
       img: review3,
-      review:
-        "A Cinematic Experiment that Pays Off , really nive to start vaccation",
-      desc: "From Tarantino sharp wit to Allison Anders poignant exploration of human relationships, the directors showcase their distinct styles while maintaining a cohesive narrative thread",
+      review: t("reviews.3.review"),
+      desc: t("reviews.3.desc"),
       rating: 3,
-      roomName: "red evil room",
+      roomName: t("reviews.3.roomName"),
     },
     {
       id: 4,
       img: review4,
-      review: " A Wild and Wacky Ride with Four Rooms",
-      desc: "offering four distinct stories that range from hilarious to bizarre. Tim Roth shines as the beleaguered bellboy who navigates through a series of increasingly absurd situations with comedic finesse",
+      review: t("reviews.4.review"),
+      desc: t("reviews.4.desc"),
       rating: 5,
-      roomName: "paris vacation",
+      roomName: t("reviews.4.roomName"),
     },
   ];
   const [activeStep, setActiveStep] = React.useState(0);
@@ -203,11 +203,11 @@ export default function Reviews() {
               disabled={activeStep === maxSteps - 1}
               sx={{ marginLeft: "25px" }}
             >
-              Next
+              {t("reviews.next")}
               {theme.direction === "rtl" ? (
-                <KeyboardArrowLeft />
-              ) : (
                 <KeyboardArrowRight />
+              ) : (
+                <KeyboardArrowLeft />
               )}
             </Button>
           }
@@ -219,11 +219,11 @@ export default function Reviews() {
               sx={{ marginRight: "25px" }}
             >
               {theme.direction === "rtl" ? (
-                <KeyboardArrowRight />
-              ) : (
                 <KeyboardArrowLeft />
+              ) : (
+                <KeyboardArrowRight />
               )}
-              Back
+              {t("reviews.back")}
             </Button>
           }
           sx={{ width: "fit-content" }}

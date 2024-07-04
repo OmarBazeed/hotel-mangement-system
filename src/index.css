@@ -5,6 +5,10 @@
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 @media (max-width: 899px) {
   .auth .MuiFormLabel-root {
     color: #fff !important;

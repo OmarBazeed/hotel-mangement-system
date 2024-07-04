@@ -82,8 +82,7 @@ export default function Home() {
               {t("home.header")}
             </Typography>
             <Typography sx={{ color: "rgba(176, 176, 176, 1)" }}>
-              We provide what you need to enjoy your holiday with family. Time
-              to make another memorable moments.
+              {t("home.title")}
             </Typography>
             <Typography
               sx={{
@@ -92,7 +91,7 @@ export default function Home() {
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
               }}
             >
-              Start Booking
+              {t("home.SBook")}
             </Typography>
             <Typography
               sx={{
@@ -100,7 +99,7 @@ export default function Home() {
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
               }}
             >
-              pick a date
+              {t("home.PDate")}
             </Typography>
             <Box>
               <Stack
@@ -168,7 +167,7 @@ export default function Home() {
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
               }}
             >
-              Capacity
+              {t("home.Capacity")}
             </Typography>
             <Stack
               sx={{
@@ -208,7 +207,7 @@ export default function Home() {
               </Grid>
               <Grid item xs={8} sx={{ textAlign: "center", margin: "auto" }}>
                 <Typography sx={{ fontSize: "1.5rem", color: "#152C5B" }}>
-                  {personCount} person
+                  {personCount} {t("home.person")}
                 </Typography>
               </Grid>
               <Grid

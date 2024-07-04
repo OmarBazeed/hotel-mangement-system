@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { getBaseUrl } from "../../../../Utils/Utils";
 import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
 export default function PopularAds() {
   const [Z5Ads, setZ5Ads] = useState([]);
@@ -46,7 +47,6 @@ export default function PopularAds() {
     try {
       const res = await axios.get(
         `${getBaseUrl()}/api/v0/portal/ads?page=1&size=10000`
-        
       );
       const SplicedArray = res.data.data.ads.slice(0, 5);
       setZ5Ads(SplicedArray);
@@ -115,7 +115,7 @@ export default function PopularAds() {
   return (
     <Box>
       <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
-        Most Popular Ads
+        {t("popAds.header")}
       </Typography>
       <Box component="div" mt={2} minHeight={"100vh"}>
         <Grid minHeight={"80vh"} container>
@@ -251,7 +251,7 @@ const CardComponent = (
               fontWeight: "bold",
             }}
           >
-            ${AD?.room.discount} discount per night
+            ${AD?.room.discount} {t("popAds.dis")}
           </Typography>
         </Box>
       </Box>

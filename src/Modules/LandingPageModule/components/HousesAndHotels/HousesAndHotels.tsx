@@ -6,6 +6,7 @@ import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
 export default function HousesAndHotels() {
   const [houses, setHouses] = useState<RoomsInterface[]>([]);
@@ -39,7 +40,7 @@ export default function HousesAndHotels() {
     <Box>
       <Grid container spacing={2} padding={3}>
         <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
-          Houses with beauty backyard
+          {t("houses.header1")}
         </Typography>
         <Grid item xs={12}>
           <Grid container spacing={6}>
@@ -98,7 +99,7 @@ export default function HousesAndHotels() {
           </Grid>
         </Grid>
         <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
-          Hotels with large living room
+          {t("houses.header2")}
         </Typography>
         <Grid item xs={12}>
           <Grid container spacing={8}>

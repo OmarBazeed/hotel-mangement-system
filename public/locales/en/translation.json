@@ -1,5 +1,53 @@
 {
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "reviews": "Reviews",
+    "favorites": "Favorites",
+    "reg": "register",
+    "login": "login",
+    "lan": "english"
+  },
   "home": {
-    "header": "Forget Busy Work,Start Next Vacation"
+    "header": "Forget Busy Work,Start Next Vacation",
+    "title": "We provide what you need to enjoy your holiday with family. Time to make another memorable moments",
+    "SBook": "Start Booking",
+    "PDate": "Pick a date",
+    "Capacity": "Number of people",
+    "person": "person"
+  },
+  "popAds": {
+    "header": "Most Popular Ads",
+    "dis": "discount per night"
+  },
+  "houses": {
+    "header1": "Houses with beauty backyard",
+    "header2": "Hotels with large living room"
+  },
+  "reviews": {
+    "1": {
+      "review": "A Quirky and Wild Ride Through Four Rooms",
+      "desc": "Four Rooms is a delightful rollercoaster of absurdity and creativity. Each segment, directed by different auteurs like Quentin Tarantino and Robert Rodriguez, brings a unique flavor to the overall narrative",
+      "roomName": "chalet 4"
+    },
+    "2": {
+      "review": "An Anthology of Eccentricities and Twists",
+      "desc": "Each room presents a mini-story that feels like a wild ride through the imaginations of its directors. Quentin Tarantino segment is a standout, filled with his trademark dialogue and unexpected twists that keep you hooked ",
+      "roomName": "Green Room"
+    },
+    "3": {
+      "review": "A Cinematic Experiment that Pays Off , really nive to start vaccation",
+      "desc": "From Tarantino sharp wit to Allison Anders poignant exploration of human relationships, the directors showcase their distinct styles while maintaining a cohesive narrative thread",
+
+      "roomName": "red evil room"
+    },
+    "4": {
+      "review": " A Wild and Wacky Ride with Four Rooms",
+      "desc": "offering four distinct stories that range from hilarious to bizarre. Tim Roth shines as the beleaguered bellboy who navigates through a series of increasingly absurd situations with comedic finesse",
+
+      "roomName": "paris vacation"
+    },
+    "next": "Next",
+    "back": "Back"
   }
 }

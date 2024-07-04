@@ -7,29 +7,29 @@ import {
   Button,
   Divider,
   Drawer,
+  FormControl,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Popover,
+  Select,
   Toolbar,
   Typography,
   styled,
   useTheme,
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
+import MenuItem from "@mui/material/MenuItem";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../Context/AuthContext/AuthContext";
 import { AppBarProps } from "../../../../Interfaces/interFaces";
 import logoDark from "../../../../assets/images/logo-dark.svg";
 import logoLight from "../../../../assets/images/logo-light.svg";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
 export default function Navbar({
   setTheme,
   setOpen,
@@ -38,31 +38,23 @@ export default function Navbar({
 }: AppBarProps) {
   const { loginData, logOut, userInfo, favsNumber } = useAuth();
   const navigate = useNavigate();
-
+  // importing t , i18n from react-i18next to use it in navbar to enable me to convert texts to arabic and english
+  const { t, i18n } = useTranslation();
   const [isDark, setIsDark] = useState(() => {
     const value = localStorage.getItem("theme");
     if (value === "dark" || value === null) return true;
     return false;
   });
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const openLang = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+  const languages = {
+    en: { label: "English" },
+    ar: { label: "Arabic" },
   };
 
-  const handleLanguageChange = (langCode) => {
-    console.log("Selected language:", langCode);
-    handleClose();
+  const handleLanguageChange = (e) => {
+    const selectedLang = e.target.value;
+    i18n.changeLanguage(selectedLang);
+    location.reload();
   };
-
-  const languages = [
-    { code: "en", label: "English" },
-    { code: "ar", label: "Arabic" },
-  ];
 
   const darkToggle = (
     <label style={{ paddingTop: "8px" }} id="theme-toggle-button">
@@ -114,8 +106,8 @@ export default function Navbar({
     </label>
   );
 
-  const regBtn = <Box>Register</Box>;
-  const logBtn = <Box>Login Now</Box>;
+  const regBtn = <Box>{t("nav.reg")}</Box>;
+  const logBtn = <Box>{t("nav.login")}</Box>;
 
   const getProfileMenu = (
     <PopupState variant="popover" popupId="demo-popup-popover">
@@ -204,15 +196,15 @@ export default function Navbar({
   } =
     loginData?.role === "user"
       ? [
-          { title: "Home", path: "/" },
-          { title: "Explore", path: "/explore" },
-          { title: "Reviews", path: "/reviews" },
-          { title: "Favorites", path: "/favorites" },
+          { title: t("nav.home"), path: "/" },
+          { title: t("nav.explore"), path: "/explore" },
+          { title: t("nav.reviews"), path: "/reviews" },
+          { title: t("nav.favorites"), path: "/favorites" },
         ]
       : loginData === null
       ? [
-          { title: "Home", path: "/" },
-          { title: "Explore", path: "/explore" },
+          { title: t("nav.home"), path: "/" },
+          { title: t("nav.explore"), path: "/explore" },
           { title: regBtn, path: "/auth/signup" },
           { title: logBtn, path: "/auth" },
         ]
@@ -224,6 +216,10 @@ export default function Navbar({
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+
+  useEffect(() => {
+    document.dir = i18n.dir();
+  });
 
   {
     /*mobile view */
@@ -406,42 +402,32 @@ export default function Navbar({
                   <Box mt={1}> {darkToggle}</Box>
                 </Box>
                 {/*select language */}
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Button
-                    id="language-button"
-                    aria-controls="language-menu"
-                    aria-haspopup="true"
-                    aria-expanded={openLang ? "true" : undefined}
-                    onClick={handleClick}
-                    color="inherit"
-                  >
-                    Language <KeyboardArrowDownIcon />
-                  </Button>
-                  <Menu
-                    id="language-menu"
-                    anchorEl={anchorEl}
-                    open={openLang}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
+
+                <FormControl sx={{ m: 1, minWidth: 70 }} size="small">
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={i18n.language}
+                    onChange={(e) => handleLanguageChange(e)}
+                    sx={{
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "transparent",
+                      },
                     }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
+                    inputProps={{
+                      classes: {
+                        root: "select-root",
+                        focused: "select-focused",
+                      },
                     }}
-                    sx={{ top: "50px", right: "50px" }}
                   >
-                    {languages.map((lang) => (
-                      <MenuItem
-                        key={lang.code}
-                        onClick={() => handleLanguageChange(lang.code)}
-                      >
-                        {lang.label}
+                    {Object.keys(languages).map((lang) => (
+                      <MenuItem key={lang} value={lang}>
+                        {languages[lang].label}
                       </MenuItem>
                     ))}
-                  </Menu>
-                </Box>
+                  </Select>
+                </FormControl>
               </Box>
             </Toolbar>
           </AppBar>
