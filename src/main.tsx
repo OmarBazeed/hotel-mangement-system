@@ -4,7 +4,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App.tsx";
 import { AuthContextProvider } from "./Context/AuthContext/AuthContext.tsx";
-// here i am importing i18n to use it overall the app so i imported in main.tsx
 import "./Modules/i18n/i18n.tsx";
 import "./index.css";
 

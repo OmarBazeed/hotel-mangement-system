@@ -114,7 +114,12 @@ export default function PopularAds() {
 
   return (
     <Box>
-      <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.8rem"}>
+      <Typography
+        component={"h2"}
+        fontWeight={"bold"}
+        fontSize={"1.8rem"}
+        fontFamily={"poppins"}
+      >
         {t("popAds.header")}
       </Typography>
       <Box component="div" mt={2} minHeight={"100vh"}>
@@ -247,11 +252,14 @@ const CardComponent = (
                 sx: ".5rem !important",
                 md: "1.1rem !important",
               },
-              fontFamily: "emoji",
-              fontWeight: "bold",
+              fontFamily: "poppins",
+              fontWeight: "semibold",
             }}
           >
-            ${AD?.room.discount} {t("popAds.dis")}
+            <span style={{ color: "#1565c0", fontWeight: "bold" }}>
+              ${AD?.room.discount}
+            </span>
+            {t("popAds.dis")}
           </Typography>
         </Box>
       </Box>

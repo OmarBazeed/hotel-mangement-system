@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
+import defaultImg from "../../../../assets/images/hotal2.jpg";
 
 export default function HousesAndHotels() {
   const [houses, setHouses] = useState<RoomsInterface[]>([]);
@@ -39,7 +40,12 @@ export default function HousesAndHotels() {
   return (
     <Box>
       <Grid container spacing={2} padding={3}>
-        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
+        <Typography
+          component={"h2"}
+          fontWeight={"bold"}
+          fontSize={"1.6rem"}
+          fontFamily={"poppins"}
+        >
           {t("houses.header1")}
         </Typography>
         <Grid item xs={12}>
@@ -54,10 +60,11 @@ export default function HousesAndHotels() {
                     sx={{
                       position: "relative",
                       height: "300px",
-                      background:
-                        house.images && house.images.length > 0
-                          ? `url(${house?.images[0]})`
-                          : "grey",
+                      background: `url(${
+                        house?.images && house.images.length > 0
+                          ? house.images[0]
+                          : defaultImg
+                      })`,
                       backgroundSize: "cover",
                       backgroundRepeat: "no-repeat",
                       "&:hover .overlay": {
@@ -89,16 +96,27 @@ export default function HousesAndHotels() {
                   </Card>
                 </Button>
                 <Box sx={{ marginTop: "5px" }}>
-                  <Typography fontWeight={"bold"} fontSize={"1.1rem"}>
+                  <Typography
+                    fontWeight={"bold"}
+                    fontSize={"1.1rem"}
+                    fontFamily={"poppins"}
+                  >
                     {house.roomNumber}
                   </Typography>
-                  <Typography>{house.roomNumber}</Typography>
+                  <Typography fontFamily={"poppins"}>
+                    {house.roomNumber}
+                  </Typography>
                 </Box>
               </Grid>
             ))}
           </Grid>
         </Grid>
-        <Typography component={"h2"} fontWeight={"bold"} fontSize={"1.6rem"}>
+        <Typography
+          component={"h2"}
+          fontWeight={"bold"}
+          fontSize={"1.6rem"}
+          fontFamily={"poppins"}
+        >
           {t("houses.header2")}
         </Typography>
         <Grid item xs={12}>
@@ -148,10 +166,16 @@ export default function HousesAndHotels() {
                   </Card>
                 </Button>
                 <Box sx={{ marginTop: "5px" }}>
-                  <Typography fontWeight={"bold"} fontSize={"1.1rem"}>
+                  <Typography
+                    fontWeight={"bold"}
+                    fontSize={"1.1rem"}
+                    fontFamily={"poppins"}
+                  >
                     {hotel.roomNumber}
                   </Typography>
-                  <Typography>{hotel.roomNumber}</Typography>
+                  <Typography fontFamily={"poppins"}>
+                    {hotel.roomNumber}
+                  </Typography>
                 </Box>
               </Grid>
             ))}

@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/effect-cards";
-import { EffectCards, Autoplay } from "swiper/modules";
+import { Autoplay, EffectCards } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 export default function Home() {
   const [personCount, setPersonCount] = useState<number>(0);
@@ -77,11 +77,14 @@ export default function Home() {
                 fontWeight: "bold",
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
                 fontSize: "2rem",
+                fontFamily: "Poppions",
               }}
             >
               {t("home.header")}
             </Typography>
-            <Typography sx={{ color: "rgba(176, 176, 176, 1)" }}>
+            <Typography
+              sx={{ color: "rgba(176, 176, 176, 1)", fontFamily: "Poppions" }}
+            >
               {t("home.title")}
             </Typography>
             <Typography
@@ -89,6 +92,7 @@ export default function Home() {
                 fontWeight: "bold",
                 fontSize: "1.3rem",
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
+                fontFamily: "Poppions",
               }}
             >
               {t("home.SBook")}
@@ -97,6 +101,7 @@ export default function Home() {
               sx={{
                 marginBottom: "-15px !important",
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
+                fontFamily: "Poppions",
               }}
             >
               {t("home.PDate")}
@@ -152,6 +157,7 @@ export default function Home() {
                           margin: "auto",
                           marginLeft: { xs: "37px", md: "0" },
                           cursor: "pointer",
+                          fontFamily: "Poppions",
                         },
                       }}
                       className="dateInput"
@@ -165,6 +171,7 @@ export default function Home() {
               sx={{
                 marginBottom: "-15px !important",
                 color: isDark ? "white" : "rgba(21, 44, 91, 1)",
+                fontFamily: "Poppions",
               }}
             >
               {t("home.Capacity")}
@@ -178,6 +185,7 @@ export default function Home() {
                 width: "100%",
                 bgcolor: "#F5F6FF",
                 padding: "10px 0",
+                fontFamily: "Poppions",
               }}
             >
               <Grid
@@ -206,7 +214,13 @@ export default function Home() {
                 </Button>
               </Grid>
               <Grid item xs={8} sx={{ textAlign: "center", margin: "auto" }}>
-                <Typography sx={{ fontSize: "1.5rem", color: "#152C5B" }}>
+                <Typography
+                  sx={{
+                    fontSize: "1.5rem",
+                    color: "#152C5B",
+                    fontFamily: "Poppions",
+                  }}
+                >
                   {personCount} {t("home.person")}
                 </Typography>
               </Grid>
@@ -244,10 +258,11 @@ export default function Home() {
                 width: "50%",
                 padding: "12px 8px",
                 marginTop: "60px !important",
+                fontFamily: "Poppions",
               }}
               onClick={handleExploreClick}
             >
-              Explore
+              {t("home.button")}
             </Button>
           </Stack>
         </Grid>

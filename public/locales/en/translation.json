@@ -14,7 +14,8 @@
     "SBook": "Start Booking",
     "PDate": "Pick a date",
     "Capacity": "Number of people",
-    "person": "person"
+    "person": "person",
+    "button": "explore"
   },
   "popAds": {
     "header": "Most Popular Ads",
