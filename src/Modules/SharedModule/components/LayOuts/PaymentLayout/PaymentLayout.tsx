@@ -14,7 +14,7 @@ export default function PaymentLayout() {
       <Stack>
         <Box
           sx={{
-            paddingTop: "25px",
+            paddingTop: "20px",
             width: "100%",
             textAlign: "center",
           }}

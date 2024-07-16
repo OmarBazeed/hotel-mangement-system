@@ -80,8 +80,13 @@ export default function FirstPaymentPage() {
         display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}
-        marginTop={4}
         width={"100%"}
+        sx={{
+          marginTop: {
+            xs: "15px",
+            sm: "35px",
+          },
+        }}
       >
         <Box sx={{ width: "30%" }}>
           <Stepper activeStep={activeStep}>
@@ -131,8 +136,14 @@ export default function FirstPaymentPage() {
             component={"form"}
             columns={12}
             container
-            p={6}
             onSubmit={handlePay}
+            p={4}
+            sx={{
+              paddingTop: {
+                xs: "0",
+                sm: "50px",
+              },
+            }}
           >
             <Grid
               item
@@ -273,7 +284,7 @@ export default function FirstPaymentPage() {
                   sx={{
                     display: "flex",
                     flexDirection: "row",
-                    pt: 2,
+                    pt: 0,
                     width: "100%",
                     justifyContent: "space-between",
                     alignItems: "center",

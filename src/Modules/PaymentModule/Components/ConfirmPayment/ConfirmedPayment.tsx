@@ -20,7 +20,7 @@ export default function ConfirmPayment() {
         display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}
-        marginTop={4}
+        marginTop={3}
         width={"100%"}
         gap={4}
       >
