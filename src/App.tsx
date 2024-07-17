@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import { createTheme, CssBaseline } from "@mui/material";
 import { Suspense, useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import AdsList from "./Modules/AdminDashboard/Componenets/Ads/AdsList/AdsList";
 import BookingsList from "./Modules/AdminDashboard/Componenets/BookingsList/BookingsList";
 import Dashboard from "./Modules/AdminDashboard/Componenets/Dashboard/Dashboard";
@@ -91,7 +91,7 @@ export default function App() {
           }),
     },
   });
-  const routes = createBrowserRouter([
+  const routes = createHashRouter([
     {
       path: "/",
       element: <LandingLayout setTheme={setTheme} />,
