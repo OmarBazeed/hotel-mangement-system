@@ -124,10 +124,11 @@ export default function FirstPaymentPage() {
             <Typography
               component={"h1"}
               sx={{ fontSize: "1.5em", fontWeight: "bold" }}
+              fontFamily={"poppins"}
             >
               Payment
             </Typography>
-            <Typography color={"gray"}>
+            <Typography color={"gray"} fontFamily={"poppins"}>
               Kindly follow the instructions below
             </Typography>
           </Box>
@@ -157,16 +158,22 @@ export default function FirstPaymentPage() {
                 gap: "15px",
               }}
             >
-              <Typography>Transfer Pembayaran:</Typography>
-              <Typography>Tax: 10%</Typography>
+              <Typography fontFamily={"poppins"}>
+                Transfer Pembayaran:
+              </Typography>
+              <Typography fontFamily={"poppins"}>Tax: 10%</Typography>
               <Box
                 display={"flex"}
                 justifyContent={"center"}
                 alignItems={"center"}
                 gap={1}
               >
-                <Typography> Sub total:</Typography>
-                <Typography color={"teal"} fontWeight={"bold"}>
+                <Typography fontFamily={"poppins"}> Sub total:</Typography>
+                <Typography
+                  color={"teal"}
+                  fontWeight={"bold"}
+                  fontFamily={"poppins"}
+                >
                   ${subtotal} USD
                 </Typography>
               </Box>
@@ -179,9 +186,13 @@ export default function FirstPaymentPage() {
               >
                 <img src={bankImg} width={120} height={35} alt="..." />
                 <Box textAlign={"left"}>
-                  <Typography>Bank Central Asia</Typography>
-                  <Typography>2208 1996</Typography>
-                  <Typography>BuildWith Angga</Typography>
+                  <Typography fontFamily={"poppins"}>
+                    Bank Central Asia
+                  </Typography>
+                  <Typography fontFamily={"poppins"}>2208 1996</Typography>
+                  <Typography fontFamily={"poppins"}>
+                    BuildWith Angga
+                  </Typography>
                 </Box>
               </Box>
               <Box
@@ -192,9 +203,11 @@ export default function FirstPaymentPage() {
               >
                 <img src={mandiriImg} width={120} height={70} alt="..." />
                 <Box textAlign={"left"}>
-                  <Typography>Bank Mandiri</Typography>
-                  <Typography>2208 1996</Typography>
-                  <Typography>BuildWith Angga</Typography>
+                  <Typography fontFamily={"poppins"}>Bank Mandiri</Typography>
+                  <Typography fontFamily={"poppins"}>2208 1996</Typography>
+                  <Typography fontFamily={"poppins"}>
+                    BuildWith Angga
+                  </Typography>
                 </Box>
               </Box>
             </Grid>
@@ -292,7 +305,11 @@ export default function FirstPaymentPage() {
                   }}
                 >
                   <Button
-                    sx={{ width: "100%", textAlign: "left" }}
+                    sx={{
+                      width: "100%",
+                      textAlign: "left",
+                      fontFamily: "poppins",
+                    }}
                     variant="contained"
                     color="error"
                     onClick={() => navigate("/")}
@@ -300,7 +317,7 @@ export default function FirstPaymentPage() {
                     cancel
                   </Button>
                   <Button
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", fontFamily: "poppins" }}
                     variant="contained"
                     color="primary"
                     type="submit"

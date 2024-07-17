@@ -23,7 +23,9 @@
   },
   "houses": {
     "header1": "Houses with beauty backyard",
-    "header2": "Hotels with large living room"
+    "header2": "Hotels with large living room",
+    "Mpopular": "most popular",
+    "Pchoice": "popular choice"
   },
   "reviews": {
     "1": {

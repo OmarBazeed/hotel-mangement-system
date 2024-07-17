@@ -76,11 +76,14 @@ export default function HousesAndHotels() {
                   >
                     {index == 3 ? (
                       <Typography
+                        color={"white"}
                         sx={{
                           textAlign: "right",
-                          backgroundColor: "tomato",
+                          backgroundColor: "rgba(25, 118, 210, 0.2)",
+                          boxShadow: "3px 3px 3px black",
                           padding: "5px 7px",
                           width: "fit-content",
+                          marginTop: "4px",
                           marginLeft: "auto",
                           borderRadius: "0px 10px 0 10px",
                           fontSize: "1.1rem",
@@ -88,7 +91,7 @@ export default function HousesAndHotels() {
                           fontWeight: "bold",
                         }}
                       >
-                        most popular
+                        {t("houses.Mpopular")}
                       </Typography>
                     ) : (
                       ""
@@ -146,9 +149,12 @@ export default function HousesAndHotels() {
                   >
                     {index == 2 ? (
                       <Typography
+                        color={"white"}
                         sx={{
                           textAlign: "right",
-                          backgroundColor: "tomato",
+                          backgroundColor: "rgba(25, 118, 210, 0.2)",
+                          boxShadow: "3px 3px 3px black",
+                          marginTop: "3px",
                           padding: "5px 7px",
                           width: "fit-content",
                           marginLeft: "auto",
@@ -158,7 +164,7 @@ export default function HousesAndHotels() {
                           fontWeight: "bold",
                         }}
                       >
-                        popular choice
+                        {t("houses.Pchoice")}
                       </Typography>
                     ) : (
                       ""

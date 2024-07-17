@@ -239,11 +239,12 @@ const CardComponent = (
           <img width={"99%"} height={"99%"} src={AD?.room.images[0]} alt="" />
           <Typography
             position={"absolute"}
-            top={10}
-            right={10}
+            top={7}
+            right={9}
             sx={{
               textAlign: "right",
-              backgroundColor: "tomato",
+              backgroundColor: "rgba(25, 118, 210, 0.2)",
+              boxShadow: "3px 3px 3px black",
               padding: "5px 7px",
               width: "fit-content",
               marginLeft: "auto",
@@ -256,7 +257,13 @@ const CardComponent = (
               fontWeight: "semibold",
             }}
           >
-            <span style={{ color: "#1565c0", fontWeight: "bold" }}>
+            <span
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                margin: "0 5px",
+              }}
+            >
               ${AD?.room.discount}
             </span>
             {t("popAds.dis")}

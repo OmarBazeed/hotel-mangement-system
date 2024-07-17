@@ -54,6 +54,7 @@ export default function ConfirmPayment() {
               fontWeight: "bolder",
               fontSize: "2em",
               color: "rgba(21, 44, 91, 1)",
+              fontFamily: "poppins",
             }}
           >
             Yay! Completed
@@ -67,7 +68,7 @@ export default function ConfirmPayment() {
           />
         </Box>
         <Box width={"80%"} sx={{ textAlign: "center" }}>
-          <Typography>
+          <Typography fontFamily={"poppins"}>
             We will inform you via email later once the transaction has been
             accepted
           </Typography>
@@ -80,6 +81,7 @@ export default function ConfirmPayment() {
               fontSize: "1em",
               fontWeight: "800",
               boxShadow: "2px 2px 2px  gray",
+              fontFamily: "poppins",
             }}
             onClick={() => navigate("/")}
           >

@@ -53,7 +53,7 @@ export default function Navbar({
   const handleLanguageChange = (e) => {
     const selectedLang = e.target.value;
     i18n.changeLanguage(selectedLang);
-    // location.reload();
+    location.reload();
   };
 
   const darkToggle = (

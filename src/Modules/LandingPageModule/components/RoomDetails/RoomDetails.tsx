@@ -396,7 +396,7 @@ export default function RoomDetails() {
         marginBottom="35px"
         spacing={2}
       >
-        {room.images &&
+        {room.images && room.images.length > 0 ? (
           room.images.map((img, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <Box
@@ -411,7 +411,10 @@ export default function RoomDetails() {
                 maxHeight={"400px"}
               />
             </Grid>
-          ))}
+          ))
+        ) : (
+          <Typography>No Available Images 😞 </Typography>
+        )}
       </Grid>
       <Grid
         container
@@ -421,7 +424,9 @@ export default function RoomDetails() {
         sx={{ marginTop: "30px", paddingLeft: { xs: "25px", md: "0" } }}
       >
         <Grid item xs={12} lg={5}>
-          <Typography sx={{ paddingLeft: "0px !important" }}>
+          <Typography
+            sx={{ paddingLeft: "0px !important", fontFamily: "poppins" }}
+          >
             Design is a plan or specification for the construction of an object
             or system or for the implementation of an activity or process, or
             the result of that plan or specification in the form of a prototype,
@@ -443,7 +448,9 @@ export default function RoomDetails() {
                     display={"flex"}
                     alignItems={"center"}
                     justifyContent={"center"}
-                    bgcolor={"teal"}
+                    gap={1}
+                    bgcolor={"rgba(25, 118, 210, 0.12)"}
+                    boxShadow={"2px 2px 2px gray"}
                     flexWrap={"wrap"}
                     sx={{
                       margin: "3px 10px",
@@ -453,12 +460,20 @@ export default function RoomDetails() {
                     key={index}
                   >
                     <HomeMax />
-                    <Typography marginLeft={1}> {fac.name}</Typography>
+                    <Typography marginLeft={1} fontFamily={"poppins"}>
+                      {fac.name}
+                    </Typography>
                   </Box>
                 );
               })
             ) : (
-              <Typography bgcolor={"tomato"} padding={2} borderRadius={2}>
+              <Typography
+                bgcolor={"rgba(25, 118, 210, 0.2)"}
+                padding={"12px"}
+                borderRadius={2}
+                fontWeight={"bold"}
+                fontFamily={"poppins"}
+              >
                 No Facilities 😞
               </Typography>
             )}
@@ -478,22 +493,35 @@ export default function RoomDetails() {
             direction={"column"}
             spacing={3}
           >
-            <Typography color={"#152C5B"} fontWeight={"bold"} component={"h3"}>
+            <Typography
+              color={"#152C5B"}
+              fontWeight={"bold"}
+              component={"h3"}
+              fontFamily={"poppins"}
+            >
               Start Booking
             </Typography>
             <Box display={"flex"} justifyContent={"start"}>
-              <Typography color={"teal"} fontSize={"2rem"} fontWeight={600}>
+              <Typography
+                color={"teal"}
+                fontSize={"2rem"}
+                fontWeight={400}
+                fontFamily={"poppins"}
+              >
                 ${room.price}
               </Typography>
               <Typography
                 fontSize={"2rem"}
                 marginLeft={1}
                 color={"rgba(176, 176, 176, 1)"}
+                fontFamily={"poppins"}
               >
                 per Night
               </Typography>
             </Box>
-            <Box color={"tomato"}>Discount {room.discount} % Off </Box>
+            <Box color={"tomato"} fontFamily={"poppins"}>
+              Discount {room.discount} % Off
+            </Box>
             <Box>
               <Stack
                 sx={{
@@ -548,13 +576,14 @@ export default function RoomDetails() {
                 </LocalizationProvider>
               </Stack>
             </Box>
-            <Typography>
+            <Typography fontFamily={"poppins"}>
               You will pay
               <span
                 style={{
                   fontWeight: "bold",
                   color: "teal",
                   margin: "0 5px",
+                  fontFamily: "poppins",
                 }}
               >
                 {reservedDays > 0 ? reservedDays * room.price : room.price}
@@ -564,6 +593,7 @@ export default function RoomDetails() {
                 style={{
                   color: "teal",
                   margin: "0 5px",
+                  fontFamily: "poppins",
                 }}
               >
                 2 Person
@@ -577,6 +607,7 @@ export default function RoomDetails() {
                 textAlign: "center",
                 filter: "drop-shadow(2px 2px 2px #466a63)",
                 padding: "15px 25px",
+                fontFamily: "poppins",
               }}
               onClick={() => handleSendBooking()}
             >
@@ -602,7 +633,11 @@ export default function RoomDetails() {
               gap={3}
               height={"100%"}
             >
-              <Typography component={"h1"} sx={{ fontWeight: "bold" }}>
+              <Typography
+                component={"h1"}
+                sx={{ fontWeight: "bold" }}
+                fontFamily={"poppins"}
+              >
                 Rate
               </Typography>
               <Box>
@@ -616,7 +651,11 @@ export default function RoomDetails() {
                   sx={{ "& label": { margin: "0 7px" } }}
                 />
               </Box>
-              <Typography component={"h4"} sx={{ fontWeight: "bold" }}>
+              <Typography
+                component={"h4"}
+                sx={{ fontWeight: "bold" }}
+                fontFamily={"poppins"}
+              >
                 Message
               </Typography>
               <Input
@@ -636,6 +675,7 @@ export default function RoomDetails() {
               <Button
                 variant="contained"
                 sx={{ width: "25%", marginRight: "auto" }}
+                fontFamily={"poppins"}
                 onClick={() => handleSendRate()}
               >
                 Rate
@@ -651,7 +691,11 @@ export default function RoomDetails() {
               gap={3}
               height={"100%"}
             >
-              <Typography component={"h4"} sx={{ fontWeight: "bold" }}>
+              <Typography
+                component={"h4"}
+                sx={{ fontWeight: "bold" }}
+                fontFamily={"poppins"}
+              >
                 Add Your Comment
               </Typography>
               <Input
@@ -670,7 +714,11 @@ export default function RoomDetails() {
               />
               <Button
                 variant="contained"
-                sx={{ width: "25%", marginRight: "auto" }}
+                sx={{
+                  width: "25%",
+                  marginRight: "auto",
+                  fontFamily: "poppins",
+                }}
                 onClick={() => handleSendComment()}
               >
                 Comment
@@ -692,7 +740,9 @@ export default function RoomDetails() {
           }}
           onClick={() => setShowComments(!showComments)}
         >
-          <Typography sx={{ fontWeight: "bold" }}> Room Comments</Typography>
+          <Typography sx={{ fontWeight: "bold" }} fontFamily={"poppins"}>
+            Room Comments
+          </Typography>
           <KeyboardArrowDownOutlinedIcon />
         </Button>
         {allComments.length > 0 ? (
@@ -788,6 +838,7 @@ export default function RoomDetails() {
         ) : (
           <Typography
             component={"h1"}
+            fontFamily={"poppins"}
             sx={{
               textAlign: "center",
               fontWeight: "bold",
@@ -809,7 +860,9 @@ export default function RoomDetails() {
           }}
           onClick={() => setShowReviews(!showReviews)}
         >
-          <Typography sx={{ fontWeight: "bold" }}> Room Reviews</Typography>
+          <Typography sx={{ fontWeight: "bold" }} fontFamily={"poppins"}>
+            Room Reviews
+          </Typography>
           <KeyboardArrowDownOutlinedIcon />
         </Button>
         {roomReviews.length > 0 ? (
@@ -874,6 +927,7 @@ export default function RoomDetails() {
         ) : (
           <Typography
             component={"h1"}
+            fontFamily={"poppins"}
             sx={{
               textAlign: "center",
               fontWeight: "bold",
