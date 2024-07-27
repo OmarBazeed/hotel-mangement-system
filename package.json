@@ -54,5 +54,8 @@
     "react-toastify": "^10.0.5",
     "swiper": "^11.1.5",
     "vite-plugin-require": "^1.2.14"
+  },
+  "peerDependencies": {
+    "@types/react": "^16.8.6 || ^17.0.0 || ^18.3.3"
   }
 }
