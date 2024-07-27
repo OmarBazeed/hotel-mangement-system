@@ -50,7 +50,7 @@ export default function Navbar({
     ar: { label: "Arabic" },
   };
 
-  const handleLanguageChange = (e) => {
+  const handleLanguageChange = (e: { target: { value: string } }) => {
     const selectedLang = e.target.value;
     i18n.changeLanguage(selectedLang);
     location.reload();
@@ -231,7 +231,7 @@ export default function Navbar({
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item, i) => (
+        {navItems.map((item: { path: string; title: string }, i: number) => (
           <ListItem key={i} disablePadding>
             {item.path === "/favorites" ? (
               <ListItemButton
